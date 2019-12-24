@@ -332,7 +332,7 @@ BUG-110358	|	[ATLAS-3019](https://issues.apache.org/jira/browse/ATLAS-3019)	|	Al
 BUG-110170	|	[ATLAS-3019](https://issues.apache.org/jira/browse/ATLAS-3019)	|	Altlas	|	在导入期间，NPE不能同时对父类型和子类型使用转换（替换）
 BUG-109937	|	[ATLAS-2842](https://issues.apache.org/jira/browse/ATLAS-2842)	|	Altlas	|	2.6-maint-“使用ownerRef的实体的UI加载速度缓慢和REST改进”和“创建包含具有重复值的类型集属性的实体”
 BUG-107745	|	[HIVE-16812HIVE-17231HIVE-17917HIVE-20635HIVE-20664HIVE-20694HIVE-20730HIVE-20738](https://issues.apache.org/jira/browse/HIVE-16812HIVE-17231HIVE-17917HIVE-20635HIVE-20664HIVE-20694HIVE-20730HIVE-20738)	|	Hive	|	DeleteReaderValue优化以仅加载正确的存储桶和相关事件
-BUG-95263	|	[YARN-7824](https://issues.apache.org/jira/browse/YARN-7824)	|	YARN	|	[UI2][YARN-7824]纱线组件实例页面应包含指向容器日志的链接
+BUG-95263	|	[YARN-7824](https://issues.apache.org/jira/browse/YARN-7824)	|	YARN	|	[UI2][YARN-7824]YARN线组件实例页面应包含指向容器日志的链接
 BUG-92696	|	不可用	|	Hive	|	在ACID表上复制动态分区和CTAS操作
 
 ## 性能提升
