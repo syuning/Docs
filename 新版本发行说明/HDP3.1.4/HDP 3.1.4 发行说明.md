@@ -13,7 +13,7 @@ HDP 3.1.4的官方Apache组件版本：
 * Apache Atlas 1.1.0
 * Apache Calcite 1.16.0
 * Apache DataFu 1.3.0
-* Apache Druid 0.12.1（正在培养）
+* Apache Druid 0.12.1（孵化中）
 * Apache Hadoop 3.1.1
 * Apache HBase 2.0.2
 * Apache Hive 3.1.0
