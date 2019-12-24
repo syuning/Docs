@@ -1,7 +1,7 @@
 
 > 源文档地址：https://docs.cloudera.com/HDPDocuments/HDP3/HDP-3.1.4/release-notes/content/hdp_relnotes.html
 
-# 组件版本
+# **组件版本**
 
 Hortonworks数据平台（HDP）3.1.4的正式Apache组件版本列表。为确保您使用的是最新的稳定软件，必须熟悉HDP 3.1.4中的最新Apache组件版本。您还应该了解可用的技术预览(Technical Preview)组件，并仅在测试环境中使用它们。
 
@@ -35,7 +35,7 @@ HDP 3.1.4的官方Apache组件版本：
 
 * Apache Superset 0.23.3
 
-# 新功能说明
+# **新功能说明**
 
 ## **Altlas**
 
@@ -87,30 +87,30 @@ HDP 3.1.4的官方Apache组件版本：
 * 综合方面：
     * 从Zeppelin安装中取消捆绑Zeppelin Notebook。
 
-# 弃用通知
+# **弃用通知**
 
 从一个Hortonworks Data Platform版本升级到另一个版本时，您必须了解从最新版本中弃用、移动或删除的任何技术，并使用弃用通知作为实施计划的指南。
 
-## 术语
+## **术语**
 
 本节中的项目指定如下：
 
-### 已弃用
+### **已弃用**
 Hortonworks将在将来的HDP版本中删除的技术。将项目标记为已弃用可让您有时间计划在将来的HDP版本中将其删除。
 
-### 移动
+### **已移动**
 Hortonworks正在从将来的HDP版本中转移而来的技术，并将通过替代的Hortonworks产品或订阅来提供该技术。将项目标记为移动可让您有时间计划在将来的HDP版本中将其删除，并为该技术的替代Hortonworks产品或订阅进行计划。
 
-### 已移除
+### **已移除**
 Hortonworks已从HDP中删除了该技术，并且此版本不再提供或支持该技术。请注意标记为已删除的技术，因为它可能会影响您的升级计划。
 
-## 删除了的组件和产品功能
+## **删除了的组件和产品功能**
 
 在此HDP版本中，不存在已弃用或已删除的组件。
 
 如有任何疑问，请联系Hortonworks支持或您的Hortonworks客户团队。
 
-# 最新技术预览功能的描述
+# **最新技术预览功能的描述 Technical Preview**
 
 如果要试验Hortonworks Data Platform 3.1.4中包含的技术预览功能，则应注意这些功能尚未准备好进行生产部署。Hortonworks鼓励您在非生产环境中探索这些技术预览功能，并通过Hortonworks社区论坛提供有关您的体验的反馈 。
 
@@ -118,3 +118,4 @@ Hortonworks已从HDP中删除了该技术，并且此版本不再提供或支持
 | -----|----- |
 | YARN | YARN现在可以将NEC VE设备作为资源来处理。现在，工作负载可以将这些设备用于您的用例。 |
 
+# **行为变化 Behavioral Changes**
