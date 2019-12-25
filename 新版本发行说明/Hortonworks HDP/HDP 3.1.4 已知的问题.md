@@ -4,14 +4,14 @@
 
 Hortonworks错误ID	|	Apache JIRA	|	Apache组件	|	摘要	|
 ----------	|	----------	|	----------	|	----------	|
-BUG-79238	|	不可用	|	文档，HBase，HDFS，Hive，MapReduce，Zookeeper	|	"**问题或行为的描述**
+| BUG-79238	|	不可用	|	文档，HBase，HDFS，Hive，MapReduce，Zookeeper	|	"**问题或行为的描述**
 
 SSL已弃用，不建议在生产中使用SSL。使用TLS。
 
 **解决方法**
 
 在Ambari中：使用ssl.enabled.protocols = TLSv1 | TLSv1.1 | TLSv1.2和security.server.disabled.protocols = SSL | SSLv2 | SSLv3。有关为其他组件配置TLS的帮助，请联系客户支持。文档将在将来的版本中提供。 |
-BUG-106494	|	不可用	|	文档，Hive	|	"**问题描述**
+| BUG-106494	|	不可用	|	文档，Hive	|	"**问题描述**
 
 当对类型为double的Hive列进行分区时，如果列值为0.0，则实际的分区目录将创建为“ 0”。发生AIOB异常。
 
@@ -42,21 +42,21 @@ org.apache.hadoop.hive.ql.Driver.run
 **解决方法**
 
 不要对double类型的列进行分区。 |
-BUG-106379	|	不可用	|	文档，Hive	|	"**问题描述**
+| BUG-106379	|	不可用	|	文档，Hive	|	"**问题描述**
 
 升级过程无法执行ACID表的必要压缩，并且可能导致永久性数据丢失。
 
 **解决方法**
 
 如果Hive Metastore中有ACID表，请在Ambari中启用ACID操作或设置Hive配置属性以启用ACID。如果禁用了ACID操作，则升级过程不会转换ACID表。这会导致数据永久丢失；您以后将无法恢复ACID表中的数据。 |
-BUG-106286	|	不可用	|	文档，Hive	|	"**问题描述**
+| BUG-106286	|	不可用	|	文档，Hive	|	"**问题描述**
 
 升级过程可能无法备份Hive Metastore，这一点至关重要。
 
 **解决方法**
 
 升级之前，手动对Hive Metastore数据库进行手动备份。如果您不使用Ambari来安装Hive和创建元存储数据库，则进行备份尤为重要，但在所有情况下均强烈建议您进行备份。Ambari可能没有必要的权限才能自动执行备份。即使备份失败，升级也可能成功，因此拥有备份至关重要。 |
-BUG-101082	|	不可用	|	文档，Hive	|	"**问题或行为的描述**
+| BUG-101082	|	不可用	|	文档，Hive	|	"**问题或行为的描述**
 
 当以批处理方式运行Beeline时，在极少数情况下，由工作负载管理过程终止的查询可能会在命令行上错误地返回成功。
 
@@ -75,14 +75,14 @@ BUG-101082	|	不可用	|	文档，Hive	|	"**问题或行为的描述**
 **解决方法**
 
 当前没有解决方法。 |
-BUG-103495	|	HBASE-20634，HBASE-20680，HBASE-20700	|	HBase	|	"**问题或行为的描述**
+| BUG-103495	|	HBASE-20634，HBASE-20680，HBASE-20700	|	HBase	|	"**问题或行为的描述**
 
 由于在HBase中重构了区域分配，因此存在尚不清楚的问题可能会影响此功能的稳定性。如果您依赖RegionServer Groups功能，建议您等到将来的HDP 3.x版本发布，该版本将返回该功能的稳定性，因为它在HBase 1.x / HDP 2.x版本中可用。
 
 **解决方法**
 
 当前没有解决方法。 |
-BUG-98727	|	不可用	|	HBase	|	"**问题或行为的描述**
+| BUG-98727	|	不可用	|	HBase	|	"**问题或行为的描述**
 
 由于在HBase中重构了区域分配，因此存在尚不清楚的问题可能会影响此功能的稳定性。如果依赖于区域复制功能，建议您等到将来的HDP 3.x版本发布，该版本将恢复该功能的稳定性，因为它在HBase 1.x / HDP 2.x版本中可用。
 
@@ -110,21 +110,21 @@ HBase服务（主服务器或RegionServer）停止参与其余的HBase群集。
 **解决方法**
 
 重试连接即可解决问题。 |
-BUG-121749	|	HBASE-20662	|	HBase	|	"**问题或行为的描述**
+| BUG-121749	|	HBASE-20662	|	HBase	|	"**问题或行为的描述**
 
 HBase空间配额策略状态有时会自动从“禁用”更改为“观察”。
 
 **解决方法**
 
 通过设置LIMIT => NONE禁用表上的空间配额策略。 |
-BUG-96402	|	HIVE-18687	|	Hive	|	"**问题或行为的描述**
+| BUG-96402	|	HIVE-18687	|	Hive	|	"**问题或行为的描述**
 
 当HiveServer2在HDP 3.0.0中以HA（高可用性）模式运行时，所有HiveServer2实例都会在内存中加载资源计划。如果客户端对资源计划进行更改，则更改仅在与客户端连接的HiveServer2中反映（推动）。
 
 **解决方法**
 
 为了使资源计划更改反映在所有HiveServer2实例上，必须重新启动所有HiveServer2实例，以便它们可以从metastore重新加载资源计划。 |
-BUG-88614	|	不可用	|	Hive	|	"**问题或行为的描述**
+| BUG-88614	|	不可用	|	Hive	|	"**问题或行为的描述**
 
 Hive Metastore的RDMBS架构包含定义为的索引HL_TXNID_​​INDEX
 CREATE INDEX HL_TXNID_INDEX ON HIVE_LOCKS USING hash (HL_TXNID);
@@ -134,7 +134,7 @@ PostgreSQL不建议使用哈希索引。有关更多信息，请参见https://ww
 **解决方法**
 
 建议将此索引更改为type BTREE。 |
-BUG-60904	|	Knox823	|	Knox	|	"**问题或行为的描述**
+| BUG-60904	|	Knox823	|	Knox	|	"**问题或行为的描述**
 
 当Apache Knox代理Ambari时，不会重写快速链接以通过网关返回。如果对Ambari的所有访问都是通过部署中的Knox进行的，则新的Ambari QuickLink配置文件可用于隐藏和/或更改URL以永久通过Knox。将来的版本将使这些内容适当地反映网关。
 
@@ -147,14 +147,14 @@ BUG-60904	|	Knox823	|	Knox	|	"**问题或行为的描述**
 **解决方法**
 
 当前没有解决方法。 |
-BUG-107399	|	不可用	|	Knox	|	"**问题或行为的描述**
+| BUG-107399	|	不可用	|	Knox	|	"**问题或行为的描述**
 
 从以前的HDP版本升级后，某些拓扑部署可能会返回503错误。这包括但不限于针对启用KnoxSSO的服务的knoxsso.xml。
 
 **解决方法**
 
 遇到这种情况时，通过Ambari（偶数空格）对knoxsso拓扑（或任何其他有此问题的拓扑）进行较小的更改并重新启动Knox网关服务器应该可以解决此问题。 |
-BUG-110463	|	Knox1434	|	Knox	|	"**问题或行为的描述**
+| BUG-110463	|	Knox1434	|	Knox	|	"**问题或行为的描述**
 
 在任何浏览器（Firefox / Chrome）中访问Knox Admin UI都会为运行Knox的主机设置HTTP严格传输安全性（HSTS）标头。由于此标头，通过HTTP对同一主机上的其他服务（例如Graphana，Ranger等）的任何后续请求都将重定向到HTTPS。
 
@@ -176,7 +176,7 @@ BUG121014	|	不可用	|	Oozie	|	"**问题或行为的描述**
 **解决方法**
 
 完成升级后，手动安装Apache Tomcat 7或更高版本。 |
-BUG-101227	|	不可用	|	Spark	|	"**问题或行为的描述**
+| BUG-101227	|	不可用	|	Spark	|	"**问题或行为的描述**
 
 当Spark Thriftserver必须同时运行多个查询时，在执行广播联接时，其中一些查询可能会因超时异常而失败。
 
@@ -242,7 +242,7 @@ Exception in thread ""main"" java.lang.IllegalArgumentException
 
 您必须提供的值是一个空格，Ambari限制配置为具有一个值，但不允许多个空格。
  |
-BUG-106917	|	不可用	|	Sqoop	|	"**问题或行为的描述**
+| BUG-106917	|	不可用	|	Sqoop	|	"**问题或行为的描述**
 
 在HDP 3中，托管Hive表必须是事务性（hive.strict.managed.tables=true）。Hive不支持Parquet格式的事务表。指定为的Hive导入 --as-parquetfile必须使用外部表 --external-table-dir。
 
@@ -257,7 +257,7 @@ transactional.
 sqoop import ... --hive-import
                  --as-parquetfile 
                  --external-table-dir hdfs:///path/to/table |
-BUG-102672	|	不可用	|	Sqoop	|	"**问题或行为的描述**
+| BUG-102672	|	不可用	|	Sqoop	|	"**问题或行为的描述**
 
 在HDP 3中，托管Hive表必须是事务性的（hive.strict.managed.tables = true）。Hive不支持使用HCatalog编写事务表。如果指定的Hive表不存在或不在外部，则在HCatalog Sqoop导入期间会导致错误。
 
@@ -267,7 +267,7 @@ BUG-102672	|	不可用	|	Sqoop	|	"**问题或行为的描述**
 **解决方法**
 
 在使用Sqoop运行HCatalog导入之前，用户必须在Hive中创建外部表。--create-hcatalog-table不支持创建外部表。 |
-BUG-109607	|	不可用	|	YARN	|	"**问题或行为的描述**
+| BUG-109607	|	不可用	|	YARN	|	"**问题或行为的描述**
 
 通过在Docker上使用YARN上的容器化Spark启用有线加密，Spark提交在“集群”部署模式下失败。“客户端”部署模式下的Spark提交工作成功。
 
@@ -277,7 +277,7 @@ BUG-109607	|	不可用	|	YARN	|	"**问题或行为的描述**
 **解决方法**
 
 当前没有解决方法。 |
-BUG-110192	|	不可用	|	YARN	|	"**问题或行为的描述**
+| BUG-110192	|	不可用	|	YARN	|	"**问题或行为的描述**
 
 当仅使用KNOX SSO安装并配置YARN时，Application Timeline Server Web端点将阻止来自YARN UI的远程REST调用，并显示401未经授权错误。
 
