@@ -43,15 +43,15 @@ BUG-121911	|	[AMBARI-25379](https://issues.apache.org/jira/browse/AMBARI-25379)	
 BUG-121898	|	[AMBARI-25399](https://issues.apache.org/jira/browse/AMBARI-25399)	|	添加Hive PAM支持以进行服务检查和警报
 BUG-121879	|	不适用	|	oozie.server.authentication.type=kerberos启用KnoxSSO时，HDP堆栈未设置， 导致冲突
 BUG-121218	|	不适用	|	使用hdfs资源，而不是在 hive_server_interactive.py
-错误121024	|	[AMBARI-25333](https://issues.apache.org/jira/browse/AMBARI-25333)	|	如果高速缓存中不存在文件，则重新生成密钥表将生成空的密钥表文件
-错误120861	|	[AMBARI-25326](https://issues.apache.org/jira/browse/AMBARI-25326)	|	AMS-使用2个收集器时，没有HBase和Hive指标在升级后
-错误120603	|	[AMBARI-25395](https://issues.apache.org/jira/browse/AMBARI-25395)	|	更新Hive安装中的帮助文本以反映实际的JAR文件名或提供格式清晰的示例
+BUG-121024	|	[AMBARI-25333](https://issues.apache.org/jira/browse/AMBARI-25333)	|	如果高速缓存中不存在文件，则重新生成密钥表将生成空的密钥表文件
+BUG-120861	|	[AMBARI-25326](https://issues.apache.org/jira/browse/AMBARI-25326)	|	AMS-使用2个收集器时，没有HBase和Hive指标在升级后
+BUG-120603	|	[AMBARI-25395](https://issues.apache.org/jira/browse/AMBARI-25395)	|	更新Hive安装中的帮助文本以反映实际的JAR文件名或提供格式清晰的示例
 				
 ### 性能				
 错误编号	|	Apache JIRA	|	摘要
 ----------	|	----------	|	----------
 BUG-121889	|	[AMBARI-25385](https://issues.apache.org/jira/browse/AMBARI-25385)	|	减少集群创建请求的处理时间
-错误120989	|	[AMBARI-25332](https://issues.apache.org/jira/browse/AMBARI-25332)	|	Kerberos keytab再生工作缓慢
+BUG-120989	|	[AMBARI-25332](https://issues.apache.org/jira/browse/AMBARI-25332)	|	Kerberos keytab再生工作缓慢
 BUG-122244	|	[AMBARI-21935](https://issues.apache.org/jira/browse/AMBARI-21935)	|	Hive向量化：向量化UDF会降低性能
 BUG-122079	|	[AMBARI-25156](https://issues.apache.org/jira/browse/AMBARI-25156)	|	ClientComponentHasNoStatus 异常混乱的操作系统 /var/log/messages
 BUG-122239	|	[AMBARI-25408](https://issues.apache.org/jira/browse/AMBARI-25408)	|	将Infra Solr升级到7.7.2
@@ -60,7 +60,7 @@ BUG-122239	|	[AMBARI-25408](https://issues.apache.org/jira/browse/AMBARI-25408)	
 错误编号	|	Apache JIRA	|	摘要
 ----------	|	----------	|	----------
 BUG-121464	|	[AMBARI-25396](https://issues.apache.org/jira/browse/AMBARI-25396)	|	Ambari主机上的跨站点脚本漏洞
-错误122087	|	不适用	|	使用API​​将XSS漏洞存储在rack_info中
+BUG-122087	|	不适用	|	使用API​​将XSS漏洞存储在rack_info中
 BUG-121361	|	[AMBARI-25384](https://issues.apache.org/jira/browse/AMBARI-25384)	|	文件视图中的跨站点脚本漏洞
 BUG-122015	|	[AMBARI-25391](https://issues.apache.org/jira/browse/AMBARI-25391)	|	Ambari在ActionQueue.py中记录Grafana密码
 BUG-121801	|	[AMBARI-25390](https://issues.apache.org/jira/browse/AMBARI-25390)	|	在/ resources端点和子目录中禁用索引

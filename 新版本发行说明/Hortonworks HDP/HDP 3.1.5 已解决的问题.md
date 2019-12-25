@@ -59,7 +59,7 @@ BUG-115077	|	[HIVE-20932](https://issues.apache.org/jira/browse/HIVE-20932)	|	HI
 BUG-121862	|	不可用	|	HWC	|	HiveWarehouseDataReaderFactory中的快速序列化	|
 BUG-122550	|	[RANGER-2637](https://issues.apache.org/jira/browse/RANGER-2637)<br>[RANGER-2651](https://issues.apache.org/jira/browse/RANGER-2651)	|	RANGER	|	性能提升	|
 BUG-122226	|	[TEZ-4075](https://issues.apache.org/jira/browse/TEZ-4075)<br>[TEZ-4088](https://issues.apache.org/jira/browse/TEZ-4088)<br>[TEZ-4091](https://issues.apache.org/jira/browse/TEZ-4091)	|	特兹	|	查询性能会随着时间而下降，并且LLAP需要频繁重启才能恢复。	|
-错误121078	|	[TEZ-4075](https://issues.apache.org/jira/browse/TEZ-4075)	|	特兹	|	Tez：重新实现tez.runtime.transfer.data-via-events.enabled	|
+BUG-121078	|	[TEZ-4075](https://issues.apache.org/jira/browse/TEZ-4075)	|	特兹	|	Tez：重新实现tez.runtime.transfer.data-via-events.enabled	|
 
 ## **查询失败问题**
 

@@ -79,7 +79,7 @@ BUG-98727	|	不可用	|	HBase的	|	问题或行为的描述：
 -	|	-	|	-	|	由于在HBase中重构了区域分配，因此存在尚不清楚的问题可能会影响此功能的稳定性。如果依赖于区域复制功能，建议您等到将来的HDP 3.x版本发布，该版本将恢复该功能的稳定性，因为它在HBase 1.x / HDP 2.x版本中可用。
 -	|	-	|	-	|	解决方法：
 -	|	-	|	-	|	当前没有解决方法。
-错误105983	|	不可用	|	HBase的	|	问题或行为的描述：
+BUG-105983	|	不可用	|	HBase的	|	问题或行为的描述：
 -	|	-	|	-	|	HBase服务（主服务器或RegionServer）停止参与其余的HBase群集。
 -	|	-	|	-	|	相关错误消息：
 -	|	-	|	-	|	服务的日志包含堆栈跟踪，其中包含“ Kerberos主体名称不具有预期的主机名部分...”
@@ -117,7 +117,7 @@ BUG-106266	|	OOZIE-2769，OOZIE-3085，OOZIE-3156，OOZIE-3183	|	Oozie	|	问题�
 -	|	-	|	-	|	SSH命令以远程命令的退出状态退出，如果发生错误，则以255退出。
 -	|	-	|	-	|	解决方法：
 -	|	-	|	-	|	重试连接即可解决问题。
-错误121014	|	不可用	|	Oozie	|	问题或行为的描述：
+BUG-121014	|	不可用	|	Oozie	|	问题或行为的描述：
 -	|	-	|	-	|	如果您使用的是非基于rpm的Linux发行版，例如，由于操作系统中存在不正确的Apache Tomcat服务器版本，则Debian，Ubuntu，Oozie升级后将无法启动。
 -	|	-	|	-	|	解决方法：
 -	|	-	|	-	|	完成升级后，手动安装Apache Tomcat 7或更高版本。
@@ -146,7 +146,7 @@ BUG-101227	|	不可用	|	SPARK	|	问题或行为的描述：
 -	|	-	|	-	|	org.apache.spark.sql.execution.joins.BroadcastHashJoin.doExecute(BroadcastHashJoin.scala:107)
 -	|	-	|	-	|	解决方法：
 -	|	-	|	-	|	您可以通过增加spark.sql.broadcastTimeout值来解决此问题。
-错误109979	|	不可用	|	SPARK	|	问题或行为的描述：
+BUG-109979	|	不可用	|	SPARK	|	问题或行为的描述：
 -	|	-	|	-	|	由于YarnShuffleService CNF，在Spark补丁升级后，YARN NodeManager无法启动。
 -	|	-	|	-	|	解决方法：
 -	|	-	|	-	|	要解决此问题，您必须：
@@ -163,7 +163,7 @@ BUG-101227	|	不可用	|	SPARK	|	问题或行为的描述：
 -	|	-	|	-	|	解决方法：
 -	|	-	|	-	|	要删除分区，请使用完全匹配的'='。
 -	|	-	|	-	|	scala> sql("alter table t drop partition (b=0) ").show
-错误114383	|	不可用	|	STORM	|	问题或行为的描述：
+BUG-114383	|	不可用	|	STORM	|	问题或行为的描述：
 -	|	-	|	-	|	向Storm提交拓扑失败。将拓扑提交给Storm时，您会看到一个错误。
 -	|	-	|	-	|	相关错误消息：
 -	|	-	|	-	|	使用堆栈跟踪org.apache.storm.hack提交拓扑时，将显示以下错误消息：

@@ -34,7 +34,7 @@ BUG-105818 | Ambari | AMBARI-9016 | 内容为JSON时，Ambari API使用HTTP标�
 ### 结果不正确
 错误编号 | Apache JIRA | 摘要
 ---------- | ---------- | ----------
-错误120097 | [AMBARI-25278](https://issues.apache.org/jira/browse/AMBARI-25278) | 在Kafka的Grafana仪表板中修复汇总指标
+BUG-120097 | [AMBARI-25278](https://issues.apache.org/jira/browse/AMBARI-25278) | 在Kafka的Grafana仪表板中修复汇总指标
 BUG-100002 | [AMBARI-23478](https://issues.apache.org/jira/browse/AMBARI-23478) | YARN群集CPU使用率图始终显示高CPU使用率
 
 ### 其他				
