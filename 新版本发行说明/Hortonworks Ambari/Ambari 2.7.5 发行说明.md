@@ -88,16 +88,13 @@ Ambari 2.7.5具有以下已知问题，计划在将来的版本中解决。
 | Apache JIRA	|	Cloudera BUG-ID	|	问题	|	解决方法
 | --------	|	--------	|	--------	|	--------
 | 不适用	|	BUG-120773	|	EU：Oozie SC失败java.io.IOException：连接Oozie服务器时出错	|	如果配置了Ranger HA和/或Oozie Server HA，并且正在使用自定义复合密钥表文件，则在HDP 2.6到HDP 3.1升级期间，对Ranger和Oozie的服务检查将失败。
-|    -	|	-	|	-	|	-
 |    -	|	-	|	-	|	重新创建自定义的Ranger和/或Oozie Server密钥表文件，然后重试服务检查，或者忽略并继续进行服务检查。
 |    不适用	|	BUG-121044	|	禁用kerberos后，STORM服务检查失败	|	我们应该创建ZooKeeper超级用户并删除/更改凭据znode的权限。详细步骤如下：
 |    -	|	-	|	-	|	使用ZooKeeper客户端登录到任何节点，并为所选用户创建摘要：密码对：
 |    -	|	-	|	-	|	export ZK_CLASSPATH=/etc/zookeeper/conf/:/usr/hdp/current/zookeeper-server/lib/*:/usr/hdp/current/zookeeper-server/* 
 |    -	|	-	|	-	|	java -cp $ZK_CLASSPATH org.apache.zookeeper.server.
 |    -	|	-	|	-	|	auth.DigestAuthenticationProvider super:super123
-|    -	|	-	|	-	|	-
 |    -	|	-	|	-	|	其中super：super123是user：password对。我们将在输出中得到摘要：
-|    -	|	-	|	-	|	-
 |    -	|	-	|	-	|	super:super123->super:UdxDQl4f9v5oITwcAsO9bmWgHSI=
 |    -	|	-	|	-	|	通过添加以下行来更新ZooKeeper服务页面上的“ zookeeper-env模板”属性：
 |    -	|	-	|	-	|	export SERVER_JVMFLAGS="$SERVER_JVMFLAGS -Dzookeeper.
@@ -108,7 +105,6 @@ Ambari 2.7.5具有以下已知问题，计划在将来的版本中解决。
 |    -	|	-	|	-	|	/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server <zookeeperServerHostFQDN>:2181
 |    -	|	-	|	-	|	删除/更改凭据 znode的权限。用户应使用Storm的storm.zookeeper.root属性的值 代替<stormRoot>：
 |    -	|	-	|	-	|	delete /<stormRoot>/credentials
-|    -	|	-	|	-	|	-
 |    -	|	-	|	-	|	或将权限更新为所有人可用：
 |    -	|	-	|	-	|	setAcl /<stormRoot>/credentials world:anyone:cdrwa
 |    -	|	-	|	-	|	完成上述步骤后，Storm服务检查将开始通过。
@@ -127,7 +123,6 @@ Ambari 2.7.5具有以下已知问题，计划在将来的版本中解决。
 |    -	|	-	|	使用Hive Configs- > Enable Interactive Query在任何主机上启用HSI ，HSI已安装并启动。使用陈旧的配置重新启动服务。	|	使用hdfs主体进行身份验证： kinit -k -t /etc/security/keytabs/hdfs.headless.keytab hdfs@EXAMPLE.COM
 |    -	|	-	|	-	|	从HDFS删除密钥标签： hdfs dfs -rm /user/hive/.yarn/keytabs/hive/hive.service.keytab
 |    -	|	-	|	接下来，通过切换“ 交互查询”按钮来禁用HSI 。在另一台主机上启用HSI。	|	重新启动Hive。
-|    -	|	-	|	-	|	-
 |    -	|	-	|	HSI无法启动。	|	-
 
 ## 文档勘误表
