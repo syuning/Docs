@@ -1,3 +1,6 @@
+
+> 源文档地址 https://docs.cloudera.com/HDPDocuments/HDP3/HDP-3.1.5/release-notes/content/hdp_relnotes.html
+
 # **已解决的问题**
 
 已解决的问题代表以前通过Cloudera支持记录的部分问题，但当前版本中已解决。这些问题可能已经在以前版本的“已知问题”部分中报告过；表示它们由客户报告或由Cloudera质量工程团队识别。
@@ -27,7 +30,7 @@ BUG-122387	|	[ZEPPELIN-3701](https://issues.apache.org/jira/browse/ZEPPELIN-3701
 ----------	|	----------	|	----------	|	----------	|
 BUG-122279	|	[HADOOP-16640](https://issues.apache.org/jira/browse/HADOOP-16640)	|	Hadoop常见	|	WASB：覆盖getCanonicalServiceName（）以返回WASB文件系统的完整URL	|
 BUG-122067	|	不可用	|	HBase	|	在ams-hbase中添加hadoop-aws依赖项	|
-BUG-122066	|	不可用	|	HBase	|	为AWS依赖项构建hbase阴影jar	|
+BUG-122066	|	不可用	|	HBase	|	为AWS依赖项构建hbase shaded jar	|
 BUG-122521	|	[HIVE-22948](https://issues.apache.org/jira/browse/HIVE-22948)	|	HIVE	|	Schematool合并目录	|
 BUG-122494	|	不可用	|	HIVE	|	Spark不应写入配置单元存储桶表	|
 BUG-122492	|	不可用	|	HIVE	|	HMS应该向客户端返回真实的元数据，而没有存储功能	|
@@ -79,7 +82,7 @@ BUG-121406	|	[SPARK-26307](https://issues.apache.org/jira/browse/SPARK-26307)	|	
 
 错误编号	|	Apache JIRA	|	Apache组件	|	摘要
 ----------	|	----------	|	----------	|	----------
-BUG-122199	|	[HADOOP-16619](https://issues.apache.org/jira/browse/HADOOP-16619)	|	Hadoop常见	|	将杰克逊和杰克逊数据绑定升级到2.9.10
+BUG-122199	|	[HADOOP-16619](https://issues.apache.org/jira/browse/HADOOP-16619)	|	Hadoop常见	|	将jackson和jackson数据绑定升级到2.9.10
 BUG-122198	|	[HADOOP-16533](https://issues.apache.org/jira/browse/HADOOP-16533)	|	Hadoop常见	|	将jackson-databind更新为2.9.9.3
 BUG-122197	|	[HADOOP-16487](https://issues.apache.org/jira/browse/HADOOP-16487)	|	Hadoop常见	|	将jackson-databind更新为2.9.9.2
 BUG-122158	|	不可用	|	Hadoop常见	|	将Jackson-Databind升级到2.10.0
@@ -97,7 +100,7 @@ BUG-122131	|	[SPARK-29445](https://issues.apache.org/jira/browse/SPARK-29445)	|	
 BUG-122130	|	不可用	|	SPARK	|	将Jackson升级到2.10.0
 BUG-121389	|	[SPARK-26895](https://issues.apache.org/jira/browse/SPARK-26895)	|	SPARK	|	当以代理用户（--proxy-user）身份运行spark 2.3时，SparkSubmit无法解析目标用户所拥有的glob
 BUG-121841	|	[SQOOP-3447](https://issues.apache.org/jira/browse/SQOOP-3447)	|	Sqoop	|	删除org.codehaus.jackson和org.json包的用法
-BUG-121930	|	[STORM3201](https://issues.apache.org/jira/browse/STORM3201)	|	STORM	|	UI上的kafka喷口滞后需要清除-CVE-2018-11779
+BUG-121930	|	[STORM3201](https://issues.apache.org/jira/browse/STORM3201)	|	STORM	|	UI上的kafka喷的spout lag 需要一些清除工作-CVE-2018-11779
 
 ## **稳定性**
 

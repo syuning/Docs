@@ -222,7 +222,7 @@ alter table t drop partition (b<1)
 
 要删除分区，请使用完全匹配的'='。
 scala> sql(""alter table t drop partition (b=0) "").show |
-BUG114383	|	不可用	|	风暴	|	"**问题或行为的描述**
+BUG114383	|	不可用	|	STORM	|	"**问题或行为的描述**
 
 向Storm提交拓扑失败。将拓扑提交给Storm时，您会看到一个错误。
 

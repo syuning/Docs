@@ -1,3 +1,6 @@
+
+> 源文档地址 https://docs.cloudera.com/HDPDocuments/HDP3/HDP-3.1.5/release-notes/content/hdp_relnotes.html
+
 # 已知的问题
 
 此版本的已知问题摘要。
@@ -160,7 +163,7 @@ BUG-101227	|	不可用	|	SPARK	|	问题或行为的描述：
 -	|	-	|	-	|	解决方法：
 -	|	-	|	-	|	要删除分区，请使用完全匹配的'='。
 -	|	-	|	-	|	scala> sql("alter table t drop partition (b=0) ").show
-错误114383	|	不可用	|	风暴	|	问题或行为的描述：
+错误114383	|	不可用	|	STORM	|	问题或行为的描述：
 -	|	-	|	-	|	向Storm提交拓扑失败。将拓扑提交给Storm时，您会看到一个错误。
 -	|	-	|	-	|	相关错误消息：
 -	|	-	|	-	|	使用堆栈跟踪org.apache.storm.hack提交拓扑时，将显示以下错误消息：
