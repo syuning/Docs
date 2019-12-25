@@ -19,9 +19,9 @@ Ambari用户的密码策略 | 此版本的Ambari支持一项功能，使您可�
 行为更改表示从先前发布的版本到此版本的Ambari，其行为已发生明显变化。与先前发布的版本相比，此版本没有任何行为更改。
 
 *表1. Apache Ambari 2.7.4行为更改*
-Hortonworks错误ID | Apache组件 | Apache JIRA | 摘要 | 细节
----------- | ---------- | ---------- | ---------- | ----------
-错误105818 | Ambari | AMBARI-9016 | 内容为JSON时，Ambari API使用HTTP标头Content-Type：text / plain | **场景**：<br>即使内容为JSON格式，Ambari REST API仍希望将“ Content-Type” HTTP标头设置为“ text / plain”。如果客户端使用“ application / json”值指定了相同的标头，则Ambari会引发HTTP 500错误。<br><br>**先前的行为**： <br>Ambari的行为具有误导性，迫使用户在HTTP客户端中使用“文本/纯文本” Content-Type标头。<br><br>**新行为**：<br>Ambari需要“ application / json” Content-Type标头。<br><br>**预期的客户操作**：<br>修改任何使用Ambari REST API的自定义代码，并在需要时采取措施
+Hortonworks BUG ID | Apache组件 | Apache JIRA | 摘要 | 细节
+-------------------- | -------------------- | -------------------- | -------------------- | --------------------
+BUG-105818 | Ambari | AMBARI-9016 | 内容为JSON时，Ambari API使用HTTP标头Content-Type：text / plain | **场景**：<br>即使内容为JSON格式，Ambari REST API仍希望将“ Content-Type” HTTP标头设置为“ text / plain”。如果客户端使用“ application / json”值指定了相同的标头，则Ambari会引发HTTP 500错误。<br><br>**先前的行为**： <br>Ambari的行为具有误导性，迫使用户在HTTP客户端中使用“文本/纯文本” Content-Type标头。<br><br>**新行为**：<br>Ambari需要“ application / json” Content-Type标头。<br><br>**预期的客户操作**：<br>修改任何使用Ambari REST API的自定义代码，并在需要时采取措施
 
 ## **常见漏洞**
 没有常见漏洞（CVE）修复程序适用于Ambari 2.7.4。
