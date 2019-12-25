@@ -85,50 +85,50 @@ BUG-121804	|	[AMBARI-25380](https://issues.apache.org/jira/browse/AMBARI-25380)	
 
 Ambari 2.7.5具有以下已知问题，计划在将来的版本中解决。
 
-Apache JIRA	|	Cloudera BUG-ID	|	问题	|	解决方法
---------	|	--------	|	--------	|	--------
-不适用	|	BUG-120773	|	EU：Oozie SC失败java.io.IOException：连接Oozie服务器时出错	|	如果配置了Ranger HA和/或Oozie Server HA，并且正在使用自定义复合密钥表文件，则在HDP 2.6到HDP 3.1升级期间，对Ranger和Oozie的服务检查将失败。
--	|	-	|	-	|	-
--	|	-	|	-	|	重新创建自定义的Ranger和/或Oozie Server密钥表文件，然后重试服务检查，或者忽略并继续进行服务检查。
-不适用	|	BUG-121044	|	禁用kerberos后，STORM服务检查失败	|	我们应该创建ZooKeeper超级用户并删除/更改凭据znode的权限。详细步骤如下：
--	|	-	|	-	|	使用ZooKeeper客户端登录到任何节点，并为所选用户创建摘要：密码对：
--	|	-	|	-	|	export ZK_CLASSPATH=/etc/zookeeper/conf/:/usr/hdp/current/zookeeper-server/lib/*:/usr/hdp/current/zookeeper-server/* 
--	|	-	|	-	|	java -cp $ZK_CLASSPATH org.apache.zookeeper.server.
--	|	-	|	-	|	auth.DigestAuthenticationProvider super:super123
--	|	-	|	-	|	-
--	|	-	|	-	|	其中super：super123是user：password对。我们将在输出中得到摘要：
--	|	-	|	-	|	-
--	|	-	|	-	|	super:super123->super:UdxDQl4f9v5oITwcAsO9bmWgHSI=
--	|	-	|	-	|	通过添加以下行来更新ZooKeeper服务页面上的“ zookeeper-env模板”属性：
--	|	-	|	-	|	export SERVER_JVMFLAGS="$SERVER_JVMFLAGS -Dzookeeper.
--	|	-	|	-	|	DigestAuthenticationProvider.superDigest=super:UdxDQl4f9v5oITwcAsO9bmWgHSI="
--	|	-	|	-	|	用户应在上一步中用一个替换建议的摘要。
--	|	-	|	-	|	重新启动所有必需的服务。
--	|	-	|	-	|	使用ZooKeeper客户端登录到任何节点并连接到ZooKeeper控制台：
--	|	-	|	-	|	/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server <zookeeperServerHostFQDN>:2181
--	|	-	|	-	|	删除/更改凭据 znode的权限。用户应使用Storm的storm.zookeeper.root属性的值 代替<stormRoot>：
--	|	-	|	-	|	delete /<stormRoot>/credentials
--	|	-	|	-	|	-
--	|	-	|	-	|	或将权限更新为所有人可用：
--	|	-	|	-	|	setAcl /<stormRoot>/credentials world:anyone:cdrwa
--	|	-	|	-	|	完成上述步骤后，Storm服务检查将开始通过。
-不适用	|	BUG-120925	|	升级到Ambari 2.7.5.0后，Hbase服务检查失败	|	确保HDFS服务已完全启动，然后重新启动HBase服务。
-不适用	|	BUG-105092	|	EU期间高可用性群集上的Oozie服务检查失败	|	如果配置了Ranger HA和/或Oozie Server HA，并且正在使用自定义复合密钥表文件，则在HDP 2.6到HDP 3.0升级期间，Ranger和Oozie的服务检查将失败。
-不适用	|	BUG-113993	|	在过去已启用安全性的群集上，如果已禁用安全性，那么度量收集器启动将失败并显示错误。	|	清除ams-hbase-site：zookeeper.znode.parent中指定的znode上的数据。
--	|	-	|	-	|	如果AMS处于嵌入式模式，则可以通过删除ams-hbase-site属性“ HBase ZooKeeper属性DataDir”中指定的目录来完成此操作。
--	|	-	|	-	|	如果AMS处于分布式模式，则可以通过使用zkCli在群集Zookeeper中删除znode来完成。
--	|	-	|	-	|	将znode的值从/ ams-hbase-unsecure更改为/ ams-hbase-unsecure-new也可以，而不是删除znode，也可以。
-不适用	|	BUG-121151	|	在安装了openssl 1.1.0k的Debian 9上从Ambari 2.7.1（或更旧版本）升级到2.7.4时，Smartsense服务无法启动。	|	禁用启动SmartSense服务预升级。只有成功升级到Ambari 2.7.4.0后，才能启动SmartSense服务。
-不适用	|	BUG-113753	|	在启用viewfs的集群上进行任何配置更改后，重新启动时，YARN应用程序时间轴服务器（ATSV2）失败。	|	如果重新启动HDFS，请重新启动Timeline Service V2.0 Reader。
-不适用	|	BUG-122551	|	提交storm-starter-topologies*.jar脚本可能会失败，因为Storm Starter脚本会尝试根据client.jartransformer.class 配置参数转换JAR 。入门脚本无法按预期处理故障。	|	转换失败时， client.jartransformer.class必须更改配置参数或将其设置为空。
-不适用	|	BUG-122408	|	在未完成从HDP-3.0.1.0到HDP-3.1.5.0的最终升级后，Oozie被降级。降级成功完成，但是Oozie在降级后降级了。	|	不适用
-不适用	|	BUG-122579	|	禁用HSI并启用HSI失败。	|	使用以下步骤启用HIS：
--	|	-	|	-	|	苏hdfs。
--	|	-	|	使用Hive Configs- > Enable Interactive Query在任何主机上启用HSI ，HSI已安装并启动。使用陈旧的配置重新启动服务。	|	使用hdfs主体进行身份验证： kinit -k -t /etc/security/keytabs/hdfs.headless.keytab hdfs@EXAMPLE.COM
--	|	-	|	-	|	从HDFS删除密钥标签： hdfs dfs -rm /user/hive/.yarn/keytabs/hive/hive.service.keytab
--	|	-	|	接下来，通过切换“ 交互查询”按钮来禁用HSI 。在另一台主机上启用HSI。	|	重新启动Hive。
--	|	-	|	-	|	-
--	|	-	|	HSI无法启动。	|	-
+| Apache JIRA	|	Cloudera BUG-ID	|	问题	|	解决方法
+| --------	|	--------	|	--------	|	--------
+| 不适用	|	BUG-120773	|	EU：Oozie SC失败java.io.IOException：连接Oozie服务器时出错	|	如果配置了Ranger HA和/或Oozie Server HA，并且正在使用自定义复合密钥表文件，则在HDP 2.6到HDP 3.1升级期间，对Ranger和Oozie的服务检查将失败。
+|    -	|	-	|	-	|	-
+|    -	|	-	|	-	|	重新创建自定义的Ranger和/或Oozie Server密钥表文件，然后重试服务检查，或者忽略并继续进行服务检查。
+|    不适用	|	BUG-121044	|	禁用kerberos后，STORM服务检查失败	|	我们应该创建ZooKeeper超级用户并删除/更改凭据znode的权限。详细步骤如下：
+|    -	|	-	|	-	|	使用ZooKeeper客户端登录到任何节点，并为所选用户创建摘要：密码对：
+|    -	|	-	|	-	|	export ZK_CLASSPATH=/etc/zookeeper/conf/:/usr/hdp/current/zookeeper-server/lib/*:/usr/hdp/current/zookeeper-server/* 
+|    -	|	-	|	-	|	java -cp $ZK_CLASSPATH org.apache.zookeeper.server.
+|    -	|	-	|	-	|	auth.DigestAuthenticationProvider super:super123
+|    -	|	-	|	-	|	-
+|    -	|	-	|	-	|	其中super：super123是user：password对。我们将在输出中得到摘要：
+|    -	|	-	|	-	|	-
+|    -	|	-	|	-	|	super:super123->super:UdxDQl4f9v5oITwcAsO9bmWgHSI=
+|    -	|	-	|	-	|	通过添加以下行来更新ZooKeeper服务页面上的“ zookeeper-env模板”属性：
+|    -	|	-	|	-	|	export SERVER_JVMFLAGS="$SERVER_JVMFLAGS -Dzookeeper.
+|    -	|	-	|	-	|	DigestAuthenticationProvider.superDigest=super:UdxDQl4f9v5oITwcAsO9bmWgHSI="
+|    -	|	-	|	-	|	用户应在上一步中用一个替换建议的摘要。
+|    -	|	-	|	-	|	重新启动所有必需的服务。
+|    -	|	-	|	-	|	使用ZooKeeper客户端登录到任何节点并连接到ZooKeeper控制台：
+|    -	|	-	|	-	|	/usr/hdp/current/zookeeper-client/bin/zkCli.sh -server <zookeeperServerHostFQDN>:2181
+|    -	|	-	|	-	|	删除/更改凭据 znode的权限。用户应使用Storm的storm.zookeeper.root属性的值 代替<stormRoot>：
+|    -	|	-	|	-	|	delete /<stormRoot>/credentials
+|    -	|	-	|	-	|	-
+|    -	|	-	|	-	|	或将权限更新为所有人可用：
+|    -	|	-	|	-	|	setAcl /<stormRoot>/credentials world:anyone:cdrwa
+|    -	|	-	|	-	|	完成上述步骤后，Storm服务检查将开始通过。
+|    不适用	|	BUG-120925	|	升级到Ambari 2.7.5.0后，Hbase服务检查失败	|	确保HDFS服务已完全启动，然后重新启动HBase服务。
+|    不适用	|	BUG-105092	|	EU期间高可用性群集上的Oozie服务检查失败	|	如果配置了Ranger HA和/或Oozie Server HA，并且正在使用自定义复合密钥表文件，则在HDP 2.6到HDP 3.0升级期间，Ranger和Oozie的服务检查将失败。
+|    不适用	|	BUG-113993	|	在过去已启用安全性的群集上，如果已禁用安全性，那么度量收集器启动将失败并显示错误。	|	清除ams-hbase-site：zookeeper.znode.parent中指定的znode上的数据。
+|    -	|	-	|	-	|	如果AMS处于嵌入式模式，则可以通过删除ams-hbase-site属性“ HBase ZooKeeper属性DataDir”中指定的目录来完成此操作。
+|    -	|	-	|	-	|	如果AMS处于分布式模式，则可以通过使用zkCli在群集Zookeeper中删除znode来完成。
+|    -	|	-	|	-	|	将znode的值从/ ams-hbase-unsecure更改为/ ams-hbase-unsecure-new也可以，而不是删除znode，也可以。
+|    不适用	|	BUG-121151	|	在安装了openssl 1.1.0k的Debian 9上从Ambari 2.7.1（或更旧版本）升级到2.7.4时，Smartsense服务无法启动。	|	禁用启动SmartSense服务预升级。只有成功升级到Ambari 2.7.4.0后，才能启动SmartSense服务。
+|    不适用	|	BUG-113753	|	在启用viewfs的集群上进行任何配置更改后，重新启动时，YARN应用程序时间轴服务器（ATSV2）失败。	|	如果重新启动HDFS，请重新启动Timeline Service V2.0 Reader。
+|    不适用	|	BUG-122551	|	提交storm-starter-topologies*.jar脚本可能会失败，因为Storm Starter脚本会尝试根据client.jartransformer.class 配置参数转换JAR 。入门脚本无法按预期处理故障。	|	转换失败时， client.jartransformer.class必须更改配置参数或将其设置为空。
+|    不适用	|	BUG-122408	|	在未完成从HDP-3.0.1.0到HDP-3.1.5.0的最终升级后，Oozie被降级。降级成功完成，但是Oozie在降级后降级了。	|	不适用
+|    不适用	|	BUG-122579	|	禁用HSI并启用HSI失败。	|	使用以下步骤启用HIS：
+|    -	|	-	|	-	|	苏hdfs。
+|    -	|	-	|	使用Hive Configs- > Enable Interactive Query在任何主机上启用HSI ，HSI已安装并启动。使用陈旧的配置重新启动服务。	|	使用hdfs主体进行身份验证： kinit -k -t /etc/security/keytabs/hdfs.headless.keytab hdfs@EXAMPLE.COM
+|    -	|	-	|	-	|	从HDFS删除密钥标签： hdfs dfs -rm /user/hive/.yarn/keytabs/hive/hive.service.keytab
+|    -	|	-	|	接下来，通过切换“ 交互查询”按钮来禁用HSI 。在另一台主机上启用HSI。	|	重新启动Hive。
+|    -	|	-	|	-	|	-
+|    -	|	-	|	HSI无法启动。	|	-
 
 ## 文档勘误表
 本节包含对产品文档的最新添加或更正。
