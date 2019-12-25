@@ -9,6 +9,7 @@
 以下是Ambari 2.7.5版本中引入的新功能。
 
 *表1. Apache Ambari 2.7.5的新功能*
+
 特征 | 描述
 ------ | ------
 安全的Ambari存储库 | 出于生产目的访问Ambari存储库需要进行身份验证。发行包存储库使用基本身份验证进行保护，并且Ambari支持处理这些存储库的用户名和密码。有关更多信息，请参阅Ambari安装指南中的“访问Ambari存储库”主题。
@@ -81,7 +82,9 @@ BUG-121600	|	不适用	|	对于HDP 3.1 HS（容器模式）hive.merge.nway.joins
 BUG-121804	|	[AMBARI-25380](https://issues.apache.org/jira/browse/AMBARI-25380)	|	UI无法反映/更新任务日志
 
 ## 已知问题
+
 Ambari 2.7.5具有以下已知问题，计划在将来的版本中解决。
+
 Apache JIRA	|	Cloudera BUG-ID	|	问题	|	解决方法
 --------	|	--------	|	--------	|	--------
 不适用	|	BUG-120773	|	EU：Oozie SC失败java.io.IOException：连接Oozie服务器时出错	|	如果配置了Ranger HA和/或Oozie Server HA，并且正在使用自定义复合密钥表文件，则在HDP 2.6到HDP 3.1升级期间，对Ranger和Oozie的服务检查将失败。
