@@ -152,21 +152,21 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 #### 2.2.1 源文件修改
 
 1. 修改ambari源
-	运行命令:
+运行命令:
 
-	``` vi /etc/yum.repos.d/ambari.repo```
+``` vi /etc/yum.repos.d/ambari.repo```
 
-	内容如下所示:
-    
-	```
-        #VERSION_NUMBER=2.7.1.0
-        [ambari-2.7.1.0]
-        name=ambari Version - ambari-2.7.1.0
-        baseurl=http://10.221.129.22/InspurHD1.0/manager/
-        gpgcheck=0
-        enabled=1
-        priority=1
-	```
+内容如下所示:
+
+```
+#VERSION_NUMBER=2.7.1.0
+[ambari-2.7.1.0]
+name=ambari Version - ambari-2.7.1.0
+baseurl=http://10.221.129.22/InspurHD1.0/manager/
+gpgcheck=0
+enabled=1
+priority=1
+```
 
 2. 修改mysql源
     运行命令：
