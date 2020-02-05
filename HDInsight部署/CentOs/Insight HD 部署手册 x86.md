@@ -171,7 +171,7 @@ priority=1
 2. 修改mysql源
     运行命令：
     
-    ``` /etc/yum.repos.d/mysql.repo```
+    ``` vi /etc/yum.repos.d/mysql.repo```
     
     内容如下所示：
     
@@ -188,7 +188,7 @@ priority=1
     3. 修改CentOS源
     运行命令：
     
-    ``` /etc/yum.repos.d/CentOS.repo```
+    ``` vi /etc/yum.repos.d/CentOS.repo```
     
     内容如下所示：
     
