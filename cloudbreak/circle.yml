@@ -1,0 +1,28 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  pre:
+    - git fetch --tags
+    - make circleci
+  override:
+    - make clean
+
+test:
+  override:
+    - make test
+
+deployment:
+  master:
+    branch: master
+    commands:
+      - eval $(docker run -e MASTER=master hortonworks/pagebuilder circleci-cmd)
+  releases:
+    branch: /release.*/
+    commands:
+      - eval $(docker run -e MASTER=master hortonworks/pagebuilder circleci-cmd)
+general:
+  branches:
+    ignore:
+      - gh-pages
