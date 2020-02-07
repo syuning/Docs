@@ -1,4 +1,3 @@
-:horse:
 源文档地址：https://maven.apache.org/pom.html
 
 # 简单POM示例
