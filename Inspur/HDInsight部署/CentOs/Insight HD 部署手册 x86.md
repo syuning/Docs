@@ -382,7 +382,7 @@ priority=1
 	```mysql -uroot -p```
 	```use mysql;```
 	```UPDATE user SET Password = 'bigdata' WHERE User = 'root';```
-        ```FLUSH PRIVILEGES; ```
+    ```FLUSH PRIVILEGES; ```
 
 5. 授权root用户在其他节点访问数据库的权限:
 
@@ -393,7 +393,7 @@ priority=1
 
     ```vi /etc/my.cnf```
     
-    ``` #skip-grant-tables ```
+    ```#skip-grant-tables```
     
 	```systemctl restart mysql.service```
 
@@ -1696,3 +1696,6 @@ root@master1:~# ntpdate manager.bigdata.com
 修改参数：
 
 ![](/pic/zeeplin_credential.jpg)
+
+# 重装
+yum remove -y ambari-agent.x86_64 ambari-server.x86_64 atlas-metadata_3_1_0_0_78-hbase-plugin.noarch hdp-select.noarch bigtop-jsvc.x86_64 ranger_3_1_0_0_78* spark2_3_1_0_0_78-yarn-shuffle.noarch ranger_3_1_0_0_78* zookeeper_3_1_0_0_78*
