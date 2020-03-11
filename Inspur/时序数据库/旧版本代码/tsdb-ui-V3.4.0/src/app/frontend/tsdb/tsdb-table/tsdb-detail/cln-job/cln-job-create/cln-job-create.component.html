@@ -1,0 +1,53 @@
+<nzi-form [formName]="clnJobForm">
+    <form nz-form [formGroup]="clnJobForm">
+  
+        <nz-form-item>
+            <nz-form-label [nzSpan]="5" nzFor="timeRangeType" nzRequired>时间范围<span class="required-icon">*</span></nz-form-label>
+            <nz-form-control [nzSpan]="12">
+              <nz-radio-group id="timeRangeType" formControlName="timeRangeType" [nzButtonStyle]="'solid'" (ngModelChange)="timeRangeTypeChange($event)">
+                  <label nz-radio-button nzValue="All">全部时间</label>
+                  <label nz-radio-button nzValue="Absolute">选择时间范围</label>          
+                <!-- <label nz-radio-button nzValue="Absolute">绝对时间范围</label>
+                <label nz-radio-button nzValue="Relative">相对时间范围</label> -->
+              </nz-radio-group>
+              <br>
+              <nz-range-picker *ngIf="isAbsoluteTimeRange" formControlName="absoluteTimeRange" style="margin-top: 10px"[nzShowTime]="{ nzFormat: 'HH:mm:ss' }"
+              nzFormat="yyyy-MM-dd HH:mm:ss" [nzPlaceHolder]="[ '开始时间', '结束时间' ]"></nz-range-picker>        
+            </nz-form-control>
+          </nz-form-item>
+      
+          <!-- <nz-form-item>
+            <nz-form-control [nzSm]="16" [nzXs]="24" *ngIf="clnJobForm.value.timeRangeType==='Absolute'">
+              <nz-range-picker formControlName="absoluteTimeRange" [nzShowTime]="{ nzFormat: 'HH:mm:ss' }"
+              nzFormat="yyyy-MM-dd HH:mm:ss" [nzPlaceHolder]="[ '开始时间', '结束时间' ]"></nz-range-picker>
+            </nz-form-control>
+      
+            <nz-form-control [nzSm]="16" [nzXs]="24" *ngIf="clnJobForm.value.timeRangeType=='Relative'">
+              <ng-container>
+                <nz-input-number nzPlaceHolder="起始" style="margin-left: 30px" formControlName="relativeStart" [nzMin]="0" [nzStep]="1" [nzDisabled]="clnJobForm.value.timeRangeType == 'Absolute'"></nz-input-number>
+                <nz-select style="margin-left: 10px; margin-right: 10px; width: 85px;" formControlName="relativeStartUnit" nzPlaceHolder="单位" [nzDisabled]="clnJobForm.value.timeRangeType == 'Absolute'">
+                  <nz-option *ngFor="let option of timeUnitOptions" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+                </nz-select>
+                <label>以前，到</label>
+                <br>
+                  <nz-input-number nzPlaceHolder="结束" style="margin-right: 10px; margin-top: 10px;" formControlName="relativeEnd" [nzMin]="0" [nzStep]="1" [nzDisabled]="clnJobForm.value.timeRangeType == 'Absolute'"></nz-input-number>
+                <nz-select nzAllowClear style="margin-left: 35px; width: 85px; margin-top: 10px; margin-right: 10px;"formControlName="relativeEndUnit" nzPlaceHolder="单位" [nzDisabled]="clnJobForm.value.timeRangeType == 'Absolute'">
+                  <nz-option *ngFor="let option of timeUnitOptions" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+                </nz-select>
+                <label>以前（0为当前时间）</label>
+              </ng-container>
+            </nz-form-control>
+          </nz-form-item> -->
+  
+          <nz-form-item>
+              <nz-form-label>度量（Metric）<span class="required-icon">*</span></nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="metricName" placeHolder="请输入删除的度量">
+                <!-- <nz-select formControlName="metric" id="metric" nzPlaceHolder="请选择度量">
+                  <nz-option *ngFor="let option of metrics" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+                </nz-select> -->
+              </nz-form-control>
+          </nz-form-item>
+
+    </form>
+  </nzi-form>

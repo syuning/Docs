@@ -1,0 +1,26 @@
+[
+{
+        "id": 2,
+        "name": "",
+        "host": "10.110.25.114.xip.io",
+        "role": "domain",
+        "environmentId": "9439c591-b8c9-486d-8793-8d8f8eb9f292",
+        "creatorId": 2,
+        "ownerGroup": "group-ioptest",
+        "createTime": "2018-09-13T10:26:31Z",
+        "updateTime": "2018-09-13T10:26:35Z",
+        "deleteTime": "0001-01-01T00:00:00Z"
+    },
+    {
+            "id": 2,
+            "name": "",
+            "host": "10.110.25.115.xip.io",
+            "role": "domain",
+            "environmentId": "9439c591-b8c9-486d-8793-8d8f8eb9f292",
+            "creatorId": 2,
+            "ownerGroup": "group-ioptest",
+            "createTime": "2018-09-13T10:26:31Z",
+            "updateTime": "2018-09-13T10:26:35Z",
+            "deleteTime": "0001-01-01T00:00:00Z"
+        }
+]

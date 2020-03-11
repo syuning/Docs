@@ -1,0 +1,93 @@
+<nz-alert nzType="info" nzBanner nzShowIcon="false" [nzDescription]='innerTemplate' [ngStyle]="{ 'marginBottom': '11px' }">
+  <ng-template #innerTemplate>
+    温馨提示：此处的用户是指当前时序数据库的用户，假设列表中存在用户A，即可以用户A的身份信息来访问当前时序数据库。用户角色是指此用户所属的角色，角色定义：数据源角色拥有写入数据点的权限；应用角色拥有写入以及读取数据点的权限；管理角色拥有写入、读取数据以及新建、修改、删除用户的权限。
+    <a (click)="navToDocumentPage()" >操作指南</a>
+  </ng-template>
+</nz-alert>
+
+<div class="table-top table-operations clearfix">
+  <div class="pull-left">
+    <app-user-create #createUserModal (myEvent)="getUserList()"></app-user-create>
+    <button (click)="createUserModal.showCreateModal()" nz-button nzType="primary" class="btn-add"><i class="fas fa-plus"></i>
+      创建用户</button>
+  </div>
+  <div class="pull-right">
+    <nz-input-group style="width: 220px;" nzSearch [nzSuffix]="suffixIconButton">
+      <input [(ngModel)]="username" name="name" [nzSize]="'default'" (keyup)="onKey($event)" nz-input placeholder="用户名称">
+    </nz-input-group>
+    <ng-template #suffixIconButton>
+      <button nz-button nzSearch (click)="searchUserList()" nz-popover [nzContent]="'搜索'">
+        <i class="anticon anticon-search"></i>
+      </button>
+    </ng-template>
+    <button nz-button (click)="getUserList()" style="top: -1px; margin-top: -1px" nz-popover [nzContent]="'刷新'">
+        <i class="anticon anticon-reload"></i>
+      </button>
+  </div>
+</div>
+
+<nz-table #nzTable [nzData]="data" [nzLoading]="loading" [nzShowSizeChanger]="true" nzBordered>
+  <thead>
+    <tr>
+      <th [nzWidth]="'10%'">
+        <span>用户名称</span>
+      </th>
+      <th [nzWidth]="'10%'">
+        <span>用户角色</span>
+        <nzi-help [options]="{'title': '<p>数据源用户：拥有写入数据点的权限</p><p>应用用户：拥有写入以及读取数据点的权限</p><p>管理用户：拥有写入、读取数据以及新建、删除以及修改用户的权限</p>'}"></nzi-help>
+      </th>
+      <th [nzWidth]="'15%'">
+        <span>上次编辑时间</span>
+      </th>
+      <th [nzWidth]="'15%'">
+        <span>创建时间</span>
+      </th>
+      <th [nzWidth]="'15%'">
+        <span>操作</span>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of nzTable.data">
+      <td>{{data.name}}</td>
+      <td>{{roleTrans(data.role)}}</td>
+      <td>{{data.last_update_time|date:'y-MM-dd HH:mm:ss'}}</td>
+      <td>{{data.create_time|date:'y-MM-dd HH:mm:ss'}}</td>
+      <td>
+
+        <app-user-edit #editUserModal [data]="data" (myEvent)="getUserList()"></app-user-edit>
+        <span *ngIf="data.name === 'root'"> 
+            <a class="ant-dropdown-menu-item-disabled">编辑</a>
+        </span>
+        <span *ngIf="data.name !== 'root'">
+            <a (click)="editUserModal.showEditModal()">编辑</a>
+        </span>
+
+        <nz-divider nzType="vertical"></nz-divider>
+
+        <!-- <nz-dropdown [nzTrigger]="'click'">
+          <a nz-dropdown>
+            更多 <i class="anticon anticon-caret-down"></i>
+          </a>
+          <ul nz-menu>
+            <li (click)="showDeleteConfirm(data)" nz-menu-item>删除</li>
+            <app-user-reset #resetPasswordModal [data]="data" (myEvent)="getUserList()"></app-user-reset>
+            <li (click)="resetPasswordModal.showResetModal()" nz-menu-item>重置密码</li>
+          </ul>
+        </nz-dropdown> -->
+        <span *ngIf="data.name === 'root'"> 
+            <a class="ant-dropdown-menu-item-disabled">删除</a>
+        </span>
+        <span *ngIf="data.name !== 'root'">
+            <a (click)="showDeleteConfirm(data)">删除</a>
+        </span>
+
+        <nz-divider nzType="vertical"></nz-divider>
+
+        <app-user-reset #resetPasswordModal [data]="data" (myEvent)="getUserList()"></app-user-reset>
+        <a (click)="resetPasswordModal.showResetModal()">重置密码</a>
+
+      </td>
+    </tr>
+  </tbody>
+</nz-table>

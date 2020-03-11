@@ -1,0 +1,54 @@
+.dynamic-delete-button {
+  cursor: pointer;
+  top: 4px;
+  font-size: 24px;
+  color: #999;
+  transition: all .3s;
+}
+
+.dynamic-delete-button:hover {
+  color: #777;
+}
+.btn-group {
+  margin-left: 120px;
+  margin-top: -15px;
+}
+.input-number-container {
+  height: 40px;
+  width: 400px;
+  margin-bottom: 8px;
+  padding-left: 10px;
+  line-height: 40px;
+  background-color: #f5fbff;
+}
+.input-number-container .nz-input-number {
+  margin-left: 40px;
+  margin-right: 200px;
+}
+.input-number-container .anticon-close-circle-o {
+  font-size: 16px;
+  cursor: pointer;
+}
+.add-action {
+  line-height: 40px;
+}
+.add-action .anticon-plus-square {
+  margin-right: 5px;
+  margin-top: 5px;
+  cursor: pointer;
+  font-size: 28px;
+  color: #40a9ff;
+}
+.tip-text {
+  color: #5a5a5a;
+}
+.nz-step.enable-click {
+  cursor: pointer;
+}
+
+.s-highlight {
+  margin-left: 10px;
+  padding: 3px;
+  color: #ff2d19;
+  background: #ffd9d3;
+}

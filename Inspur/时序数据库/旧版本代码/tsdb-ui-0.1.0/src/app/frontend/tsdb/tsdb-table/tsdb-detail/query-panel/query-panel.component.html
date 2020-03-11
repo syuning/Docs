@@ -1,0 +1,130 @@
+<div class="tab-page">
+
+  <div class="covered-form" [class.hide]="cover" style="padding:0px">
+
+    <div class="sub-area-title">
+      查询项
+      <button (click)="addTemplateModal()" nz-button nzType="primary" nzSize="small" style="margin-left: 10px;"><i class="fas fa-plus"></i> 添加</button>
+      <!-- <button (click)="getTemplateList()">刷新</button> -->
+    </div>
+    <nz-spin [nzSpinning]="isFormLoading" [nzSize]="'large'" style="overflow-y: scroll;">
+      <div *ngIf="templates.length > 0" class="covered-form-content">
+        <nz-collapse nzAccordion>
+          <nz-collapse-panel *ngFor="let template of templates" [nzHeader]="template.templateName" [nzActive]="template.active" (nzActiveChange)="useTemplate($event, template)">
+              <div style="height: 500px; position: relative; bottom: 0px;">
+                <div class="ant-row ant-form-item">
+                  <div class="ant-form-item-label">时间选择</div>
+                  <div style="margin-left: 100px">
+                    <nz-range-picker [(ngModel)]="template.timeRange" (ngModelChange)="changeParam($event, template)"
+                      [nzShowTime]="{ nzFormat: 'HH:mm:ss' }" nzFormat="yyyy-MM-dd HH:mm:ss" [nzAllowClear]=false
+                      [nzPlaceHolder]="[ '开始时间', '结束时间' ]"></nz-range-picker>
+                    <div *ngIf="!template.timeRange.length > 0" class="ant-form-explain">时间不可为空！</div>
+                  </div>
+                </div>
+
+                <div class="ant-row ant-form-item">
+                  <div class="ant-form-item-label">度量</div>
+                  <div style="margin-left: 100px">
+                    {{template.metric}}
+                  </div>
+                </div>
+
+                <div class="ant-row ant-form-item">
+                  <div class="ant-form-item-label">空间聚合函数</div>
+                  <div style="margin-left: 100px">
+                    <nz-radio-group [(ngModel)]="template.aggFunc" (ngModelChange)="changeParam($event, template)" [nzButtonStyle]="'solid'">
+                      <label style="width: 100px;" nz-radio-button nzValue="avg">平均数/avg</label>
+                      <label style="width: 100px;" nz-radio-button nzValue="count">计数/count</label>
+                      <label style="width: 100px;" nz-radio-button nzValue="sum">求和/sum</label>
+                      <div style="height:5px"></div>
+                      <label style="width: 100px;" nz-radio-button nzValue="max">最大值/max</label>
+                      <label style="width: 100px;" nz-radio-button nzValue="min">最小值/min</label>
+                      <label style="width: 100px;" nz-radio-button nzValue="none">无/none</label>
+                    </nz-radio-group>
+                  </div>
+                </div>
+
+                <div class="ant-row ant-form-item"
+                  *ngIf="template.downSamplingInterval != null && template.downSamplingFunc != null">
+                  <div class="ant-form-item-label">降采样</div>
+                  <div class="ant-form-item-control">
+                    <div style="margin-left: 100px">
+                      <nz-switch [(ngModel)]="template.isDownSampling" nzCheckedChildren="开" nzUnCheckedChildren="关"
+                        (ngModelChange)="changeParam(true, template)" style="margin-bottom: 5px"></nz-switch>
+                    </div>
+                    <div style="margin-left: 100px">
+                      <nz-radio-group *ngIf="template.isDownSampling" [(ngModel)]="template.downSamplingInterval" (ngModelChange)="changeParam($event, template)" [nzButtonStyle]="'solid'">
+                        <label style="width: 100px;" nz-radio-button nzValue="1">1分钟</label>
+                        <label style="width: 100px;" nz-radio-button nzValue="5">5分钟</label>
+                        <label style="width: 100px;" nz-radio-button nzValue="15">15分钟</label>
+                        <div style="height:5px"></div>
+                        <label style="width: 100px;" nz-radio-button nzValue="30">30分钟</label>
+                        <label style="width: 100px;" nz-radio-button nzValue="60">1小时</label>
+                        <label style="width: 100px;" nz-radio-button nzValue="720">12小时</label>
+                        <div style="height:5px"></div>
+                        <label style="width: 100px;" nz-radio-button nzValue="1440">24小时</label>
+                      </nz-radio-group>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ant-row ant-form-item" *ngIf="template.tags.length > 0">
+                  <div class="ant-form-item-label">标签</div>
+                    <span *ngFor="let tag of template.tags, let i = index">
+                      <div style="margin-left: 100px" *ngIf="!tag.group"> {{tag.name}} = {{tag.value}} </div>
+                    </span>
+                </div>
+
+                <div class="ant-row ant-form-item" *ngIf="template.groupBy.length > 0">
+                  <div class="ant-form-item-label">已添加分组</div>
+                    <span *ngFor="let groupBy of template.groupBy, let i = index">
+                      <div style="margin-left: 100px" *ngIf="groupBy">{{groupBy}}</div>
+                    </span>
+                </div>
+
+              </div>
+          </nz-collapse-panel>
+        </nz-collapse>
+
+
+        <div style="position: absolute; top:7px; left: 80%;">
+          <button nz-button (click)="editTemplateModal(template)" nz-popover [nzContent]="'编辑'"style="background: #fafafa; border: 0ch"> <i class="anticon anticon-edit"></i></button>
+          <button nz-button (click)="showDeleteConfirm(template)" nz-popover [nzContent]="'删除'"style="background: #fafafa; border: 0ch"> <i class="anticon anticon-delete"></i></button>
+        </div>
+
+                
+        <div class="collapse-option-button">
+            <ng-template ngFor let-item [ngForOf]="templates" let-i="index">
+                <button *ngIf="i > 0" nz-button (click)="editTemplateModal(templates[i])" nz-popover [nzContent]="'编辑'" style="height: 46px; margin-bottom: 2px; background: #fafafa; border: 0ch"> <i class="anticon anticon-edit"></i></button>
+                <button *ngIf="i > 0" nz-button (click)="showDeleteConfirm(templates[i])" nz-popover [nzContent]="'删除'" style="height: 46px; margin-bottom: 2px; background: #fafafa; border: 0ch"> <i class="anticon anticon-delete"></i></button>
+                <br>
+          </ng-template>
+        </div>
+
+      </div>
+
+      <div *ngIf="templates.length == 0" class="covered-form-content" style="height: 100px; margin-top: 40px; margin-bottom: 140px">
+      <p style="color: #AAAAAA;  margin-top: 0px; margin-left: 35%;">暂无查询项，请点击<a (click)="addTemplateModal()">添加</a></p>
+      </div>
+
+
+    </nz-spin>
+  </div>
+
+  <div class="covering-result" [class.cover]="cover">
+    <button nz-button class="cover-icon" [class.after-cover]="cover" (click)="cover=!cover">
+      <ng-container *ngIf="!cover"><i class="anticon anticon-caret-left"></i></ng-container>
+      <ng-container *ngIf="cover"><i class="anticon anticon-caret-right"></i></ng-container>
+    </button>
+    <div class="sub-area-title">
+      时序信息
+    </div>
+    <nz-spin [nzSpinning]="isChartLoading" [nzSize]="'large'">
+      <div *ngIf="isChartVisible" echarts [options]="queryEchartOption" style="height: 500px; margin-top: 20px; margin-bottom: 40px"></div>
+      <div *ngIf="!isChartVisible" style="height: 500px">
+      <p style="color: #AAAAAA;  margin-top: 50px; margin-left: 45%;">暂无数据</p>
+      </div>
+    </nz-spin>
+  </div>
+
+</div>

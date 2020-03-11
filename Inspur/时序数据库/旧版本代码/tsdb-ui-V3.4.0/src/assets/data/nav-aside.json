@@ -1,0 +1,23 @@
+{
+    "label": "时序数据库",
+    "icon": "iconfontheader icon-cedaohang-yunshenjiselly",
+    "sideLists": [
+      {
+        "label": "概览",
+        "icon": "iconfont icon-gailantachometer",
+        "link": "tsdb/outline"
+      },
+      {
+        "label": "时序数据库",
+        "icon": "iconfont icon-shixushujukutsdb",
+        "children": [
+          {
+            "label": "实例列表",
+            "link": "tsdb/list"
+          }
+        ],
+        "open": true,
+        "authority": "TSDB"
+      }
+    ]
+  }

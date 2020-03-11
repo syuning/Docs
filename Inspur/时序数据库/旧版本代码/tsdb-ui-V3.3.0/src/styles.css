@@ -1,0 +1,220 @@
+.body {
+  overflow: hidden;
+  padding-right: 0px;
+  margin: 0;
+}
+
+.body,
+.input[text],
+.button {
+  font-family: Cambria, Georgia;
+}
+
+/* everywhere else */
+
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.ul {
+  list-style: none;
+}
+
+#page-main .container {
+  max-width: 100% !important;
+  height: 100%;
+  overflow: auto;
+}
+
+/* code-box intro*/
+.code-box-demo {
+  padding: 24px;
+  color: rgba(0,0,0,0.65);
+}
+.help-file-container {
+  color: #314659;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.help-file-container h1 {
+  color: #0d1a26;
+  font-size: 30px;
+  font-weight: 500;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  font-variant: tabular-nums;
+  line-height: 38px;
+}
+.help-file-container h2 {
+  color: #0d1a26;
+  font-size: 24px;
+  font-weight: 500;
+  margin: 1.6em 0 .6em;
+  font-variant: tabular-nums;
+  line-height: 32px;
+  clear: both;
+}
+.help-file-container h3 {
+  color: #0d1a26;
+  font-size: 18px;
+  font-weight: 500;
+  margin-top: 50px;
+  font-variant: tabular-nums;
+  clear: both;
+}
+.help-file-container p {
+  margin: 0 0 10px 0;
+}
+.help-file-container .ant-table {
+  color: #314659;
+}
+.help-file-container>table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  empty-cells: show;
+  border: 1px solid #d9d9d9;
+  width: 100%;
+}
+.help-file-container.api-container table {
+  font-size: 14px;
+  line-height: 1.5;
+  border-width: 0;
+  margin: 2em 0;
+}
+.help-file-container.api-container table th {
+  border-width: 0 0 2px;
+}
+.help-file-container.api-container table th, .help-file-container.api-container table td {
+  padding: 14px 16px;
+}
+.help-file-container code {
+  color: inherit;
+  margin: 0 1px;
+  background: #f2f4f5;
+  padding: .2em .4em;
+  border-radius: 3px;
+  font-size: .9em;
+  border: 1px solid #eee;
+}
+.help-file-container.api-container table td:first-child {
+  color: #003a8c;
+  font-weight: 500;
+  width: 27%;
+}
+.help-file-container.api-container table td:nth-child(3) {
+  width: 18%;
+  font-size: 13px;
+  color: #c7254e;
+  word-break: break-all;
+}
+.help-file-container.api-container table td:nth-child(4) {
+  width: 15%;
+  font-size: 13px;
+  color: #c7254e;
+  word-break: break-all;
+}
+/* specification-demo*/
+.norm-container {
+  padding: 20px 30px;
+  border-bottom: 1px solid #d9d9d9;
+}
+.norm-container h3 {
+  color: #36b3df;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+.norm-container h4 {
+  font-weight: 600;
+  margin-bottom: 15px;
+  margin-top: 15px;
+  font-size: 16px;
+}
+.norm-container .norm-main-container {
+  margin: 15px 0;
+  clear: both;
+}
+.norm-container .norm-sub-container {
+  padding-bottom: 30px;
+  border-bottom: 2px dotted #d9d9d9;
+}
+.norm-container .descriptive-text {
+  color: #404040;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.norm-container em {
+  font-weight: bold;
+  margin: 0;
+}
+
+.norm-container .norm-middle-container {
+  display: inline-block;
+  vertical-align: top;
+  width: 50%;
+  padding: 0 20px 20px 0;
+}
+.norm-container img {
+  max-width: 100%;
+}
+/* design-language && components-site*/
+.site-element-container {
+
+}
+.site-element-container h1 {
+  margin-top: 40px;
+  font-size: 28px;
+  font-weight: 500;
+  color: #404040;
+}
+.site-element-container h2 {
+  margin-top: 50px;
+  margin-bottom: 6px;
+  font-size: 22px;
+  font-weight: 500;
+  color: #404040;
+}
+.site-element-container h4 {
+  margin-top: 50px;
+  margin-bottom: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #404040;
+}
+.site-element-container .body-paragraph {
+  margin-top: 20px;
+}
+.body-paragraph p {
+  line-height: 2;
+}
+.site-element-container .help-text {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+#interactive canvas {
+  /*height: 560px!important;
+  max-width: 1223px;
+  margin: 0 auto;*/
+  min-height: 560px;
+}
+
+.nz-breadcrumb {
+  display: inline-block;
+  font-size: 12px;
+  background: none;
+}
+.dark, .light {
+  display: inline-block;
+  position: relative;
+  width: 8px;
+  height: 8px;
+}
+.dark {
+  background-color: #40a3f1;
+  top: -2px;
+  left: -12px;
+}
+.light {
+  background-color: #d3eef8;
+  top: 3px;
+}

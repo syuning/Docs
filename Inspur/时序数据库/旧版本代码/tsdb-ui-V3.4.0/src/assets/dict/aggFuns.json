@@ -1,0 +1,33 @@
+[{
+    "label": "平均值/AVG",
+    "value": "avg"
+  },
+  {
+    "label": "计数/COUNT",
+    "value": "count"
+  },
+  {
+    "label": "偏差/DEV",
+    "value": "dev"
+  },
+  {
+    "label": "最初值/FIRST",
+    "value": "first"
+  },
+  {
+    "label": "最末值/LAST",
+    "value": "last"
+  },
+  {
+    "label": "最大值/MAX",
+    "value": "max"
+  },
+  {
+    "label": "最小值/MIN",
+    "value": "min"
+  },
+  {
+    "label": "求和/SUM",
+    "value": "sum"
+  }
+]

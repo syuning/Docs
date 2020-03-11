@@ -1,0 +1,93 @@
+<div class="page-title">
+  <h4>概览</h4>
+</div>
+
+<nz-spin [nzSpinning]="isSpinning">
+
+<div class="row overview-bar">
+    <div class="col-sm-8">
+      <div class="border overview-container" style="min-height: 360px;">
+
+        <div class="overview-bar-title">
+          <div class="pull-left info-bar overview-statistics">
+            <div class="overview-num">
+              <span class="overview-number">{{resourcesAll.total}}</span><span class="info-name">台</span>
+            </div>
+            <div class="overview-name">总数量</div>
+          </div>
+          <div class="pull-left info-bar">
+            <div class="overview-num">
+              <span class="overview-number">{{resourcesAll.running}}</span><span class="info-name">台</span>
+            </div>
+            <div class="overview-name">运行中</div>
+          </div>
+          <div class="pull-left info-bar">
+            <div class="overview-num">
+              <span class="overview-number highlight-color">{{resourcesAll.toBeExpired}}</span><span class="info-name">台</span>
+            </div>
+            <div class="overview-name">即将过期</div>
+          </div>
+          <div class="pull-left info-bar">
+            <div class="overview-num">
+              <span class="overview-number highlight-color">{{resourcesAll.expired}}</span><span class="info-name">台</span>
+            </div>
+            <div class="overview-name">已过期</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 10px">区域分布资源
+          <span class="overview-refresh">
+            <button (click)="getRegions()" nz-button><i class="anticon anticon-reload"></i></button>
+          </span>
+        </div>
+        <div class="row">
+            <ng-template ngFor let-item [ngForOf]="resourcesByRegions" let-i="index">
+          <div class="col-sm-6">
+            <nz-card nzTitle="{{resourcesByRegions[i].regionName}}">
+              <div class="info-statistics">
+                <i class="iconfont icon-shixushujukutsdb"></i>
+                <span class="icon-text">时序数据库</span>
+                <span>{{resourcesByRegions[i].total}}</span>
+              </div>
+              <div class="info">
+                <div class="pull-left info-bar">
+                  <div class="info-number">{{resourcesByRegions[i].running}}</div>
+                  <div class="info-name">运行中</div>
+                </div>
+                <div class="pull-left info-bar">
+                  <div class="info-number">{{resourcesByRegions[i].recentPurchase}}</div>
+                  <div class="info-name">近期创建</div>
+                </div>
+                <div class="pull-left info-bar">
+                  <div class="info-number highlight-color">0</div>
+                  <div class="info-name">即将过期</div>
+                </div>
+                <div class="pull-left info-bar">
+                  <div class="info-number highlight-color">0</div>
+                  <div class="info-name">已过期</div>
+                </div>
+              </div>
+            </nz-card>
+          </div>
+        </ng-template>
+        </div>
+
+      </div>
+    </div>
+
+  <div class="col-sm-4">
+      <div class="border helpEntrance-container">
+        <div class="help-bar-title">快速入口</div>
+        <div class="help-bar-content">
+           <a (click)="navToPurchasePage()">购买时序数据库TSDB实例</a>
+        </div>
+      </div>
+      <div class="border help-container" style="min-height: 100px">
+        <div class="help-bar-title">快速指南</div>
+        <div class="help-bar-content">
+            <p><a (click)="navToDocumentPage()">时序数据库</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-spin>

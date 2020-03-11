@@ -1,0 +1,142 @@
+<form nz-form [formGroup]="userForm" (ngSubmit)="submitUserForm()">
+
+  <!-- 用户名 -->
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>用户名<span class="required-icon">*</span></nz-form-label>
+    <nz-form-control [nzSpan]="12" [nzValidateStatus]="userForm.get('username')">
+          <nz-tooltip [nzPlacement]="'right'" [nzTrigger]="'focus'" [nzOverlayClassName]="'nzi-help-box'">
+              <input nz-input nz-tooltip placeholder="请输入用户名" formControlName="username"(focus)="status.username = false">
+              <span class="checkout-icon-place" *ngIf="isCreate">
+                <i class="anticon anticon-close-circle checkout-icon" *ngIf="getFormControlStatus('username', 'invalid').match('wrong') || getFormControlStatus('username', 'length').match('wrong')"></i>
+                <i class="anticon anticon-check-circle checkout-icon" *ngIf="getFormControlStatus('username', 'invalid').match('right') && getFormControlStatus('username', 'length').match('right')"></i>
+              </span>
+              <ng-template #nzTemplate *ngIf="isCreate">
+                <div>
+                    <i class="anticon anticon-info-circle" *ngIf="getFormControlStatus('username', 'length').match('default')"></i>
+                    <i class="anticon anticon-close-circle" *ngIf="getFormControlStatus('username', 'length').match('wrong')"></i>
+                    <i class="anticon anticon-check-circle" *ngIf="getFormControlStatus('username', 'length').match('right')"></i>
+                    &nbsp;&nbsp;5-32个字符
+                    <br>
+                    <i class="anticon anticon-info-circle" *ngIf="getFormControlStatus('username', 'invalid').match('default')"></i>
+                    <i class="anticon anticon-close-circle" *ngIf="getFormControlStatus('username', 'invalid').match('wrong')"></i>
+                    <i class="anticon anticon-check-circle" *ngIf="getFormControlStatus('username', 'invalid').match('right')"></i>
+                    &nbsp;&nbsp;可使用小写字母数字或特殊字符（-）且只能以字母开头
+                </div>
+              </ng-template>
+            </nz-tooltip>
+    </nz-form-control>
+  </nz-form-item>
+
+  <!-- 用户角色 -->
+  <nz-form-item *ngIf="isEdit || isCreate">
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>用户角色<span class="required-icon">*</span></nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24">
+      <div>
+        <nz-radio-group formControlName="role" [nzButtonStyle]="'solid'">
+          <label nz-radio-button [nzValue]="userType.value"
+            *ngFor="let userType of userTypes">{{ userType.label }}</label>
+        </nz-radio-group>
+      </div>
+      <nz-form-explain *ngIf="userForm.get('role').dirty && userForm.get('role').errors">请选择用户角色！</nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+  <!-- 密码 -->
+  <!-- <nz-form-item *ngIf="isReset || isCreate">
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password" nzRequired>密码<span class="required-icon">*</span>
+    </nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24">
+      <nz-tooltip [nzPlacement]="'right'" [nzOverlayClassName]="'nzi-help-box'">
+        <input nz-input type="password" formControlName="password" (ngModelChange)="updateConfirmValidator()"
+          placeholder="请输入密码" nz-tooltip #box (keyup)="0">
+        <nz-form-explain
+          *ngIf="userForm.get('password').dirty && userForm.get('password').invalid || userForm.get('password').pending ">
+          <ng-container *ngIf="userForm.get('password').hasError('required')">
+            请输入用户密码！
+          </ng-container>
+          <ng-container *ngIf="userForm.get('password').hasError('invalid')">
+            输入的用户密码无效!
+          </ng-container>
+          <ng-container *ngIf="userForm.get('password').pending">
+            验证中...
+          </ng-container>
+        </nz-form-explain>
+        <div style="width: 83%">
+          <nzi-password-level [level]='nziPasswordLevel.judgeStrength(box.value,8)' #nziPasswordLevel>
+          </nzi-password-level>
+        </div>
+        <ng-template #nzTemplate>
+          <div>密码长度8-32位
+            <br> 必须包含大小写字母和数字
+            <br> 支持英文特殊字符{{'!"$%+,/:<=>?[]^-`{}|~'
+                  <nzi-password-level [level]='"level3"'></nzi-password-level>
+              </div>
+            </ng-template>
+          </nz-tooltip>
+        </nz-form-control>
+  </nz-form-item> -->
+
+  <!-- 确认密码 -->
+  <!-- <nz-form-item *ngIf="isReset || isCreate">
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>确认密码<span class="required-icon">*</span></nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24">
+      <input nz-input type="password" formControlName="checkPassword" placeholder="请再次输入密码">
+      <nz-form-explain *ngIf="userForm.get('checkPassword').dirty && userForm.get('checkPassword').errors">
+        <ng-container *ngIf="userForm.get('checkPassword').hasError('required')">
+          请再次输入你的密码！
+        </ng-container>
+        <ng-container *ngIf="userForm.get('checkPassword').hasError('confirm')">
+          两次输入的密码值不同！
+        </ng-container>
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item> -->
+
+  <nz-form-item *ngIf="isReset || isCreate">
+      <nz-form-label nzRequired>密码<span class="required-icon">*</span></nz-form-label>
+      <nz-form-control [nzSpan]="12" [nzValidateStatus]="userForm.get('password')">
+          <nz-tooltip [nzPlacement]="'right'" [nzTrigger]="'focus'" [nzOverlayClassName]="'nzi-help-box'">
+              <input nz-input nz-tooltip formControlName="password" type="password" placeholder="请输入密码" (focus)="status.password = false"(ngModelChange)="updateConfirmValidator()">
+              <span class="checkout-icon-place">
+                <i class="anticon anticon-close-circle checkout-icon" *ngIf="getFormControlStatus('password', 'length').match('wrong') || getFormControlStatus('password', 'invalid').match('wrong')"></i>
+                <i class="anticon anticon-check-circle checkout-icon" *ngIf="getFormControlStatus('password', 'length').match('right') && getFormControlStatus('password', 'invalid').match('right')"></i>
+              </span>
+              <ng-template #nzTemplate>
+                <div>
+                    <i class="anticon anticon-info-circle" *ngIf="getFormControlStatus('password', 'length').match('default')"></i>
+                    <i class="anticon anticon-close-circle" *ngIf="getFormControlStatus('password', 'length').match('wrong')"></i>
+                    <i class="anticon anticon-check-circle" *ngIf="getFormControlStatus('password', 'length').match('right')"></i>
+                    &nbsp;&nbsp;密码长度8-32位
+                    <br>
+                    <i class="anticon anticon-info-circle" *ngIf="getFormControlStatus('password', 'invalid').match('default')"></i>
+                    <i class="anticon anticon-close-circle" *ngIf="getFormControlStatus('password', 'invalid').match('wrong')"></i>
+                    <i class="anticon anticon-check-circle" *ngIf="getFormControlStatus('password', 'invalid').match('right')"></i>
+                    &nbsp;&nbsp;必须包含大小写字母和数字，支持英文特殊字符{{'!"$%+,/:<=>?[]^-`{}|~'
+                </div>
+              </ng-template>
+            </nz-tooltip>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item *ngIf="isReset || isCreate">
+      <nz-form-label>确认密码<span class="required-icon">*</span></nz-form-label>
+      <nz-form-control [nzSpan]="12" [nzValidateStatus]="userForm.get('checkPassword')">
+          <nz-tooltip [nzPlacement]="'right'" [nzTrigger]="'focus'" [nzOverlayClassName]="'nzi-help-box'">
+              <input nz-input nz-tooltip placeholder="请再次输入密码" formControlName="checkPassword" type="password" (focus)="status.checkPassword = false">
+              <span class="checkout-icon-place">
+                <i class="anticon anticon-close-circle checkout-icon" *ngIf="getFormControlStatus('checkPassword', 'invalid').match('wrong')"></i>
+                <i class="anticon anticon-check-circle checkout-icon" *ngIf="getFormControlStatus('checkPassword', 'invalid').match('right')"></i>
+              </span>
+              <ng-template #nzTemplate>
+                <div>
+                    <i class="anticon anticon-info-circle" *ngIf="getFormControlStatus('checkPassword', 'invalid').match('default')"></i>
+                    <i class="anticon anticon-close-circle" *ngIf="getFormControlStatus('checkPassword', 'invalid').match('wrong')"></i>
+                    <i class="anticon anticon-check-circle" *ngIf="getFormControlStatus('checkPassword', 'invalid').match('right')"></i>
+                    &nbsp;&nbsp;必须与密码一致
+                </div>
+              </ng-template>
+            </nz-tooltip>
+      </nz-form-control>
+    </nz-form-item>
+
+    </form>

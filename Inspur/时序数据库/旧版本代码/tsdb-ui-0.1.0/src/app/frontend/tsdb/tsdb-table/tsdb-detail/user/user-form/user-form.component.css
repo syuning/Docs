@@ -1,0 +1,24 @@
+.anticon-check-circle {
+    color: #00a854;
+  }
+  
+  .anticon-close-circle {
+    color: #f04134;
+  }
+  
+  .anticon-info-circle {
+    color: #bfbfbf;
+  }
+  .checkout-icon-place {
+    position: relative;
+    right: -6px;
+  }
+  .checkout-icon {
+    font-size: 18px;
+  }
+  .phone-icon-place {
+    position: absolute;
+    top: 6px;
+    right: -24px;
+  }
+  

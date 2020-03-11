@@ -1,0 +1,27 @@
+<nzi-form [formName]="clnJobForm">
+    <form nz-form [formGroup]="clnJobForm">
+  
+        <nz-form-item>
+            <nz-form-label [nzSpan]="5" nzFor="timeRangeType" nzRequired>时间范围</nz-form-label>
+            <nz-form-control [nzSpan]="12">
+              <nz-radio-group id="timeRangeType" formControlName="timeRangeType" [nzButtonStyle]="'solid'" (ngModelChange)="timeRangeTypeChange($event)">
+                  <label nz-radio-button nzValue="All">全部时间</label>
+                  <label nz-radio-button nzValue="Absolute">选择时间范围</label>
+              </nz-radio-group>
+              <br>
+              <nz-range-picker *ngIf="isAbsoluteTimeRange" formControlName="absoluteTimeRange" style="margin-top: 10px"[nzShowTime]="{ nzFormat: 'HH:mm:ss' }"
+              nzFormat="yyyy-MM-dd HH:mm:ss" [nzPlaceHolder]="[ '开始时间', '结束时间' ]" [nzAllowClear]=false></nz-range-picker>        
+            </nz-form-control>
+          </nz-form-item>
+      
+          <nz-form-item>
+              <nz-form-label nzRequired>度量（Metric）<span class="required-icon">*</span></nz-form-label>
+              <nz-form-control>
+                <nz-select formControlName="metricName" id="metricName" nzPlaceHolder="请选择度量">
+                  <nz-option *ngFor="let option of metrics" [nzLabel]="option" [nzValue]="option"></nz-option>
+                </nz-select>
+              </nz-form-control>
+          </nz-form-item>
+
+    </form>
+  </nzi-form>

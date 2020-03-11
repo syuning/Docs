@@ -954,576 +954,71 @@ Zeppelin部署时，根据安装规划，Zeppelin相关服务部署在slave节�
 
 4. 若安装失败或者启动失败，请根据提示信息或者后台日志定位问题。
 
-### 2.10 开启HA
+### 2.10 启动Kerberos安全认证
+
+#### 2.10.1 KDC Master安装
+
+Kerberos KDC安装采用主从模式，主库master必须位于manager.bigdata上，从库slave位于master1.bigdata上，安装及配置过程如下。
+
+1. 登录待安装KDC的主节点所在主机，安装KDC必要的安装包。
+
+yum -y install krb5-libs krb5-server krb5-workstation
+
+2. 编辑配置文件/etc/krb5.conf，内容如下。（注红色部分为需要修改的内容）
+
+[libdefaults]
+default_realm = BIGDATA
+ticket_lifetime = 3000d
+new_lifetime = 3000d
+forwardable = true
+dns_lookup_realm = false
+dns_lookup_kdc = false
+default_ccache_name = /tmp/krb5cc_%{uid}
+#default_tgs_enctypes = aes des3-cbc-sha1 rc4 des-cbc-md5
+#default_tkt_enctypes = aes des3-cbc-sha1 rc4 des-cbc-md5
+[domain_realm]
+.bigdata.com = BIGDATA
+[logging]
+  default = FILE:/var/log/krb5kdc.log
+  admin_server = FILE:/var/log/kadmind.log
+  kdc = FILE:/var/log/krb5kdc.log
+[realms]
+  BIGDATA = {
+    admin_server = manager.bigdata.com
+    kdc = manager.bigdata.com
+    kdc = master.bigdata.com
+}
+
+3.	编辑/var/kerberos/krb5kdc/kdc.conf文件，内容如下。
+[kdcdefaults]
+ kdc_ports = 88
+ kdc_tcp_ports = 88
+[realms]
+ BIGDATA = {
+  #master_key_type = aes256-cts
+  acl_file = /var/kerberos/krb5kdc/kadm5.acl
+  dict_file = /usr/share/dict/words
+  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
+  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal
+  max_life = 3000d
+  max_renewable_life = 3000d 0h 0m 0s
+  default_principal_flags = +renewable, +forwardable
+ }
+4.	编辑/var/kerberos/krb5kdc/kadm5.acl文件，内容如下。
+*/admin@BIGDATA	*
+5.	创建数据库。
+kdb5_util create -r BIGDATA -s
+根据提示信息此处需要用户手工输入KDC数据库的密码，命令执行完成后，注意检查/var/kerberos/krb5kdc/下是否生成principal等票据文件。
+6.	创建KDC超级管理员，根据提示信息此处需要输入管理员密码。
+kadmin.local -q "addprinc admin/admin@BIGDATA"
+[注意]这里KDC超级管理员的账户名为红色字体所示。
+7.	分别执行如下命令启动kdc和kadmin。 
+systemctl restart krb5kdc.service
+systemctl restart kadmin.service
+设置开机启动。
+systemctl enable krb5kdc.service
+systemctl enable kadmin.service
 
-目前Insight HD中HDFS、YARN、HBase可以开启HA模式，其中，以HDFS开启HA过程最为典型，对于开启YARN HA操作请参考本章开启HDFS HA，其他组件则更为简单直接点击添加按钮即可，本文将不再赘述。
-
-1. 进入设置向导操作。点击“服务”菜单中的“HDFS”组件。
-
-2. 在“服务操作”中单击“启用NameNode HA”。
-
-	![](/pic/h1.jpg)
-
-3. 进入“开始设置”向导页，如果Hbase正在运行，则需要停止Hbase服务，在文本框中输入Nameservice ID（例如，mycluster），点击“下一步”。
-
-	![](/pic/h2.jpg)
-
-4. 进入“选择主机”向导页，指定附加NameNode以及JournalNode部署节点， 配置好后单击“下一步”按钮。
-
-	![](/pic/h3.jpg)
-
-5. 在“检查”概览界面显示了节点的变化情况，删除Secondary NameNode，添加 Additional NameNode、Journal Node。
-
-	![](/pic/h4.jpg)
-
-6. 进入“创建检查点”向导页，进行创建checkpoint 操作，此操作需要手工进行，根据提示信息，登录当前NameNode节点，执行显示在页面上的命令，执行完后单击 “下一步”。
-
-	![](/pic/h5.jpg)
-
-	手工执行命令及返回结果如下所示，表示命令执行成功。
-
-	![](/pic/h6.jpg)
-
-7. 进入“配置组件”向导页进行相关配置（系统自动完成）。
-
-	![](/pic/h7.jpg)
-
-	等待1-3min，配置完成后单击“下一步”。
-
-	![](/pic/h8.jpg)
-
-8. 在“启动NameNode HA向导”页进行初始化Journal Node操作，此操作需要根据提示信息手工进行，登录当前NameNode节点，执行显示在页面上的命令，执行完后，单击“下一步”。
-
-	![](/pic/h9.jpg)
-
-9. 进入“启动组件”向导页，启动ZooKeeper和NameNode（系统自动完成），完成后单击“下一步”。
-
-	![](/pic/h10.jpg)
-
-10. 进入“初始化NameNode HA元数据”向导页，初始化NameNode HA 元数据，此操作需要根据提示信息手工进行，登录当前NameNode节点，执行显示在页面上的命令，执行完后单击“下一步”。
-
-	![](/pic/h11.jpg)
-
-11. 进入“完成HA设置”向导页，启动HA。
-
-	![](/pic/h12.jpg)
-
-	等待HA设置完成，单击“完成”。
-
-	![](/pic/h13.jpg)
-
-12. 查看HDFS服务概要界面，会显示HA相关信息，HA安装结束。
-
-	![](/pic/h14.jpg)
-
-### 2.11 开启安全模式
-
- Kerberos KDC安装采用主从模式，主库master位于kylin2.bigdata上，从库slave位于kylin30.bigdata上，安装及配置过程如下。
-
-#### 2.11.1 KDC Master安装
-
-1. 安装Kerberos:
-	apt-get install krb5-kdc krb5-admin-server
-
-	以manager为例:
-
-	1. 弹出relam对话框，默认为当前机器名称后缀大写，如:manager.bigdata.com，默认值为BIGDATA.COM，保留此默认值，按回车键
-
-	2. kerberos servers for your realm, 填写kdc主机名，如:manager.bigdata.com，按回车键
-
-	3. Administrative servers for your kerberos realm, 填写kdc主机名:manager.bigdata.com，按回车键
-
-	4. 确定，按回车键
-
-2. 创建新域: ```sudo krb5_newrealm```
-
-3. 修改配置文件
-
-	* **修改krb5.conf**
-
-		运行命令 ```vi /etc/krb5.conf```
-
-		修改参数:
-
-		```
-		[libdefaults]
-		renew_lifetime = 7d
-		forwardable = true
-		default_realm = BIGDATA.COM
-		ticket_lifetime = 24h
-		dns_lookup_realm = false
-		dns_lookup_kdc = false
-		default_ccache_name = /tmp/krb5cc_%{uid}
-		#default_tgs_enctypes = aes des3-cbc-sha1 rc4 des-cbc-md5
-		#default_tkt_enctypes = aes des3-cbc-sha1 rc4 des-cbc-md5
-
-		[domain_realm]
-		bigdata.com = BIGDATA.COM
-
-		[logging]
-		default = FILE:/var/log/krb5kdc.log
-		admin_server = FILE:/var/log/kadmind.log
-		kdc = FILE:/var/log/krb5kdc.log
-
-		[realms]
-		BIGDATA.COM = {
-			admin_server = kylin2.bigdata.com
-			kdc = kylin2.bigdata.com
-			kdc = kylin30.bigdata.com
-		}
-			```
-
-	* **修改kdc.conf**
-
-		运行命令 ```vi /etc/krb5kdc/kdc.conf```
-
-		修改参数:
-
-		```
-		[kdcdefaults]
-			kdc_ports = 750,88
-
-		[realms]
-			BIGDATA.COM  = {
-				database_name = /var/lib/krb5kdc/principal
-				admin_keytab = FILE:/etc/krb5kdc/kadm5.keytab
-				acl_file = /etc/krb5kdc/kadm5.acl
-				key_stash_file = /etc/krb5kdc/stash
-				kdc_ports = 750,88
-				max_life = 10h 0m 0s
-				max_renewable_life = 7d 0h 0m 0s
-				master_key_type = des3-hmac-sha1
-				supported_enctypes = aes256-cts:normal arcfour-hmac:normal des3-hmac-sha1:normal des-cbc-crc:normal des:normal des:v4 des:norealm des:onlyrealm des:afs3
-				default_principal_flags = +preauth
-			}
-				```
-
-	* **修改kadm5.acl**
-
-		运行命令 ```vi /etc/krb5kdc/kadm5.acl```
-
-		修改参数:
-
-		```
-		admin/admin@BIGDATA.COM
-		```
-
-4. 创建数据库
-
-	```kdb5_util create -r BIGDATA –s```
-
-5. 创建KDC超级管理员，根据提示信息此处需要输入管理员密码
-
-	```kadmin.local -q "addprinc admin/admin@BIGDATA"```
-
-6. 启动:
-
-	```
-	sudo systemctl unmask krb5-admin-server
-	sudo systemctl enable krb5-admin-server
-	```
-
-	启动并查看状态:
-
-	```
-	sudo systemctl start krb5-admin-server
-	sudo systemctl status krb5-admin-server
-	```
-
-7. 测试
-
-	运行命令:
-
-	```
-	kinit admin/admin
-	```
-
-	password为admin
-
-	查看当前认证用户:
-
-	```
-	klist
-	```
-
-#### 2.11.2 辅助KDC安装
-
-1. 安装
-
-	```sudo apt install krb5-kdc krb5-admin-server```
-
-2. 修改配置文件
-
-	分别修改如下文件（操作与主KDC相同）:
-
-	/etc/krb5.conf
-	/etc/krb5kdc/kdc.conf
-	/etc/krb5kdc/kadm5.acl
-
-#### 2.11.3 主从配置
-
-1. 登录主KDC，运行命令:
-
-	```kadmin.local```
-
-2. 添加用户
-
-	运行命令:  
-
-		addprinc -randkey host/manager.bigdata.com
-		addprinc -randkey host/master1.bigdata.com
-		addprinc -randkey host/master2.bigdata.com
-		
-3. 主KDC生成keytab文件
-
-	运行命令（注意大小写）:
-
-	```ktadd -norandkey -k /etc/krb5.keytab host/manager.bigdata.com@BIGDATA.COM host/master1.bigdata.com@BIGDATA.COM host/master1.bigdata.com@BIGDATA.COM```
-
-4. 运行 quit 退出
-
-5. 将keytab发送到辅助KDC
-
-	以发送到 ```master1``` 为例，在主KDC节点运行命令:
-
-	```scp /etc/krb5.keytab root@master1.bigdata.com:/etc```
-
-6. 列出keytab
-
-	运行命令:
-
-	```sudo klist -k /etc/krb5.keytab```
-
-7. 主从机均编辑 ```kpropd.acl``` 文件
-
-	运行命令:
-	```vi kpropd.acl```
-
-	加入:
-
-	```
-	host/kylin2.bigdata.com@BIGDATA.COM
-	host/kylin30.bigdata.com@BIGDATA.COM
-	```
-
-8. 辅助KDC上创建空数据库
-
-	运行命令:
-
-	```sudo kdb5_util -s create```
-
-9. 启动kpropd守护程序
-
-	运行命令:
-
-	```sudo kpropd -S```
-
-10. 创建主体数据库的转储文件
-
-	运行命令:
-
-	```sudo kdb5_util dump /var/lib/krb5kdc/dump```
-
-11. ```主KDC``` 数据库转推到 ```辅助KDC```
-
-	运行命令:
-
-	```sudo kprop -r BIGDATA.COM -f /var/lib/krb5kdc/dump master1.bigdata.com```
-
-	运行成功会有 ```SUCCEEDED``` 信息:
-
-	```Database propagation to master1.bigdata.com: SUCCEEDED```
-
-12. 定时推送数据库到辅助KDC
-
-	运行命令:
-
-	```crontab -e```
-
-	加入内容:
-
-	```
-	2 * * * * /usr/sbin/kdb5_util dump /var/kerberos/krb5kdc/dump && /usr/sbin/kprop -r BIGDATA -f /var/kerberos/krb5kdc/dump master1.bigdata.com
-	```
-
-13. 在辅助KDC创建一个存储文件以保存Kerberos主密钥
-
-	运行命令:
-
-	```sudo kdb5_util stash```
-	
-	结果: Using existing stashed keys to update stash file.
-
-14. 在辅助KDC上启动krb5-kdc守护程序
-
-	运行命令:
-
-	```sudo systemctl start krb5-kdc.service```
-
-#### 2.11.4 Kerberos客户端
-
-1. 安装krb5-user和libpam-krb5等包
-
-	运行命令:
-
-	```sudo apt install krb5-user libpam-krb5 libpam-ccreds auth-client-config```
-
-2. 配置
-
-	运行命令:
-
-	```sudo dpkg-reconfigure krb5-config```
-
-	确保 ```/etc/krb5.conf``` 中有以下内容:
-
-	[libdefaults]
-		default_realm = BIGDATA.COM...
-	[realms]
-		BIGDATA.COM = {
-		admin_server = kylin2.bigdata.com
-		kdc = kylin2.bigdata.com
-		kdc = kylin30.bigdata.com
-		}
-
-3. 测试
-
-	运行命令:
-
-		kinit admin/admin@BIGDATA.COM
-
-	查看详情:
-
-		klist
-
-4. 使用auth-client-config来配置libpam-krb5模块，使得在登录时请求票据:
-
-	运行命令:
-
-		sudo auth-client-config -a -p kerberos_example
-
-
-## 第三章 集群高可用测试
-
-### 3.1 HDFS测试
-
-#### 3.1.1 主从替换测试
-
-##### 3.1.1.1查看节点状态
-
-hdfs haadmin -getServiceState nn1
-
-> active
-
-hdfs haadmin -getServiceState nn2
-
-> standby
-
-都为standby时，需要手动将一个节点从standby切换为active，以nn1为例:
-
-```hdfs haadmin -transitionToActive  --forcemanual nn1```
-
-##### 3.1.1.2 关闭nn1进程
-
-在nn1主机运行命令:
-
-```jps```
-
-找到NameNode进程号并关闭
-
-```kill -9 进程号```
-
-查看nn2进程号，发现从standby转为active
-
-```hdfs haadmin -getServiceState nn2```
-> active
-
-##### 3.1.1.3 重新开启nn1
-
-```find / -name hadoop-daemon.sh```
-
-找到文件位置并运行:
-
-```/usr/hdp/3.1.0.0-78/hadoop/sbin/hadoop-daemon.sh start namenode```
-
-##### 3.1.1.4 再次查看节点状态:
-
-```hdfs haadmin -getServiceState nn1```
->standby
-
-```hdfs haadmin -getServiceState nn2```
->active
-
-#### 3.1.2 NameNode测试
-
-##### 3.1.2.1 切换到hdfs用户
-
-```su hdfs```
-
-##### 3.1.2.2 本地准备用于传输的文件，存放在路径 /tmp/uploadtest 中
-
-![](/pic/781.png)
-
-##### 3.1.2.3 集群上新建测试文件夹datatest
-
-```hdfs dfs -mkdir /datatest```
-
-##### 3.1.2.4 本地文件传到集群
-
-```hdfs dfs -put /tmp/uploadtest/ /datatest```
-
-##### 3.1.2.5 手动停止namenode后，报错信息如下:
-
-![](/pic/72.png)
-
-##### 3.1.2.6 查看集群文件
-
-![](/pic/73.png)
-
-运行命令:
-
-```hdfs dfs -ls /datatest```
-
-```hdfs dfs -ls /datatest/uploadtest```
-
-![](/pic/74.png)
-
-##### 3.1.2.7 本地新建文件夹 /tmp/localtest，将传输到集群中的文件下载到新文件夹
-
-```mkdir /tmp/localtest```
-
-```hdfs dfs -copyToLocal /datatest/uploadtest /tmp/localtest```
-
-##### 3.1.2.8 查看下载文件
-
-```cd /tmp/localtest```
-
-```ll```
-
-```cd uplaodtest```
-
-```ll```
-
-![](/pic/75.png)
-
-##### 3.1.2.9 比较新文件与上传文件的差异
-
-```diff /tmp/localtest/uploadtest /tmp/uploadtest```
-
-结果显示无差异
-
-![](/pic/76.png)
-
-#### 3.1.3 DataNode测试
-
-##### 3.1.3.1 切换到hdfs用户
-
-```su hdfs```
-
-##### 3.1.3.2 本地准备用于传输的文件，存放在路径 /tmp/uploadtest 中
-
-![](/pic/781.png)
-
-##### 3.1.3.3 集群上新建测试文件夹datatest1，本地文件传到集群
-
-```hdfs dfs -mkdir /datatest1```
-
-```hdfs dfs -put /tmp/uploadtest/ /datatest1```
-
-以3个DataNode的集群为例。
-
-![](/pic/82.png)
-
-##### 3.1.3.4 手动关闭一个DataNode节点，UI界面如下所示:
-
-![](/pic/83.png)
-
-##### 3.1.3.5 后台报错信息如下:
-
-![](/pic/84.png)
-
-##### 3.1.3.6 UI最终显示文件
-
-![](/pic/85.png)
-
-##### 3.1.3.7 运行命令查看集群文件
-
-```hdfs dfs -ls /datatest1```
-
-```hdfs dfs -ls /datatest1/uploadtest```
-
-![](/pic/86.png)
-
-##### 3.1.3.8 本地新建文件夹 /tmp/localtest1，将传输到集群中的文件下载到新文件夹
-
-创建文件夹：
-
-```mkdir /tmp/localtest1```
-
-```hdfs dfs -copyToLocal /datatest1/uploadtest /tmp/localtest1```
-
-##### 3.1.3.9 查看下载文件
-
-```cd /tmp/localtest1```
-
-```ll```
-
-```cd uploadtest1```
-
-```ll```
-
-![](/pic/87.png)
-
-
-##### 3.1.3.10 比较新文件与上传文件的差异
-
-```diff /tmp/localtest1/uploadtest /tmp/uploadtest```
-
-结果显示无差异
-
-![](/pic/88.png)
-
-### 3.2 YARN主备节点切换测试
-
-#### 3.2.1 切换到yarn用户
-
-```su yarn```
-
-#### 3.2.2 查看节点状态
-
-```yarn rmadmin -getServiceState rm1```
-> active
-
-```yarn rmadmin -getServiceState rm2```
-> standby
-
-#### 3.2.3 关闭YARN进程
-
-找到ResourceManager进程号
-
-```jps```
-
-```kill -9 进程号```
-
-查看状态:
-
-```yarn rmadmin -getServiceState rm2```
-> active
-
-#### 3.2.4 重启YARN进程
-
-找到并运行yarn-daemon.sh文件启动ResourceManager
-
-```find / -name yarn-daemon.sh```
-
-```/usr/hdp/3.1.0.0-78/hadoop-yarn/sbin/yarn-daemon.sh start resourcemanager```
-
-#### 3.2.5 再次查看节点状态:
-
-```yarn rmadmin -getServiceState rm1```
-> standby
-
-```yarn rmadmin -getServiceState rm2```
-> active
 
 ## 第四章 常见问题 FAQ
 
@@ -1697,5 +1192,69 @@ root@master1:~# ntpdate manager.bigdata.com
 
 ![](/pic/zeeplin_credential.jpg)
 
-# 重装
-yum remove -y ambari-agent.x86_64 ambari-server.x86_64 atlas-metadata_3_1_0_0_78-hbase-plugin.noarch hdp-select.noarch bigtop-jsvc.x86_64 ranger_3_1_0_0_78* spark2_3_1_0_0_78-yarn-shuffle.noarch ranger_3_1_0_0_78* zookeeper_3_1_0_0_78*
+# 遇到的问题
+
+1. 初次安装集群时，hdfs client安装失败
+
+resource_management.core.exceptions.Fail: Applying File['/usr/hdp/current/hadoop-client/conf/hadoop-policy.xml'] failed, parent directory /usr/hdp/current/hadoop-client/conf doesn't exist
+
+解决方法：手动创建目录 mkdir -p /usr/hdp/current/hadoop-client/conf
+
+2. 首次安装主机出现警告
+
+resource_management.core.exceptions.Fail: Applying File['/etc/hadoop/conf/dfs.exclude'] failed, parent directory /etc/hadoop/conf doesn't exist
+
+
+手动创建文件夹 mkdir -p /etc/hadoop/conf后在主页手动启动
+
+3. 初次安装Tez时，报错/usr/hdp/current/tez-client已存在冲突
+
+resource_management.core.exceptions.ExecutionFailed: Execution of 'ambari-python-wrap /usr/bin/hdp-select set tez-client 3.1.0.0-78' returned 1. symlink target /usr/hdp/current/tez-client for tez already exists and it is not a symlink.
+
+解决方法：删除/usr/hdp/current/tez-client并手动创建symbolink
+[root@manager ~]# rm -rf /usr/hdp/current/tez-client
+[root@manager ~]# ambari-python-wrap /usr/bin/hdp-select set tez-client 3.1.0.0-78
+
+4. 初次安装hive时，数据库测试连接不上，之后配置可以连接，可能需要手动配置jdbc
+
+5. 初次安装hive时，/usr/hdp/current/hive-client已存在冲突
+
+resource_management.core.exceptions.ExecutionFailed: Execution of 'ambari-python-wrap /usr/bin/hdp-select set hive-client 3.1.0.0-78' returned 1. symlink target /usr/hdp/current/hive-client for hive already exists and it is not a symlink.
+
+[root@manager ~]# rm -rf /usr/hdp/current/hive-client
+[root@manager ~]# ambari-python-wrap /usr/bin/hdp-select set hive-client 3.1.0.0-78
+
+6. 初次安装hive时，安装完成后启动Hive Metastore失败
+
+数据库无法连接，需要手动执行
+ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java-5.1.48.jar
+
+之后手动启动hive服务
+
+7. 初次安装hive，hive server2无法启动
+
+Exception: HiveServer2 is no longer running, check the logs at /var/log/hive
+
+[root@manager ~]# cat /var/log/hive/hive.out
+Cannot find hadoop installation: $HADOOP_HOME or $HADOOP_PREFIX must be set or hadoop must be in the path
+
+警告1 安装hbase时，参数user自动加上janusgraph，此时janusgraph还没安装
+
+警告2 hbase报错连不上RegionServer
+
+警告3 hbase user和superuser不一致
+
+8. 开启安装模式时弹窗报错
+
+500状态码 在POST方法接收API：/api/v1/stacks/HDP/versions/3.1/recommendations
+
+错误信息: Stack Advisor reported an error. Exit Code: 2. Error: KeyError: 'hbase-env' 
+StdOut file: /var/run/ambari-server/stack-recommendations/79/stackadvisor.out
+
+StdErr file: /var/run/ambari-server/stack-recommendations/79/stackadvisor.err
+
+9. Flink无法启动
+
+尝试重启ambari-agent
+
+10. 安装janusgraph出现警告 Failed connect to manager.bigdata.com:8182; Connection refused

@@ -1,0 +1,9 @@
+{
+  "mode": "default",
+  "labelKey": "label",
+  "valueKey": "value",
+  "datas": [{
+    "label": "5000数据点/秒",
+    "value": 5000
+  }]
+}

@@ -1,0 +1,26 @@
+{
+  "mode": "default",
+  "labelKey": "label",
+  "valueKey": "value",
+  "datas": [{
+      "label": "微型规格",
+      "value": "TINY"
+    },
+    {
+      "label": "小型规格",
+      "value": "SMALL"
+    },
+    {
+      "label": "中型规格",
+      "value": "MEDIUM"
+    },
+    {
+      "label": "大型规格",
+      "value": "LARGE"
+    },
+    {
+      "label": "大型规格",
+      "value": "HUGE"
+    }
+  ]
+}

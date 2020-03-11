@@ -1,0 +1,69 @@
+[{
+    "status": "CREATE_FAILED",
+    "label": "创建失败",
+    "color": "red"
+  },
+  {
+    "status": "unknown",
+    "label": "未知",
+    "color": "yellow"
+  },
+  {
+    "status": "DELETED",
+    "label": "已删除",
+    "color": "yellow"
+  },
+  {
+    "status": "DELETE_IN_PROGRESS",
+    "label": "正在删除",
+    "color": "yellow",
+    "processing": true
+  },
+  {
+    "status": "DELETE_FAILED",
+    "label": "删除失败",
+    "color": "yellow"
+  },
+  {
+    "status": "RUNNING",
+    "label": "正在运行",
+    "color": "green"
+  },
+  {
+    "status": "CREATE_IN_PROGRESS",
+    "label": "正在安装",
+    "color": "yellow",
+    "processing": true
+  },
+  {
+    "status": "PENDING_CREATE",
+    "label": "等待安装",
+    "color": "yellow"
+  },
+  {
+    "status": "UN_HEALTHY",
+    "label": "不健康",
+    "color": "yellow"
+  },
+  {
+    "status": "PENDING_UPGRADE",
+    "label": "等待升级",
+    "color": "yellow"
+  },
+  {
+    "status": "UPGRADE_FAILED",
+    "label": "升级失败",
+    "color": "yellow"
+  },
+  {
+    "status": "UPGRADE_IN_PROGRESS",
+    "label": "正在升级",
+    "color": "yellow",
+    "processing": true
+  },
+  {
+    "status": "ABORATED",
+    "label": "已废弃",
+    "color": "yellow"
+  }
+]

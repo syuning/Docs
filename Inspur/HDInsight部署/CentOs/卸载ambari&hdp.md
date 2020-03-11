@@ -2,8 +2,19 @@
 yum remove -y ambari-infra-solr-client-2.7.3.0-139.noarch ambari-infra-solr-client-2.7.3.0-139.noarch ambari-agent-2.7.3.0-1.x86_64 ambari-metrics-monitor-2.7.3.0-139.x86_64 ambari-server-2.7.3.0-0.x86_64 ambari-metrics-collector-2.7.3.0-139.x86_64 ambari-metrics-grafana-2.7.3.0-139.x86_64 ambari-metrics-hadoop-sink-2.7.3.0-139.x86_64 ambari-infra-solr-2.7.3.0-139.noarch
 
 # 卸载HDP
-yum remove -y hdp-select.noarch bigtop-jsvc.x86_64 
+yum remove -y *3_1_0_0_78*
+
+yum remove -y hdp-select.noarch bigtop-jsvc.x86_64 hdp-select.noarch bigtop-jsvc.x86_64
+
 rm -rf /var/hdp
+
+# 删除数据库
+mysql -uroot -pbigdata
+
+drop database ambari;
+drop database hive;
+drop database oozie;
+drop database ranger;
 
 # 删除所有日志文件夹、Hadoop文件夹、配置文件夹、PID、库文件夹、/var/tmp/*、符号链接、服务用户
 
@@ -12,6 +23,7 @@ rm -rf /var/log/ambari-metrics-grafana
 rm -rf /var/log/ambari-metrics-monitor
 rm -rf /var/log/ambari-server/
 rm -rf /var/log/falcon
+rm -rf /var/log/hbase
 rm -rf /var/log/flume
 rm -rf /var/log/hadoop
 rm -rf /var/log/hadoop-mapreduce
@@ -25,7 +37,7 @@ rm -rf /var/log/oozie
 rm -rf /var/log/solr
 rm -rf /var/log/zookeeper
 
-rm -rf /hadoop/*
+rm -rf /hadoop
 rm -rf /hdfs
 rm -rf /home/hdfs
 rm -rf /home/ranger

@@ -1,0 +1,157 @@
+<div class="page-title">
+  <!-- <nzi-breadcrumb detailName="手动数据清理"></nzi-breadcrumb> -->
+  <nz-breadcrumb>
+    <div class="light"></div><div class="dark"></div>
+    <nz-breadcrumb-item><a [routerLink]="['/tsdb/list']"><i nz-icon type="user"></i><span>时序数据库</span></a></nz-breadcrumb-item>
+    <nz-breadcrumb-item>手动数据清理</nz-breadcrumb-item>
+  </nz-breadcrumb>
+  <div class="page-title-opt pull-right">
+  </div>
+</div>
+
+<form nz-form [formGroup]="creatingForm" (ngSubmit)="submitCreatingForm()">
+  <nz-form-item>
+    <nz-form-label [nzSpan]="5" nzRequired nzFor="jobName">任务名称</nz-form-label>
+    <nz-form-control [nzSpan]="12">
+      <input id="jobName" type="text" nz-input formControlName="jobName">
+      <nz-form-explain *ngIf="creatingForm.get('jobName').dirty && creatingForm.get('jobName').errors">请输入任务名称！</nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-divider></nz-divider>
+
+  <!-- 手动清理任务时间设置 -->
+  <nz-form-item>
+    <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>清理范围<span class="required-icon">*</span></nz-form-label>
+    <nz-form-control [nzSm]="16" [nzXs]="24">
+      <nz-radio-group id="timeRangeType" formControlName="timeRangeType" (ngModelChange)="timeRangeTypeChange($event)"
+        [nzButtonStyle]="'solid'">
+        <label nz-radio-button nzValue="All">清理全部数据</label>
+        <label nz-radio-button nzValue="Absolute">选择时间范围</label>
+      </nz-radio-group>
+      <br>
+      <nz-range-picker *ngIf="isAbsoluteTimeRange" formControlName="timeRange" style="margin-top: 10px"></nz-range-picker>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-divider></nz-divider>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="5" nzRequired nzFor="metricName">指标名称<span class="required-icon">*</span></nz-form-label>
+    <nz-form-control [nzSpan]="12">
+      <input id="metricName" type="text" nz-input formControlName="metricName">
+      <!-- <nz-form-explain *ngIf="creatingForm.get('metricName').dirty && creatingForm.get('metricName').errors">请输入指标名称！</nz-form-explain> -->
+      <nz-form-explain *ngIf="creatingForm.get('metricName').dirty && creatingForm.get('metricName').invalid || creatingForm.get('metricName').pending ">
+        <ng-container *ngIf="creatingForm.get('metricName').hasError('required')">
+          请输入指标名称！
+        </ng-container>
+        <ng-container *ngIf="creatingForm.get('metricName').dirty && creatingForm.get('metricName').errors">
+          指标名称的长度不能超过50!
+        </ng-container>
+        <ng-container *ngIf="creatingForm.get('metricName').pending">
+          验证中...
+        </ng-container>
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label nzRequired nzFor="tag_filters">标签</nz-form-label>
+    <nz-form-control>
+      <ng-container *ngFor="let tagFilter of tagFilters">
+        <div class="input-number-container">
+          <div class="sys-form">
+            <nz-select style="padding-right:0px; padding-top:5px;width: 100px;" [formControlName]="tagFilter.type"
+              nzPlaceHolder="请选择">
+              <nz-option *ngFor="let option of filterTypes" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+            </nz-select>
+            <input style="padding-right:0px; padding-top:5px;width: 100px;margin-left: 20px;" [formControlName]="tagFilter.name"
+              placeHolder="标签名称" nz-input>
+            <input style="margin-right:5px; padding-top:5px;width: 100px;margin-left: 20px;" [formControlName]="tagFilter.value"
+              placeHolder="标签值" nz-input>
+            <i class="anticon anticon-close-circle-o" (click)="removeTagFilter(tagFilter,$event)"></i>
+          </div>
+        </div>
+      </ng-container>
+      <div class="add-action">
+        <i class="anticon anticon-plus-square" (click)="addTagFilter($event)"></i>
+        添加标签过滤
+        <nzi-help [options]="{'title': '<p>分组是否根据tagV进行分组</p><p>选择过滤器的类型</p><p>输入标签名称tagK</p><p>输入标签值tagV(表达式)</p>'}">
+        </nzi-help>
+      </div>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <button nz-button nzType="primary" (click)="createManualClnJob()" [nzLoading]="isCreatingConfirmLoading">清理数据</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>
+
+<nz-divider></nz-divider>
+
+<!-- <div class="form-fieldset form-horizontal form-align-left">
+  <div>
+    <legend>
+      <i class="icon-square"></i>
+      清理记录：
+    </legend>
+  </div> -->
+  <nz-table #nestedTableManualJobs [nzData]="cleanJobsManual" [nzLoading]="loading" [nzShowSizeChanger]="true" nzBordered>
+    <thead>
+      <tr>
+        <!-- <th nzShowExpand>详情</th> -->
+        <th>任务名称</th>
+        <th>指标名称</th>
+        <th>标签</th>
+        <th>清理范围</th>
+        <th>创建时间</th>
+        <!-- <th>操作</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <ng-template ngFor let-data [ngForOf]="nestedTableManualJobs.data">
+        <tr>
+          <!-- <td nzShowExpand [(nzExpand)]="data.expand"></td> -->
+          <td>{{data.name}}</td>
+          <td>{{data.metrics}}</td>
+          <td>{{data.tag_filters || '无'}}</td>
+          <td>{{data.start_time|date:'y-MM-dd HH:mm:ss'}} 至 {{data.end_time|date:'y-MM-dd HH:mm:ss'}}</td>
+          <td>{{data.create_time|date:'y-MM-dd HH:mm:ss'}}</td>
+          <!-- <td>
+            <nz-popconfirm [nzTitle]="'确认删除任务名为 ' + data.name + '的记录?'" (nzOnConfirm)="removeManualJobRecord(data.name)">
+              <a nz-popconfirm>删除</a>
+            </nz-popconfirm>
+          </td> -->
+        </tr>
+        <!-- <tr [nzExpand]="data.expand">
+          <td></td>
+          <td colspan="4"> ------一些其他的东西------ </td>
+        </tr> -->
+        <!-- <tr [nzExpand]="data.expand">
+          <td colspan="7">
+            <nz-table #innerTableManualJobs [nzData]="data.metrics.tag_filters" nzSize="middle" [nzShowPagination]="false">
+              <thead>
+                <tr>
+                  <th>标签索引</th>
+                  <th>是否分组</th>
+                  <th>标签名称</th>
+                  <th>标签类型</th>
+                  <th>标签值</th>
+                </tr>
+              </thead>
+    <tbody>
+      <tr *ngFor="let data of innerTableManualJobs.data; let i = index">
+        <td> {{i}} </td>
+        <td>{{data.group}}</td>
+        <td>{{data.name}}</td>
+        <td>{{data.type}}</td>
+        <td>{{data.value}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+  </td>
+  </tr> -->
+      </ng-template>
+    </tbody>
+  </nz-table>
+<!-- </div> -->

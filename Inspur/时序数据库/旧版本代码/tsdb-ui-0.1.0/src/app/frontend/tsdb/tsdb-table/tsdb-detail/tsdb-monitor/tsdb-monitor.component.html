@@ -1,0 +1,58 @@
+<div class="row">
+
+  <!-- 第一个图 - 该时序数据库下，最近半小时到一小时，每分钟写入/读取数据请求的次数的图表分析(已按照读取、写入拆分成两个图) -->
+  <div class="col-sm-6">
+    <div class="chart-area">
+      <nz-card nzTitle="每分钟读取/写入请求次数" [nzExtra]="extra1">
+        <nz-spin [nzSpinning]="isSpinning1">
+          <div *ngIf="echartOption1" echarts [options]="echartOption1" style="height: 280px;">
+          </div>
+          <p style="color: #AAAAAA;  margin-top: 50px; margin-left: 45%;">暂无数据</p>
+        </nz-spin>
+      </nz-card>
+    </div>
+    <ng-template #extra1>
+      <nz-radio-group [(ngModel)]="timeRangeValue1" [nzButtonStyle]="'solid'" (ngModelChange)="changeTimeRange(1, timeRangeValue1)">
+        <label nz-radio-button nzValue='30'>最近半小时</label>
+        <label nz-radio-button nzValue='60'>最近一小时</label>
+      </nz-radio-group>
+    </ng-template>
+  </div>
+
+  <!-- 第二个图 - 该时序数据库下，最近一分钟到十分钟，每分钟写入/读取数据请求的次数的图表分析 -->
+  <div class="col-sm-6">
+    <div class="chart-area">
+      <nz-card nzTitle="每秒写入数据点" [nzExtra]="extra2">
+        <nz-spin [nzSpinning]="isSpinning2">
+          <div *ngIf="echartOption2"  echarts [options]="echartOption2" style="height: 280px;"></div>
+          <p style="color: #AAAAAA;  margin-top: 50px; margin-left: 45%;">暂无数据</p>
+        </nz-spin>
+      </nz-card>
+    </div>
+    <ng-template #extra2>
+      <nz-radio-group [(ngModel)]="timeRangeValue2" [nzButtonStyle]="'solid'" (ngModelChange)="changeTimeRange(2, timeRangeValue2)">
+        <label nz-radio-button nzValue='1'>最近一分钟</label>
+        <label nz-radio-button nzValue='10'>最近十分钟</label>
+      </nz-radio-group>
+    </ng-template>
+  </div>
+
+  <!-- 第三个图 - 该时序数据库下，最近半小时到一小时，每分钟写入数据点的数量的图表分析 -->
+  <div class="col-sm-6" style="padding-top: 10px">
+    <div class="chart-area">
+      <nz-card nzTitle="每分钟写入数据点" [nzExtra]="extra3">
+        <nz-spin [nzSpinning]="isSpinning3">
+          <div *ngIf="echartOption3"  echarts [options]="echartOption3" style="height: 280px;"></div>
+          <p style="color: #AAAAAA;  margin-top: 50px; margin-left: 45%;">暂无数据</p>
+        </nz-spin>
+      </nz-card>
+    </div>
+    <ng-template #extra3>
+      <nz-radio-group [(ngModel)]="timeRangeValue3" [nzButtonStyle]="'solid'" (ngModelChange)="changeTimeRange(3, timeRangeValue3)">
+        <label nz-radio-button nzValue='30'>最近半小时</label>
+        <label nz-radio-button nzValue='60'>最近一小时</label>
+      </nz-radio-group>
+    </ng-template>
+  </div>
+
+</div>

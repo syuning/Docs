@@ -1,0 +1,137 @@
+
+http://console.inspurstaging.com 部署环境
+inspurcloud-productdepartment     123456abc!
+10.110.43.88 1qaz@WSX?
+
+staging 南方环境源http://172.16.11.34/centos/tsdb/ambari/centos7/2.7.3.0-139/http://172.16.11.34/centos/tsdb/hdp/HDP/centos7/3.1.0.0-78/http://172.16.11.34/centos/tsdb/hdp/HDP-UTILS/centos7/1.1.0.22/
+
+HDP-3.0 http://172.16.11.34/centos/tsdb/hdp/HDP/centos7/3.1.0.0-78/
+HDP-3.0-GPL http://172.16.11.34/centos/tsdb/hdp/HDP-GPL/centos7/3.1.0.0-78/
+HDP-UTILS-1.1.0.22 http://172.16.11.34/centos/tsdb/hdp/HDP-UTILS/centos7/1.1.0.22/
+
+/etc/hosts  命名manager.bigdata.commaster.bigdata.comworker1.bigdata.comworker2.bigdata.comworker3.bigdata.com
+
+
+使用 Windows 系统的电脑
+下载安装 Windows SSH 和 Telnet 客户端工具 Putty；
+用户名： root，Host： 10.110.43.88；
+按照 Putty 使用帮助进行登录。Putty 密码方式使用帮助
+
+使用 Linux/Mac OS X 系统的电脑（使用密码登录）
+打开 SSH 客户端（Mac可使用系统自带的终端）；
+输入 ssh -q -l root -p 22 10.110.43.88；
+输入 ECS 实例密码进行登录。1qaz@WSX?
+
+使用 Linux/Mac OS X 系统的电脑（使用密钥登录）
+打开 SSH 客户端（Mac可使用系统自带的终端）；
+查找您云服务器关联的 SSH 密钥文件本地存放地址；
+您的密钥必须不公开可见，SSH 才能工作；请使用此命令： chmod 400 [密钥文件路径]；
+输入命令： ssh [-i 密钥文件路径] root@10.110.43.88。
+
+
+第一台：
+ssh -q -l root -p 22 192.168.0.9（内） 1qaz@WSX?
+ssh -q -l root -p 22 10.110.43.88（外） 1qaz@WSX?
+
+修改host
+hostnamectl set-hostname manager.bigdata.com
+
+
+第二三四五台：
+ssh -q -l root -p 22 192.168.0.4（内） 
+ssh 'master.bigdata.com' 1qaz@WSX?
+修改host
+hostnamectl set-hostname master.bigdata.com
+
+ssh -q -l root -p 22 192.168.0.16（内）
+ssh 'worker1.bigdata.com' 1qaz@WSX?
+修改host
+hostnamectl set-hostname worker1.bigdata.com
+
+ssh -q -l root -p 22 192.168.0.20（内）
+ssh 'worker2.bigdata.com' 1qaz@WSX?
+修改host
+hostnamectl set-hostname worker2.bigdata.com
+
+ssh -q -l root -p 22 192.168.0.28（内）
+ssh 'worker3.bigdata.com' 1qaz@WSX?
+修改host
+hostnamectl set-hostname worker3.bigdata.com
+
+修改hosts文件：
+
+vi /etc/hosts
+
+192.168.0.9	manager.bigdata.com  #安装ambari manager节点192.168.0.4	master.bigdata.com192.168.0.16	worker1.bigdata.com192.168.0.20	worker2.bigdata.com192.168.0.28	worker3.bigdata.com
+
+分发配置文件：
+scp /etc/hosts root@manager.bigdata.com:/etc 1qaz@WSX?
+scp /etc/hosts root@master.bigdata.com:/etc 1qaz@WSX?
+scp /etc/hosts root@worker1.bigdata.com:/etc 1qaz@WSX?
+scp /etc/hosts root@worker2.bigdata.com:/etc 1qaz@WSX?
+scp /etc/hosts root@worker3.bigdata.com:/etc 1qaz@WSX?
+
+
+打通ssh
+ssh-copy-id root@master.bigdata.com 1qaz@WSX?
+ssh-copy-id root@worker1.bigdata.com 1qaz@WSX?
+ssh-copy-id root@worker2.bigdata.com 1qaz@WSX?
+ssh-copy-id root@worker3.bigdata.com 1qaz@WSX?
+
+在第一台机器中登陆第二三四台机器：
+
+[root@tsdb-2019524163717-0003 ~]# ssh -q -l root -p 22 192.168.0.16
+The authenticity of host '192.168.0.16 (192.168.0.16)' can't be established.
+ECDSA key fingerprint is e8:ee:2f:cd:b3:0d:37:7e:12:dc:0a:30:ea:5f:3a:23.
+Are you sure you want to continue connecting (yes/no)? yes
+root@192.168.0.16's password: 
+[root@tsdb-2019524163717-0005 ~]# 
+
+
+
+源
+[root@master ~]# vi /etc/yum.repos.d/ambari.repo
+
+#VERSION_NUMBER=2.7.1.0
+[ambari-2.7.1.0]
+name=ambari Version - ambari-2.7.1.0
+baseurl=http://172.16.11.34/centos/tsdb/ambari/centos7/2.7.3.0-139/
+gpgcheck=0
+enabled=1
+priority=1
+
+
+[root@master ~]# vi /etc/yum.repos.d/mysql.repo
+
+#VERSION_NUMBER=5.6
+[mysql-5.6]
+name=mysql - 5.6
+baseurl=http://172.16.11.34/centos/tsdb/hdp/HDP/centos7/3.1.0.0-78/
+gpgcheck=0
+enabled=1
+priority=1
+
+
+
+
+[root@master ~]# vi /etc/yum.repos.d/CentOS.repo
+
+#CentOS=7.3
+[CentOS-7.3]
+name=centos7.3
+baseurl=http://172.16.11.34/centos/tsdb/hdp/HDP-UTILS/centos7/1.1.0.22/
+gpgcheck=0
+enabled=1
+priority=1
+
+
+
+wget http://172.16.11.34/centos/tsdb/jdk/jdk-8u121-linux-x64.tar.gz
+
+
+/etc/yum.repos.d/ambari-hdp-1.repo
+
+scp -r java root@master.bigdata.com:/usr/share/java
+scp -r yum.repos.d root@master.bigdata.com:/etc/yum.repos.d
+
+source /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql

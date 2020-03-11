@@ -1,0 +1,21 @@
+tsdb运维场景：
+1.获取当前region全部实例，可根据租户、实例名称过滤实例。
+显示实例信息：名称、详细配置信息、健康状况、在线时长、hbase集群和es集群信息等
+2.运维人员可进行实例名称修改、实例删除、实例重启、日志信息查看等
+3.监控对接云监控
+
+
+功能需求：
+1.可查看实例列表和具体实例详情
+2.可进行实例名称修改或实例重启等操作
+3.可查看实例运行监控信息
+
+
+
+API：
+获取实例列表  GET /tsdb/v1/tsdbs/{pageNo}/{pageSize}
+修改实例名称  PUT /tsdb/v1/tsdbs/{tsdbId}/action/alert-name
+实例重启  POST /tsdb/v1/tsdbs/{tsdbId}/action/restart
+删除实例  DELETE /tsdb/v1/tsdbs/{tsdbId}/action/delete
+实例日志查看  方案需确认
+实例详情查看  GET /tsdb/v1/tsdbs/{tsdbId}/details

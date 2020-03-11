@@ -1,0 +1,14 @@
+{
+  "namespaces": [
+    {
+      "objectMeta":{
+        "name":"default"
+      }
+    },
+    {
+          "objectMeta":{
+            "name":"iop"
+          }
+     }
+  ]
+}

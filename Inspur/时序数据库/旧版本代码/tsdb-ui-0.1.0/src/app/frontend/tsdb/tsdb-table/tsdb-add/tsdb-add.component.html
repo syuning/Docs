@@ -1,0 +1,205 @@
+<div class="full-page">
+  <nz-spin [nzSpinning]="loading">
+    <div class="full-page-header">
+      <div class="full-page-title">购买时序数据库</div>
+    </div>
+
+    <div class="full-page-content">
+      <nz-alert nzType="info" nzBanner nzShowIcon="false" [nzDescription]='innerTemplate' [ngStyle]="{ 'marginBottom': '11px' }">
+        <ng-template #innerTemplate>
+          温馨提示：根据实例规格创建时序数据库实例，注意时序数据库名称只能为以字母或汉字开头，仅包含字母、汉字、数字、”.“、”_“或”-“的长度为2-128的字符。
+          <a (click)="navToDocumentPage()" href="#" target="_blank">操作指南</a>
+        </ng-template>
+      </nz-alert>
+
+      <form nz-form [formGroup]="tsdbCreateForm">
+        <!-- 计费方式 -->
+        <fieldset>
+          <nz-form-item style="margin-bottom: 0px">
+            <nz-form-label [nzSpan]="5" nzRequired>计费方式
+            </nz-form-label>
+            <nz-radio-group [nzButtonStyle]="'solid'" formControlName="billingMode" (ngModelChange)="usePackage($event)">
+              <label nz-radio-button nzValue="monthly">包年/包月</label>
+              <label nz-radio-button nzValue="hourlySettlement">按需付费</label>
+            </nz-radio-group>
+            <nzi-help [options]="{'title': '
+              <p>包年/包月：包年包月是预付费模式，按订单的购买周期计费，适用于可预估资源使用周期的场景，价格比按需计费模式更优惠。</p>
+              <p>按需付费：按需付费是后付费模式，按时序数据库的实际使用时长计费，可以随时开通/删除时序数据库。</p>
+              '}"></nzi-help>
+          </nz-form-item>
+        </fieldset>
+
+        <!-- 区域 -->
+        <fieldset>
+          <nz-form-item>
+            <nz-form-label [nzSpan]="5" nzRequired>区域</nz-form-label>
+            <nz-radio-group [nzButtonStyle]="'solid'" formControlName="region">
+              <label nz-radio-button *ngFor="let option of regions" [nzValue]="option.code">{{option.name}}</label>
+            </nz-radio-group>
+            <p class="help-text">不同区域的云服务产品之间内网互不相通，请就近选择靠近您业务的区域，可减少网络延时，提高访问速度。</p>
+          </nz-form-item>
+        </fieldset>
+
+        <!-- 套餐 -->
+        <fieldset>
+          <nz-form-item style="max-width: 700px;">
+            <nz-form-label>写入能力</nz-form-label>
+            <nz-form-control style="position: relative;top:-25px">
+              <nz-table nzSize="small" #specTable [nzData]="specData" nzShowPagination="false">
+                <thead>
+                  <tr>
+                    <th nzWidth="40px"></th>
+                    <th>数据点</th>
+                    <th>最大时间序列数</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of specTable.data">
+                    <td>
+                      <span class="ant-radio" [class.ant-radio-checked]="tsdbCreateForm.get('spec').value == data">
+                        <input type="radio" name="spec" formControlName="spec" class="ant-radio-input" (ngModelChange)="usePackage($event)" [value]="data">
+                        <span class="ant-radio-inner"></span>
+                      </span>
+                    </td>
+                    <td>{{data.dataPoint}}</td>
+                    <td>{{data.timeSeries}}</td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-form-control>
+            <p class="help-text tip-text">当前写入能力: {{tsdbCreateForm.get('spec').value.dataPoint}} 数据点/s | 允许创建的最大时间序列数量不超过 {{tsdbCreateForm.get('spec').value.timeSeries}} 个</p>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzSpan]="5" nzRequired>存储空间</nz-form-label>
+            <nz-form-control [nzSpan]="12">
+                <nz-input-number formControlName="storage_size" [nzMin]="storage_size_min" [nzMax]="storage_size_max" [nzStep]="40" (ngModelChange)="diskChange()"></nz-input-number>
+              <span class="unit">GiB</span>
+            </nz-form-control>
+          </nz-form-item>
+        </fieldset>
+
+        <!-- 用户 -->
+        <fieldset>
+          <nz-form-item>
+            <nz-form-label [nzSpan]="5" nzRequired>默认管理员</nz-form-label>
+            root
+          </nz-form-item>
+
+          <nz-form-item>
+              <nz-form-label>密码<span class="required-icon">*</span></nz-form-label>
+              <nz-form-control>
+                  <input nz-input type="password" formControlName="password" (ngModelChange)="validateConfirmPassword()" placeholder="请输入密码" nz-tooltip #box (keyup)="0">
+                <nz-form-explain *ngIf="tsdbCreateForm.get('password').dirty && tsdbCreateForm.get('password').invalid" class="from-help">
+                  8-12个字符，必须包含大小写字母和数字，支持英文特殊字符!"$%+,/:;<=>?@[]^_`~
+                </nz-form-explain>
+              </nz-form-control>
+              <p class="help-text"  *ngIf="!tsdbCreateForm.get('password').dirty && tsdbCreateForm.get('password').invalid" >8-12个字符，必须包含大小写字母和数字，支持英文特殊字符!"$%+,/:;<=>?@[]^_`~</p>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label>确认密码<span class="required-icon">*</span></nz-form-label>
+              <nz-form-control>
+              <input nz-input placeholder="请输入密码" formControlName="confirmPassword" type="password">
+                <nz-form-explain *ngIf="tsdbCreateForm.get('confirmPassword').dirty && tsdbCreateForm.get('confirmPassword').errors" class="from-help">
+                    两次输入的密码值不同！
+                </nz-form-explain>
+              </nz-form-control>
+            </nz-form-item>
+
+        </fieldset>
+
+        <!-- 实例名称 -->
+        <fieldset>
+          <nz-form-item>
+            <nz-form-label [nzSpan]="5" nzRequired>实例名称</nz-form-label>
+            <nz-form-control [nzSpan]="12">
+              <input formControlName="db_name" class="form-input" placeHolder="请输入云数据库名称" nz-input>
+              <nz-form-explain *ngIf="tsdbCreateForm.get('db_name').dirty && tsdbCreateForm.get('db_name').invalid || tsdbCreateForm.get('db_name').pending ">
+                <ng-container *ngIf="tsdbCreateForm.get('db_name').hasError('required')">
+                  请输入实例名称!
+                </ng-container>
+                <ng-container *ngIf="tsdbCreateForm.get('db_name').hasError('invalid')">
+                  输入的实例名称或长度不符合要求!
+                </ng-container>
+                <ng-container *ngIf="tsdbCreateForm.get('db_name').pending">
+                  验证中...
+                </ng-container>
+              </nz-form-explain>
+            </nz-form-control>
+            <p class="help-text">2-128个字符，只能以字母或汉字开头，仅包含字母、汉字、数字、”.“、”_“或”-“</p>
+          </nz-form-item>
+
+          <!-- 购买时长 -->
+          <nz-form-item *ngIf="tsdbCreateForm.value.billingMode == 'monthly'">
+            <nz-form-label>时长</nz-form-label>
+            <nz-form-control>
+              <nz-radio-group class="small-radio" [nzButtonStyle]="'solid'" formControlName="duration" (ngModelChange)="usePackage($event)">
+                <label *ngFor="let item of durationList" nz-radio-button [nzValue]="item.value">
+                  {{item.label}}
+                  <span *ngIf="item.value == tsdbCreateForm.value.duration">个月</span>
+                </label>
+                <label nz-radio-button nzValue="12">1年<span class="zhe-badge-s">83折</span></label>
+                <label nz-radio-button nzValue="24">2年<span class="zhe-badge-s">7折</span></label>
+                <label nz-radio-button nzValue="36">3年<span class="zhe-badge-s">7折</span></label>
+                <!-- <label nz-radio-button nzValue="12">1年</label>
+                <label nz-radio-button nzValue="24">2年</label>
+                <label nz-radio-button nzValue="36">3年</label> -->
+              </nz-radio-group>
+            </nz-form-control>
+            <nz-form-control>
+            <label nz-checkbox formControlName="isAutoRenew">自动续费</label>
+            <nzi-help [options]="{'title': '
+              <p>自动续费周期为1个月</p>'}"></nzi-help>
+          </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzSpan]="5" nzRequired>用户购买数量</nz-form-label>
+            <nz-form-control [nzSpan]="12">
+              <nz-tooltip [nzTitle]="'请输入一个整数'">
+              <nz-input-number [nzMin]="1" [nzMax]="1" [nzStep]="1" formControlName="purchase_num"></nz-input-number>
+               <!-- / {{current}} -->
+              <nz-form-explain *ngIf="tsdbCreateForm.get('purchase_num').dirty && tsdbCreateForm.get('purchase_num').invalid">
+                <ng-container *ngIf="tsdbCreateForm.get('purchase_num').hasError('required')">
+                  请输入购买数量！
+                </ng-container>
+                <ng-container *ngIf="tsdbCreateForm.get('purchase_num').hasError('invalid')">
+                  购买数量超出配额!
+                </ng-container>
+              </nz-form-explain>
+            </nz-tooltip>
+            </nz-form-control>
+            <p class="help-text">时序数据库 配额：{{tsdbCreateForm.get('purchase_num').value}}/{{current}}</p>
+          </nz-form-item>
+
+        </fieldset>
+
+      </form>
+    </div>
+
+    <div class="full-page-footer">
+      <div class="full-page-footer-content">
+          <div class="tip-info">
+          总费用：
+          <div class="highlight">￥{{ actualMoney || '--' }} </div>
+          <del class="help-text">￥{{ totalMoney || '--' }}  </del>
+          <span nz-popover [nzContent]="content" class="s-highlight">查看优惠</span>
+          <ng-template #content>
+              <div>满一年实例打83折</div>
+              <div>满两年实例打7折</div>
+              <div>满三年实例打7折</div>
+            </ng-template>
+          <!-- <p class="help-text">以上是参考价格，具体扣费请以账单为准。</p> -->
+          <div class="certification-tip" *ngIf="!isVerified">
+            <i class="anticon anticon-exclamation-circle"></i>
+            您尚未认证，开通服务需完成实名认证，<a href="/user/user-center/account-center/certification">去认证</a>
+          </div>
+          <div class="pull-right">
+            <button nz-button nzType="primary" (click)="submitForm()">立即购买</button>
+          </div>
+          </div>
+      </div>
+    </div>
+  </nz-spin>
+</div>

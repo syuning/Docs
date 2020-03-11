@@ -1,0 +1,125 @@
+<nzi-form [formName]="queryForm">
+  <form nz-form [formGroup]="queryForm">
+
+      <nz-form-item>
+        <nz-form-label>开始时间<span class="required-icon">*</span></nz-form-label>
+          <nz-form-control>
+              <nz-date-picker formControlName="startDate"></nz-date-picker>
+              <nz-time-picker style="margin-left: 10px" formControlName="startTime"></nz-time-picker>
+          </nz-form-control>
+        </nz-form-item>
+
+      <nz-form-item>
+          <nz-form-label>结束时间<span class="required-icon">*</span></nz-form-label>
+            <nz-form-control>
+              <nz-date-picker formControlName="endDate"></nz-date-picker>
+              <nz-time-picker style="margin-left: 10px" formControlName="endTime"></nz-time-picker>
+            </nz-form-control>
+      </nz-form-item>
+      
+      <hr>
+      
+      <nz-form-item>
+          <nz-form-label>查询模版名称<span class="required-icon">*</span></nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="templateName" placeholder="请输入查询面板名称">
+          </nz-form-control>
+          <p class="help-text"  *ngIf="queryForm.get('templateName').dirty">8-12个字符，必须包含大小写字母和数字，支持英文特殊字符!"$%+,/:;<=>?@[]^_`~</p>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-label>度量<span class="required-icon">*</span></nz-form-label>
+            <nz-form-control>
+              <!-- <input nz-input formControlName="metric"> -->
+              <nz-select formControlName="metric" id="metric" nzPlaceHolder="请选择度量">
+                <nz-option *ngFor="let option of metrics" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+              </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-label>空间聚合函数<span class="required-icon">*</span></nz-form-label>
+            <nz-form-control>
+              <nz-radio-group formControlName="aggFunc">
+                  <label nz-radio nzValue="avg">平均数/avg</label>
+                  <label nz-radio nzValue="count">计数/count</label>
+                  <label nz-radio nzValue="sum">求和/sum</label>
+                  <label nz-radio nzValue="max">最大值/max</label>
+                  <label nz-radio nzValue="min">最小值/min</label>
+                  <label nz-radio nzValue="none">无/none</label>
+                </nz-radio-group>
+            </nz-form-control>
+        </nz-form-item>
+
+        <hr>
+
+        <nz-form-item>
+            <nz-form-label>标签（Tags）<span class="required-icon">*</span></nz-form-label>
+            <nz-form-control>
+                <ng-container *ngFor="let filter of filters">
+                        <nz-select nzAllowClear style="padding-top:5px;width: 85px;margin-right: 10px;" [formControlName]="filter.name" nzPlaceHolder="标签名称">
+                          <!-- <nz-option *ngFor="let option of tags" [nzLabel]="option" [nzValue]="option"></nz-option> -->
+                          <nz-option [nzLabel]="'city'" [nzValue]="'city'" ></nz-option>
+                        </nz-select>
+                        <nz-select nzAllowClear nzMode="tags" style="width: 210px; margin-right: 10px;" nzPlaceHolder="标签值" [formControlName]="filter.value">
+                            <nz-option *ngFor="let option of cities" [nzLabel]="option" [nzValue]="option"> </nz-option>
+                          </nz-select>
+                        <i class="anticon anticon-close-circle-o" (click)="removeFilter(filter,$event)"></i>
+                  </ng-container>
+                <button nz-button nzType="default" (click)="addFilter($event)">+ 添加</button>
+            </nz-form-control>
+        </nz-form-item>
+
+        <hr>
+
+        <nz-form-item>
+            <nz-form-label>已添加分组<span class="required-icon">*</span></nz-form-label>
+            <nz-form-control>
+              <nz-select nzMode="tags" formControlName="groupBy" id="groupBy" nzPlaceHolder="请选择分组标签">
+                <nz-option *ngFor="let option of tags" [nzLabel]="option" [nzValue]="option"></nz-option>
+              </nz-select>
+            <!-- <nz-tag *ngFor="let tag of groupByTags; let i = index" [nzMode]="'closeable'" (nzAfterClose)="handleClose(tag)" > {{tag}} </nz-tag>
+            <button *ngIf="queryForm.get('groupBy').value" nz-button nzType="default" (click)="addTag(queryForm.get('groupBy').value)">+ 添加</button> -->
+            </nz-form-control>
+        </nz-form-item>
+
+        <hr>
+
+        <nz-form-item>
+            <nz-form-label>降采样<span class="required-icon">*</span></nz-form-label>
+            <nz-form-control>
+              <nz-switch formControlName="downSampling" nzCheckedChildren="开" nzUnCheckedChildren="关"></nz-switch>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item *ngIf="queryForm.get('downSampling').value">
+            <nz-form-label>降采样聚合函数<span class="required-icon">*</span></nz-form-label>
+            <nz-form-control>
+              <nz-radio-group formControlName="downSamplingFunc">
+                  <label nz-radio nzValue="avg">平均数/avg</label>
+                  <label nz-radio nzValue="count">计数/count</label>
+                  <label nz-radio nzValue="sum">求和/sum</label>
+                  <label nz-radio nzValue="max">最大值/max</label>
+                  <label nz-radio nzValue="min">最小值/min</label>
+                  <label nz-radio nzValue="first">开头值/first</label>
+                </nz-radio-group>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item *ngIf="queryForm.get('downSampling').value">
+            <nz-form-label>采样时间间隔<span class="required-icon">*</span></nz-form-label>
+            <nz-form-control>
+                <nz-radio-group formControlName="downSamplingInterval">
+                    <label nz-radio nzValue="1">1分钟</label>
+                    <label nz-radio nzValue="5">5分钟</label>
+                    <label nz-radio nzValue="15">15分钟</label>
+                    <label nz-radio nzValue="30">30分钟</label>
+                    <label nz-radio nzValue="60">1小时</label>
+                    <label nz-radio nzValue="720">12小时</label>
+                    <label nz-radio nzValue="1440">24小时</label>
+                  </nz-radio-group>
+            </nz-form-control>
+        </nz-form-item>
+
+  </form>
+</nzi-form>

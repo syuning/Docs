@@ -1,0 +1,23 @@
+[  {
+    "status": "unknown",
+    "label": "未知",
+    "color": "gray"
+  },
+  {
+    "status": "SUCCESS",
+    "label": "已完成",
+    "color": "green"
+  },
+  {
+    "status": "RUNNING",
+    "label": "清理中",
+    "color": "blue",
+    "processing": true
+  },
+  {
+    "status": "PENDING_RUNNING",
+    "label": "等待清理",
+    "color": "yellow",
+    "processing": true
+  }
+]

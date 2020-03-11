@@ -1,0 +1,221 @@
+<nz-alert nzType="info" nzBanner nzShowIcon="false" [nzDescription]='innerTemplate' [ngStyle]="{ 'marginBottom': '11px' }">
+  <ng-template #innerTemplate>温馨提示：示范数据库含有2015年全年北京、上海、广州3个城市每一个空气监测站的每一天的早晨8点采集的温度、湿度、风力、PM2.5、紫外线指数等气象模拟数据（非真实数据），每一个数据点所属城市的名称、邮编，以及该监测站的地理位置（经纬度）等标签，方便您快速体验、理解时序数据库各项查询、聚合及图表展示功能.（
+  <a (click)="sampleData()">下载示例数据</a>
+  ）
+</ng-template>
+</nz-alert>
+<div class="table-top table-operations clearfix">
+<div class="pull-left">
+    <button nz-button nzType="primary" (click)="importSampleData()" style="margin-right: 10px">导入示例数据</button>
+</div>
+<div class="pull-right">
+    <button nz-button (click)="refreshData()" style="top: -1px; margin-top: -1px" nz-popover [nzContent]="'刷新'">
+        <i class="anticon anticon-reload"></i>
+      </button>
+  </div>
+</div>
+
+<nz-table #nzTable [nzData]="data" [nzShowSizeChanger]="true" [nzLoading]="loading" nzBordered>
+  <thead>
+    <tr>
+      <th [nzWidth]="'20%'">
+        <span>任务名称</span>
+      </th>
+      <th [nzWidth]="'10%'">
+        <span>数据点数量</span>
+      </th>
+      <th [nzWidth]="'10%'">
+        <span>状态</span>
+      </th>
+      <th [nzWidth]="'15%'">
+        <span>启动时间</span>
+      </th>
+      <th [nzWidth]="'15%'">
+        <span>结束时间</span>
+      </th>
+      <th [nzWidth]="'10%'">
+        <span>操作</span>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of nzTable.data">
+      <td><a nz-tooltip (click)="showDetailModal(mTitle, mContent, mFooter)">{{data.name}}</a></td>
+        <ng-template #mTitle>
+          <span>任务详情</span>
+        </ng-template>
+        <ng-template #mContent>
+                <fieldset>
+                  <div class="form-static">
+                    <div class="form-group">
+                      <label class="control-label col-em-8">任务名称：</label>
+                      <div class="col-em-offset-8">
+                        <p class="form-control-static">{{data.name || '--'}}</p>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-em-8">数据库名称：</label>
+                      <div class="col-em-offset-8">
+                        <p class="form-control-static">{{data.tsdb_name || '--'}}</p>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-em-8">状态：</label>
+                      <div class="col-em-offset-8">
+                        <p class="form-control-static"><span [innerHtml]="data.status | status: 'importtaskstatus' | async"></span></p>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-em-8">导入文件地址：</label>
+                      <div class="col-em-offset-8">
+                        <p class="form-control-static">{{data.file_path || '--'}}</p>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-em-8">文件格式：</label>
+                      <div class="col-em-offset-8">
+                        <p class="form-control-static">{{data.file_type || '--'}}</p>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-em-8">文件编码：</label>
+                      <div class="col-em-offset-8">
+                        <p class="form-control-static">{{data.encoding || '--'}}</p>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-em-8">导入点数：</label>
+                      <div class="col-em-offset-8">
+                        <p class="form-control-static">{{data.data_points_num || '--'}}</p>
+                      </div>
+                    </div>
+                    <!-- <div class="form-group">
+                      <label class="control-label col-em-8">标签详情：</label>
+                      <div class="col-em-offset-8">
+                        <p class="form-control-static">{{data.tag_filters || '--'}}</p>
+                      </div>
+                    </div> -->
+                    <div class="form-group">
+                        <label class="control-label col-em-8">未导入点数：</label>
+                        <div class="col-em-offset-8">
+                          <p *ngIf="data.failed_dps >= 0" class="form-control-static">{{data.failed_dps}}</p>
+                          <p *ngIf="data.failed_dps < 0" class="form-control-static"> -- </p>
+                        </div>
+                      </div>
+                    <div class="form-group">
+                      <label class="control-label col-em-8">启动时间：</label>
+                      <div class="col-em-offset-8">
+                        <p class="form-control-static">{{data.create_time|date:'y-MM-dd HH:mm:ss' || '--'}}</p>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-em-8">结束时间：</label>
+                      <div class="col-em-offset-8">
+                        <p *ngIf="data.status==='SUCCESS'" class="form-control-static">
+                          {{data.last_update_time|date:'y-MM-dd HH:mm:ss'}}
+                        </p>
+                        <p *ngIf="data.status!=='SUCCESS'" class="form-control-static">
+                            --
+                        </p>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-em-8">错误信息：</label>
+                      <div class="col-em-offset-8">
+                        <p class="form-control-static">{{data.error || '--'}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+        </ng-template>
+        <ng-template #mFooter>
+          <button nz-button nzType="primary" (click)="detailModal.destroy()">关闭</button>
+        </ng-template>
+      <td>{{data.data_points_num || '--'}}</td>
+      <td><span [innerHtml]="data.status | status: 'importtaskstatus' | async"></span></td>
+      <td>{{data.create_time|date:'y-MM-dd HH:mm:ss' || '--'}}</td>
+      <td>
+        <!-- {{data.last_update_time|date:'y-MM-dd HH:mm:ss'}} -->
+          <span *ngIf="data.status==='SUCCESS'" class="form-control-static">
+              {{data.last_update_time|date:'y-MM-dd HH:mm:ss' || '--'}}
+          </span>
+            <span *ngIf="data.status!=='SUCCESS'" class="form-control-static">
+                --
+            </span>
+      </td>
+      <td>
+        <a nz-tooltip (click)="showDetailModal(mTitle, mContent, mFooter)">查看详情</a>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<nz-modal [(nzVisible)]="isExportModalVisible" nzTitle="数据导出" [nzContent]="modalContent" [nzFooter]="modalFooter"
+  (nzOnCancel)="handleExportCancel()" (nzOnOk)="handleExportOk()" [nzOkLoading]="isExportOkLoading">
+  <ng-template #modalContent>
+    <form nz-form [formGroup]="exportForm" (ngSubmit)="submitForm()">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>导出路径</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="exportPath" placeholder="数据导出路径">
+          <nz-form-explain *ngIf="exportForm.get('exportPath').dirty && exportForm.get('exportPath').errors || exportForm.get('exportPath').pending ">
+            <ng-container *ngIf="exportForm.get('exportPath').hasError('required')">
+              请输入一个合法的路径！
+            </ng-container>
+            <ng-container *ngIf="exportForm.get('exportPath').pending">
+              正在验证……
+            </ng-container>
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>度量名称</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="metricName" placeholder="度量名称">
+          <nz-form-explain *ngIf="exportForm.get('metricName').dirty && exportForm.get('metricName').errors">
+            <ng-container *ngIf="exportForm.get('metricName').hasError('required')">
+              请输入度量名称！
+            </ng-container>
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>时间范围</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24">
+          <nz-range-picker formControlName="timeRange"></nz-range-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>标签</nz-form-label>
+        <nz-form-control>
+          <ng-container *ngFor="let tagFilter of tagFilters">
+            <nz-select nzAllowClear style="padding-right:0px; padding-top:10px;width: 135px;" [formControlName]="tagFilter.type"
+              nzPlaceHolder="标签类型">
+              <nz-option *ngFor="let option of filterTypes" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+            </nz-select>
+            <input style="padding-right:0px; padding-top:0px; width: 90px; margin-left: 10px;" [formControlName]="tagFilter.name"
+              placeHolder="标签名称" nz-input>
+            <input style="margin-right:0px; padding-top:0px; width: 85px; margin-left: 10px; margin-right: 10px"
+              [formControlName]="tagFilter.value" placeHolder="标签值" nz-input>
+            <i class="anticon anticon-close-circle-o" (click)="removeTagFilter(tagFilter,$event)"></i>
+          </ng-container>
+          <div class="add-action">
+            <i class="anticon anticon-plus-square" (click)="addTagFilter($event)"></i>
+            添加标签过滤
+            <nzi-help [options]="{'title': '<p>分组是否根据标签值进行分组</p><p>选择过滤器的类型</p><p>输入标签名称</p><p>输入标签值(表达式)</p>'}">
+            </nzi-help>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+    </form>
+  </ng-template>
+
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="handleExportCancel()">取消</button>
+    <button nz-button nzType="primary" (click)="handleExportOk()" [disabled]="!exportForm.valid" [nzLoading]="isExportOkLoading">确认</button>
+  </ng-template>
+</nz-modal>

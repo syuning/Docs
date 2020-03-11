@@ -1,0 +1,174 @@
+<div class="page-title">
+  <!-- <nzi-breadcrumb detailName="数据导入"></nzi-breadcrumb> -->
+  <nz-breadcrumb>
+    <div class="light"></div><div class="dark"></div>
+    <nz-breadcrumb-item><a [routerLink]="['/tsdb/list']">时序数据库</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item>数据导入</nz-breadcrumb-item>
+  </nz-breadcrumb>
+  <div class="page-title-opt pull-right"></div>
+</div>
+<p class="media-desc">
+  示范数据库含有2015年全年北京、上海、广州3个城市每一个空气监测站的每一天的早晨8点采集的温度、湿度、风力、PM2.5、紫外线指数等气象模拟数据（非真实数据），每一个数据点所属城市的名称、邮编，以及该监测站的地理位置（经纬度）等标签，方便您快速体验、理解时序数据库各项查询、聚合及图表展示功能.（
+  <a (click)="sampleData()">下载示例数据</a>
+  ）
+</p>
+
+<!-- <button nz-button  [nzType]="'primary'" (click)="showConfirm()">导入示例数据</button> -->
+<button nz-button nzType="primary" (click)="importSampleData()" style="margin-right: 10px">导入示例数据</button>
+<!-- <button nz-button [nzType]="'primary'" (click)="showExportModal()">导出数据</button> -->
+<hr>
+
+<div>
+  <legend>
+    <i class="icon-square"></i>
+    任务记录：
+  </legend>
+</div>
+
+<nz-table #nzTable [nzData]="data" [nzShowSizeChanger]="true" [nzLoading]="loading" nzBordered>
+  <thead>
+    <tr>
+      <th [nzWidth]="'20%'">
+        <span>任务名称</span>
+      </th>
+      <!-- <th [nzWidth]="'20%'">
+        <span>文件地址</span>
+      </th> -->
+      <th [nzWidth]="'10%'">
+        <span>数据点数量</span>
+      </th>
+      <th [nzWidth]="'10%'">
+        <span>状态</span>
+      </th>
+      <th [nzWidth]="'15%'">
+        <span>启动时间</span>
+      </th>
+      <th [nzWidth]="'15%'">
+        <span>结束时间</span>
+      </th>
+      <th [nzWidth]="'10%'">
+        <span>操作</span>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of nzTable.data">
+      <td>
+        <a nz-tooltip routerLink="{{data.id}}">{{data.name}}</a>
+      </td>
+      <!-- <td>{{data.file_path}}</td> -->
+      <td>{{data.data_points_num}}</td>
+      <td>{{data.status}}</td>
+      <td>{{data.create_time|date:'y-MM-dd HH:mm:ss'}}</td>
+      <td>{{data.last_update_time|date:'y-MM-dd HH:mm:ss'}}</td>
+      <td>
+        <a nz-tooltip routerLink="{{data.id}}">查看详情</a>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<!-- <nz-modal [(nzVisible)]="isImportVisible" nzTitle="数据导入" [nzContent]="modalImpportContent" [nzFooter]="modalImpportFooter"
+  (nzOnCancel)="handleImportCancel()" (nzOnOk)="handleImportOk()" [nzOkLoading]="isImportOkLoading">
+  <ng-template #modalImpportContent>
+    <form nz-form [formGroup]="exportForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>数据点数量</nz-form-label>
+
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="dataPointNum" placeholder="请输入数据点数量，如400">
+          <nz-form-explain *ngIf="exportForm.get('dataPointNum').dirty && exportForm.get('dataPointNum').errors">
+            <ng-container *ngIf="exportForm.get('dataPointNum').hasError('required')">
+              请输入一个整数！
+            </ng-container>
+          </nz-form-explain>
+        </nz-form-control>
+        <nzi-help [options]="{'title': '<p>数据点(data point):“1个metric+1个field(可选)+1个timestamp+1个value + n个 tag(n>=1)”唯一定义了一个数据点。</p><p>当写入的metric、field、timestamp、n个tag都相同时，后写入的value会覆盖先写入的value。</p>'}">
+        </nzi-help>
+      </nz-form-item>
+    </form>
+  </ng-template>
+  <ng-template #modalImpportFooter>
+    <button nz-button nzType="default" (click)="handleImportCancel()">取消</button>
+    <button nz-button nzType="primary" (click)="handleImportOk()" [nzLoading]="isImportOkLoading">确认</button>
+  </ng-template>
+</nz-modal> -->
+
+<nz-modal [(nzVisible)]="isExportModalVisible" nzTitle="数据导出" [nzContent]="modalContent" [nzFooter]="modalFooter"
+  (nzOnCancel)="handleExportCancel()" (nzOnOk)="handleExportOk()" [nzOkLoading]="isExportOkLoading">
+  <ng-template #modalContent>
+    <form nz-form [formGroup]="exportForm" (ngSubmit)="submitForm()">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>导出路径</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="exportPath" placeholder="数据导出路径">
+          <nz-form-explain *ngIf="exportForm.get('exportPath').dirty && exportForm.get('exportPath').errors || exportForm.get('exportPath').pending ">
+            <ng-container *ngIf="exportForm.get('exportPath').hasError('required')">
+              请输入一个合法的路径！
+            </ng-container>
+            <ng-container *ngIf="exportForm.get('exportPath').pending">
+              正在验证……
+            </ng-container>
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>指标名称</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="metricName" placeholder="指标名称">
+          <nz-form-explain *ngIf="exportForm.get('metricName').dirty && exportForm.get('metricName').errors">
+            <ng-container *ngIf="exportForm.get('metricName').hasError('required')">
+              请输入指标名称！
+            </ng-container>
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>时间范围</nz-form-label>
+        <!-- <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'"> -->
+        <!-- <nz-tab [nzTitle]="'绝对时间范围'"> -->
+        <nz-form-control [nzSm]="16" [nzXs]="24">
+          <nz-range-picker formControlName="timeRange"></nz-range-picker>
+        </nz-form-control>
+        <!-- </nz-tab> -->
+        <!-- <nz-tab [nzTitle]="'相对时间范围'"> -->
+        <!-- <nz-form-control [nzSm]="16" [nzXs]="24">
+                              <nz-date-picker nzShowTime formControlName="timeRange"></nz-date-picker>
+                            </nz-form-control> -->
+        <!-- </nz-tab> -->
+        <!-- </nz-tabset> -->
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>标签</nz-form-label>
+        <nz-form-control>
+          <ng-container *ngFor="let tagFilter of tagFilters">
+            <nz-select style="padding-right:0px; padding-top:10px;width: 135px;" [formControlName]="tagFilter.type"
+              nzPlaceHolder="标签类型">
+              <nz-option *ngFor="let option of filterTypes" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+            </nz-select>
+            <input style="padding-right:0px; padding-top:0px; width: 90px; margin-left: 10px;" [formControlName]="tagFilter.name"
+              placeHolder="标签名称" nz-input>
+            <input style="margin-right:0px; padding-top:0px; width: 85px; margin-left: 10px; margin-right: 10px"
+              [formControlName]="tagFilter.value" placeHolder="标签值" nz-input>
+            <i class="anticon anticon-close-circle-o" (click)="removeTagFilter(tagFilter,$event)"></i>
+          </ng-container>
+          <div class="add-action">
+            <i class="anticon anticon-plus-square" (click)="addTagFilter($event)"></i>
+            添加标签过滤
+            <nzi-help [options]="{'title': '<p>分组是否根据标签值进行分组</p><p>选择过滤器的类型</p><p>输入标签名称</p><p>输入标签值(表达式)</p>'}">
+            </nzi-help>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+    </form>
+  </ng-template>
+
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="handleExportCancel()">取消</button>
+    <button nz-button nzType="primary" (click)="handleExportOk()" [disabled]="!exportForm.valid" [nzLoading]="isExportOkLoading">确认</button>
+  </ng-template>
+</nz-modal>

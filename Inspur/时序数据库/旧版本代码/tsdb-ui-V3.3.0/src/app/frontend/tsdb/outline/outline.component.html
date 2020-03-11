@@ -1,0 +1,72 @@
+<div class="page-title">
+  <h4>概览</h4>
+</div>
+<div class="border overview-container">
+  <div class="overview-bar-title" nz-row>
+    <!-- <div class="pull-left ecs-overview-bar" nz-col nzSpan="16"> -->
+      <div class="overview-statistics">
+        <span class="overview-item-icon"><i class="fas fa-server"></i></span>
+        <span>时序数据库</span>
+      </div>
+      <div class="pull-left info-bar">
+        <div class="overview-num">
+          <span class="overview-number highlight-green">{{resourcesAll.total}}</span>
+        </div>
+        <div class="overview-name">总数量</div>
+      </div>
+      <div class="pull-left info-bar">
+        <div class="overview-num">
+          <span class="overview-number highlight-red">--</span>
+        </div>
+        <div class="overview-name">即将过期</div>
+      </div>
+      <div class="pull-left info-bar">
+        <div class="overview-num">
+          <span class="overview-number highlight-red">--</span>
+        </div>
+        <div class="overview-name">已过期</div>
+      </div>
+      <div class="pull-left info-bar">
+        <div class="overview-num">
+          <span class="overview-number highlight-green">{{resourcesAll.running}}</span>
+        </div>
+        <div class="overview-name">运行中</div>
+      </div>
+    <!-- </div> -->
+  </div>
+
+  <div>区域分布资源<button nz-button (click)="getOutlineInfo() "><i class="anticon anticon-reload"></i></button></div>
+
+  <div class="row">
+    <ng-template ngFor let-item [ngForOf]="resourcesByRegions" let-i="index">
+      <div class="col-sm-6">
+        <nz-card nzTitle="{{resourcesByRegions[i].regionName}}">
+          <div class="info-statistics">
+            <i class="fas fa-server"></i>
+            <span class="icon-text">时序数据库</span>
+            <span class="card-body-title-num">{{resourcesByRegions[i].total}}</span>
+          </div>
+          <div class="info">
+            <div class="pull-left info-bar">
+              <div class="info-number highlight-green">{{resourcesByRegions[i].running}}</div>
+              <div class="info-name">运行中</div>
+            </div>
+            <div class="pull-left info-bar">
+              <div class="info-number">{{resourcesByRegions[i].recentPurchase}}</div>
+              <div class="info-name">近期创建</div>
+            </div>
+            <div class="pull-left info-bar">
+              <div class="info-number highlight-red">--</div>
+              <div class="info-name">即将过期</div>
+            </div>
+            <div class="pull-left info-bar">
+              <div class="info-number highlight-red">--</div>
+              <div class="info-name">已过期</div>
+            </div>
+          </div>
+        </nz-card>
+      </div>
+    </ng-template>
+  </div>
+
+</div>
