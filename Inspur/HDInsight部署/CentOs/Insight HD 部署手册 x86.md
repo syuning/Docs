@@ -651,6 +651,8 @@ env | grep jdk 查看jdk
 		grant all privileges on hive.* to 'hive'@'%' identified by 'bigdata';
 		flush privileges;
 
+必须重新执行 ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java-5.1.48.jar
+
 	(2) Oozie组件:
 
 		create database oozie;

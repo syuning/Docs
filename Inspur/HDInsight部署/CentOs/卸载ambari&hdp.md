@@ -4,7 +4,7 @@ yum remove -y ambari-infra-solr-client-2.7.3.0-139.noarch ambari-infra-solr-clie
 # 卸载HDP
 yum remove -y *3_1_0_0_78*
 
-yum remove -y hdp-select.noarch bigtop-jsvc.x86_64 hdp-select.noarch bigtop-jsvc.x86_64
+yum remove -y ambari-agent.x86_64 ambari-server.x86_64 hdp-select.noarch bigtop-jsvc.x86_64 hdp-select.noarch bigtop-jsvc.x86_64 smartsense-hst.x86_64
 
 rm -rf /var/hdp
 
