@@ -296,6 +296,10 @@ priority=1
 
 	```tar -zxvf jdk-1.8.0-232.tar.gz```
 
+	添加jce包：
+
+	```cp /usr/jdk64/jdk-1.8.0-232/jre/lib/security/policy/unlimited/* /usr/jdk64/jdk-1.8.0-232/jre/lib/security/```
+
 4. 配置环境变量
 
 	编辑环境变量配置文件:
