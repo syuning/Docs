@@ -11,112 +11,112 @@
 ### 2.1 准备环境
 
 1. 安装源： 
-	http://10.221.129.22/InspurHD1.0/
+    http://10.221.129.22/InspurHD1.0/
 
 2. 资源列表：
-	10.221.129.30 root/Bigdata123?
+    10.221.129.30 root/Bigdata123?
 
 #### 2.1.1 修改主机名 (集群所有节点均需执行此操作)
 
 1. 通过Shell连接主机
 
-	```ssh root@22 10.221.129.30```
+    ```ssh root@22 10.221.129.30```
 
-	![登录主机](/pic/1登录主机.png)
+    ![登录主机](/pic/1登录主机.png)
 
 2. 修改主机名，如:  
 
-	```hostnamectl set-hostname manager.bigdata.com```
+    ```hostnamectl set-hostname manager.bigdata.com```
 
 3. 查看主机名:
 
-	```cat /etc/hostname```
+    ```cat /etc/hostname```
 
-	![修改主机名](/pic/2修改主机名.png)
+    ![修改主机名](/pic/2修改主机名.png)
 
 #### 2.1.2 修改ip与域名的对应关系 (集群所有节点均需执行此操作)
 
-1. 运行命令	
-	```vi /etc/hosts```
+1. 运行命令    
+    ```vi /etc/hosts```
 
-	添加集群内所有节点的ip以及对应主机名：
+    添加集群内所有节点的ip以及对应主机名：
 
-	```
-	10.221.129.30 manager.bigdata.com manager
-	10.221.129.31 master1.bigdata.com master1
-	10.221.129.32 worker1.bigdata.com worker1
-	```
+    ```
+    10.221.129.30 manager.bigdata.com manager
+    10.221.129.31 master1.bigdata.com master1
+    10.221.129.32 worker1.bigdata.com worker1
+    ```
 
 2. 查看修改是否成功:
-	```cat /etc/hosts```
+    ```cat /etc/hosts```
 
-	
-	![修改hosts文件](/pic/3修改hosts文件.png)
+    
+    ![修改hosts文件](/pic/3修改hosts文件.png)
 
 3. 将修改好的配置文件分发到集群中其他节点: 
-	```
+    ```
     
     scp /etc/hosts root@manager.bigdata.com:/etc
     scp /etc/hosts root@master1.bigdata.com:/etc
     scp /etc/hosts root@worker1.bigdata.com:/etc
     ...
     
-	```
+    ```
 
 4. 运行 ```reboot``` 命令重启，之后重新登录
 
-	![重启并重新登录](/pic/4重启并重新登录.png)
+    ![重启并重新登录](/pic/4重启并重新登录.png)
 
 #### 2.1.3 关闭seLinux (集群所有节点均需执行此操作)
 
 1. 暂时关闭:
-	
-	```setenforce 0```
+    
+    ```setenforce 0```
 
 2. 永久关闭:
-	
-	```vi /etc/selinux/config```
+    
+    ```vi /etc/selinux/config```
 
-	SELinux设置为:
+    SELinux设置为:
 
-	```SELINUX=disabled```
+    ```SELINUX=disabled```
 
-	![关闭seLinux](/pic/5关闭seLinux.png)
+    ![关闭seLinux](/pic/5关闭seLinux.png)
 
 #### 2.1.4 关闭Linux透明大页 (集群所有节点均需执行此操作)
 
 1. 暂时关闭:
 
-	```echo never > /sys/kernel/mm/transparent_hugepage/enabled```
+    ```echo never > /sys/kernel/mm/transparent_hugepage/enabled```
 
 2. 开机关闭: 
 
-	```vi /etc/rc.local```
+    ```vi /etc/rc.local```
 
-	加入代码:
-	```
-	if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
-		echo never > /sys/kernel/mm/transparent_hugepage/enabled
-	fi
-	```
+    加入代码:
+    ```
+    if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
+        echo never > /sys/kernel/mm/transparent_hugepage/enabled
+    fi
+    ```
 
-	![关闭透明大页](/pic/6关闭透明大页1.png)
+    ![关闭透明大页](/pic/6关闭透明大页1.png)
 
 3. 查看透明大页是否已经关闭:
 
-	```cat /sys/kernel/mm/transparent_hugepage/enabled```
+    ```cat /sys/kernel/mm/transparent_hugepage/enabled```
 
-	显示如下内容说明透明大页已经关闭:
+    显示如下内容说明透明大页已经关闭:
 
-	```always madvise [never]```
+    ```always madvise [never]```
 
-	![关闭透明大页](/pic/6关闭透明大页2.png)
+    ![关闭透明大页](/pic/6关闭透明大页2.png)
 
 #### 2.1.5 关闭防火墙 (集群所有节点均需执行此操作)
 
 1. 禁用防火墙:
     
-	``` systemctl stop firewalld.service```
+    ``` systemctl stop firewalld.service```
     
 2. 开机关闭:
     
@@ -124,9 +124,9 @@
 
 3. 查看防火墙状态:
 
-	``` firewall-cmd --state ```
+    ``` firewall-cmd --state ```
 
-	![禁用防火墙](/pic/7禁用防火墙.png)
+    ![禁用防火墙](/pic/7禁用防火墙.png)
 
 #### 2.1.6 打通SSH (mannager节点需执行此操作)
 
@@ -134,18 +134,18 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 
 1. Shell登录Manager节点
 
-	```ssh root@22 10.221.129.30```
+    ```ssh root@22 10.221.129.30```
 
 2. 打通ambari-server端到集群中所有节点的ssh（必须打通自身，否安装hdp时会失败）:
 
-	```
-	ssh-keygen
-	ssh-copy-id root@manager.bigdata.com
-	ssh-copy-id root@master1.bigdata.com
-	ssh-copy-id root@worker1.bigdata.com
-	```
+    ```
+    ssh-keygen
+    ssh-copy-id root@manager.bigdata.com
+    ssh-copy-id root@master1.bigdata.com
+    ssh-copy-id root@worker1.bigdata.com
+    ```
 
-	![打通ssh](/pic/8打通ssh.png)
+    ![打通ssh](/pic/8打通ssh.png)
 
 ### 2.2 源配置 (集群所有节点均需执行此操作)
 
@@ -206,7 +206,7 @@ priority=1
 #### 2.2.2 源更新
 1. 运行命令:
 
-	```yum clean all```
+    ```yum clean all```
         ```yum update```
 
 
@@ -231,37 +231,37 @@ priority=1
 
 1. manager节点:
 
-	```
+    ```
     restrict 192.168.6.0 mask 255.255.255.0 nomodify notrap 
     server 192.168.0.1 prefer
     server 127.127.1.0
     fudge 127.127.1.0 stratum 8
 
-	```
+    ```
 
-	> 参数说明:
+    > 参数说明:
 
-	```192.168.6.0``` 和 ```255.255.255.0``` 是集群所在网段的网关和子网掩码。
+    ```192.168.6.0``` 和 ```255.255.255.0``` 是集群所在网段的网关和子网掩码。
 
-	```192.168.0.1``` 是主时钟源的IP地址，请根据实际情况替换，```prefer``` 表示优先选择的时钟源。
+    ```192.168.0.1``` 是主时钟源的IP地址，请根据实际情况替换，```prefer``` 表示优先选择的时钟源。
 
 2. master节点:
 
-	```
+    ```
     restrict 192.168.6.0 mask 255.255.255.0 nomodify notrap 
     server manager.bigdata.com prefer
     server 127.127.1.0
     fudge 127.127.1.0 stratum 9
 
-	```
+    ```
 
 3. worker节点和slave节点:
 
-	```
-	server manager.bigdata.com prefer
-	server master1.bigdata.com
-	server master2.bigdata.com
-	```
+    ```
+    server manager.bigdata.com prefer
+    server master1.bigdata.com
+    server master2.bigdata.com
+    ```
 
 #### 2.3.3 使master、worker、slave节点从manager节点同步时间
 
@@ -285,49 +285,49 @@ priority=1
 
 1. 创建并切换到jdk64文件夹
 
-	```mkdir /usr/jdk64```
-	```cd /usr/jdk64```
+    ```mkdir /usr/jdk64```
+    ```cd /usr/jdk64```
 
 2. 获取openjdk包:
 
-	```wget http://10.221.129.22/InspurHD1.0/jdk/jdk-1.8.0-232.tar.gz```
+    ```wget http://10.221.129.22/InspurHD1.0/jdk/jdk-1.8.0-232.tar.gz```
 
 3. 解压openjdk包:
 
-	```tar -zxvf jdk-1.8.0-232.tar.gz```
+    ```tar -zxvf jdk-1.8.0-232.tar.gz```
 
-	添加jce包：
+    添加jce包：
 
-	```cp /usr/jdk64/jdk-1.8.0-232/jre/lib/security/policy/unlimited/* /usr/jdk64/jdk-1.8.0-232/jre/lib/security/```
+    ```cp /usr/jdk64/jdk-1.8.0-232/jre/lib/security/policy/unlimited/* /usr/jdk64/jdk-1.8.0-232/jre/lib/security/```
 
 4. 配置环境变量
 
-	编辑环境变量配置文件:
+    编辑环境变量配置文件:
 
-	```vi /etc/profile```
+    ```vi /etc/profile```
 
-	添加内容:
+    添加内容:
 
-	```
-	export JAVA_HOME=/usr/jdk64/jdk-1.8.0-232
-	CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/lib/mysql-connector-java.jar
-	export PATH=$PATH:$JAVA_HOME/bin
-	```
+    ```
+    export JAVA_HOME=/usr/jdk64/jdk-1.8.0-232
+    CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/lib/mysql-connector-java.jar
+    export PATH=$PATH:$JAVA_HOME/bin
+    ```
 
 5. 运行命令更新环境变量:
 
-	```source /etc/profile```
+    ```source /etc/profile```
 
 ### 2.5 安装JDBC驱动文件 (集群所有节点均需执行此操作)
 
 1. 下载mysql-connector-java-5.1.47.jar
 
-	```cd /usr/share/java```
-	```wget http://10.221.129.22/InspurHD1.0/jdk/mysql-connector-java-5.1.48.jar```
+    ```cd /usr/share/java```
+    ```wget http://10.221.129.22/InspurHD1.0/jdk/mysql-connector-java-5.1.48.jar```
 
 2. 查看文件:
 
-	```ll```
+    ```ll```
     /usr/share/java/mysql-connector-java-5.1.48.jar
 
 ### 2.7 安装配置MySQL (数据库节点需执行此操作，此处manager为主节点)
@@ -375,23 +375,23 @@ priority=1
 
 2. 启动数据库:
 
-	```systemctl start mysql.service```
+    ```systemctl start mysql.service```
 
 3. 查看是否启动成功:
 
-	```systemctl status mysql.service```
+    ```systemctl status mysql.service```
 
 4. mysql5.7安装时会提示设置root密码，默认密码为空。将root用户密码修改为bigdata:
 
-	```mysql -uroot -p```
-	```use mysql;```
-	```UPDATE user SET Password = 'bigdata' WHERE User = 'root';```
+    ```mysql -uroot -p```
+    ```use mysql;```
+    ```UPDATE user SET Password = 'bigdata' WHERE User = 'root';```
     ```FLUSH PRIVILEGES; ```
 
 5. 授权root用户在其他节点访问数据库的权限:
 
-	```GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'bigdata' WITH GRANT OPTION;```
-	```FLUSH PRIVILEGES;```
+    ```GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'bigdata' WITH GRANT OPTION;```
+    ```FLUSH PRIVILEGES;```
 
 6. 修改/etc/my.cnf配置文件，删除或注释掉skip-grant-tables并重启数据库:
 
@@ -399,31 +399,31 @@ priority=1
     
     ```#skip-grant-tables```
     
-	```systemctl restart mysql.service```
+    ```systemctl restart mysql.service```
 
 7. 登录数据库，执行如下命令验证数据库编码是否为utf-8:
 
-	 ```show variables like 'char%';```
+     ```show variables like 'char%';```
 
-	若数据库编码是否不是utf-8，运行如下命令：
+    若数据库编码是否不是utf-8，运行如下命令：
 
-	```vi /etc/mysql/mysql.conf.d/mysqld.cnf```
+    ```vi /etc/mysql/mysql.conf.d/mysqld.cnf```
 
-	如果需要修改为utf8，在 ```lc-messages-dir = /usr/share/mysql``` 语句后加入:
+    如果需要修改为utf8，在 ```lc-messages-dir = /usr/share/mysql``` 语句后加入:
 
-	```
-	character-set-server = utf8
-	```
-	
+    ```
+    character-set-server = utf8
+    ```
+    
 8. 将数据库配置为允许远程连接
 
-	```vi /etc/mysql/mysql.conf.d/mysqld.cnf```
-	
-	配置修改如下：
-	```
-	skip-external-locking
-	bind-address = 0.0.0.0
-	```
+    ```vi /etc/mysql/mysql.conf.d/mysqld.cnf```
+    
+    配置修改如下：
+    ```
+    skip-external-locking
+    bind-address = 0.0.0.0
+    ```
 
 #### 2.7.2 MySQL主从配置
 
@@ -433,17 +433,17 @@ priority=1
 
 2. 给sync用户赋予主从复制权限
 
-	```grant replication slave on *.* to 'sync'@'%' identified by 'bigdata' with grant option;```
+    ```grant replication slave on *.* to 'sync'@'%' identified by 'bigdata' with grant option;```
 
 3. 在数据库从节点验证sync用户登录主节点mysql数据库
-	登录数据库*从节点*所在的主机，连接*主节点*mysql数据库：
+    登录数据库*从节点*所在的主机，连接*主节点*mysql数据库：
 
     ```mysql -usync -pbigdata -hmanager.bigdata.com```
 
 4. 配置主从、节点的 ```/etc/my.cnf``` 文件
-	主节点 ```/etc/my.cnf``` 文件配置内容如下所示：
+    主节点 ```/etc/my.cnf``` 文件配置内容如下所示：
 
-	```
+    ```
     [mysqld]
     datadir=/var/lib/mysql
     #socket=/var/lib/mysql.sock
@@ -472,13 +472,13 @@ priority=1
     pid-file=/var/lib/mysql/manager.bigdata.pid
     replicate-do-db=all
 
-	```
+    ```
 
-	说明：需要做备份的数据库通过“binlog-do-db=ambari”参数进行配置。
+    说明：需要做备份的数据库通过"binlog-do-db=ambari"参数进行配置。
 
-	从节点 ```/etc/my.cnf``` 文件配置内容如下所示：
+    从节点 ```/etc/my.cnf``` 文件配置内容如下所示：
 
-	```
+    ```
     [mysqld]
     datadir=/var/lib/mysql
     #socket=/var/lib/mysql.sock
@@ -508,50 +508,50 @@ priority=1
     log-error=/var/log/mysqld.log
     pid-file=/var/lib/mysql/master1.bigdata.pid
 
-	```
+    ```
 
 5. 分别登录主、从节点，重启MySQL服务
 
-	```service mysql restart```
+    ```service mysql restart```
 
 6. 登录主节点的mysql数据库，执行如下命令查看master节点状态
 
-	```show master status;```
+    ```show master status;```
 
 7. 执行以下命令登录从节点的mysql
 
-	```mysql -uroot -pbigdata```
+    ```mysql -uroot -pbigdata```
 
 8. 执行以下命令关闭slave
 
-	```stop slave;```
+    ```stop slave;```
 
 9. 执行以下命令配置从节点要同步的主节点信息
 
-	```change master to master_host='10.110.17.209', master_user = 'sync', master_password = 'bigdata', master_log_file = 'mysql-bin.000003', master_log_pos = 120;```
+    ```change master to master_host='10.110.17.209', master_user = 'sync', master_password = 'bigdata', master_log_file = 'mysql-bin.000003', master_log_pos = 120;```
 
-	参数解释说明如下：
+    参数解释说明如下：
 
-	```master_user```为同步用户；
-	```master_log_file```和```master_log_pos```为主节点执行完```show master status```后系统返回的参数。
+    ```master_user```为同步用户；
+    ```master_log_file```和```master_log_pos```为主节点执行完```show master status```后系统返回的参数。
 
 10. 在从节点启动mysql从节点
 
-	```start slave;```
+    ```start slave;```
 
 11. 在从节点验证mysql从节点的状态是否成功
 
-	```show slave status;```
+    ```show slave status;```
 
-	返回结果中以下两项都为yes，说明配置成功：
+    返回结果中以下两项都为yes，说明配置成功：
 
-	```
-	Slave_IO_Running: Yes
-	Slave_SQL_Running: Yes
-	```
+    ```
+    Slave_IO_Running: Yes
+    Slave_SQL_Running: Yes
+    ```
 
 12. 主节点解锁
-	```unlock tables;```
+    ```unlock tables;```
 
 ### 2.8 在manager上安装ambari
 
@@ -561,21 +561,21 @@ priority=1
 
 1. 通过shell登录集群的manager节点
 
-	```ssh root@10.221.129.30```
+    ```ssh root@10.221.129.30```
 
 2. 连接mysql数据库
 
-	```mysql -uroot -pbigdata```
+    ```mysql -uroot -pbigdata```
 
 3. 创建ambari数据库
 
-	```create database ambari;```
+    ```create database ambari;```
 
 4. 创建ambari用户并赋权，```manager.bigdata.com``` 根据实际情况改为对应的hostname
 
-	```grant all privileges on *.* to 'ambari'@'manager.bigdata.com' identified by 'bigdata' with grant option;```
+    ```grant all privileges on *.* to 'ambari'@'manager.bigdata.com' identified by 'bigdata' with grant option;```
 
-	```FLUSH PRIVILEGES;```
+    ```FLUSH PRIVILEGES;```
     
 ```[注意]：安装过程中出现的异常会有提示信息，请根据提示信息做相应操作。提示信息不明确的可以查看后台日志，日志文件存放路径：/var/log/ambari-server/ambari-server.log
    ```
@@ -592,51 +592,51 @@ env | grep jdk 查看jdk
 
 1. 运行命令:
 
-	```ambari-server setup```
+    ```ambari-server setup```
 
-	配置过程中选项如下:
-	```
-	Customize user ... daemon: n
-	JDK: 2
-	JAVA_HOME:/usr/jdk64/jdk-1.8.0-232
-	GPL: y
-	database configuration: y
-	3 (mysql选项)
-	Hostname: 主机的hostname(如:manager.bigdata.com)
-	Port: 3306
-	Database name: ambari
-	Username: ambari
-	Password: bigdata
-	jdbc: n
-	输入: /usr/share/java/mysql-connector-java-5.1.48.jar
-	```
+    配置过程中选项如下:
+    ```
+    Customize user ... daemon: n
+    JDK: 2
+    JAVA_HOME:/usr/jdk64/jdk-1.8.0-232
+    GPL: y
+    database configuration: y
+    3 (mysql选项)
+    Hostname: 主机的hostname(如:manager.bigdata.com)
+    Port: 3306
+    Database name: ambari
+    Username: ambari
+    Password: bigdata
+    jdbc: n
+    输入: /usr/share/java/mysql-connector-java-5.1.48.jar
+    ```
 
-	若在配置时没有jdbc选项，需要继续运行如下命令配置jdbc:
+    若在配置时没有jdbc选项，需要继续运行如下命令配置jdbc:
 
-	```ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java-5.1.48.jar```
+    ```ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java-5.1.48.jar```
 
 2. 执行sql脚本
 
-	登录数据库:
+    登录数据库:
 
-	```mysql -uroot -pbigdata```
+    ```mysql -uroot -pbigdata```
 
-	运行命令:
+    运行命令:
 
-	```use ambari;```
+    ```use ambari;```
 
-	```source /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql;```
+    ```source /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql;```
 
 #### 2.8.4 启动ambari-server
 
 1. 启动ambari:
 
-	```ambari-server start```
+    ```ambari-server start```
 
-	```/etc/ambari-server/conf/ambari.properties```
+    ```/etc/ambari-server/conf/ambari.properties```
 
 2. 测试登录
-	打开浏览器，以manager(10.221.129.30)为例，输入 http://10.221.129.30:8080/ 登陆web页面成功表示manager安装成功
+    打开浏览器，以manager(10.221.129.30)为例，输入 http://10.221.129.30:8080/ 登陆web页面成功表示manager安装成功
 
 ### 2.9 部署组件
 
@@ -644,41 +644,41 @@ env | grep jdk 查看jdk
 
 1. 配置MySQL
 
-	提前配置好 ```Hive```、 ```Oozie``` 、```Ranger```所对应的数据库，并对相应用户授予权限：
+    提前配置好 ```Hive```、 ```Oozie``` 、```Ranger```所对应的数据库，并对相应用户授予权限：
 
-	```root```用户登录```MySQL```：
+    ```root```用户登录```MySQL```：
 
-	(1) Hive组件:
+    (1) Hive组件:
 
-		create database hive;
-		use hive;
-		grant all privileges on hive.* to 'hive'@'%' identified by 'bigdata';
-		flush privileges;
+        create database hive;
+        use hive;
+        grant all privileges on hive.* to 'hive'@'%' identified by 'bigdata';
+        flush privileges;
 
 必须重新执行 ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java-5.1.48.jar
 
-	(2) Oozie组件:
+    (2) Oozie组件:
 
-		create database oozie;
-		use mysql;
-		grant all privileges on oozie.* to 'oozie'@'%' identified by 'bigdata';
-		flush privileges;
+        create database oozie;
+        use mysql;
+        grant all privileges on oozie.* to 'oozie'@'%' identified by 'bigdata';
+        flush privileges;
 
-	(3) Ranger组件:
-	
-		create database ranger;
-		use mysql;
-		grant all privileges on ranger.* to 'ranger'@'%' identified by 'bigdata';
-		flush privileges;
-	
+    (3) Ranger组件:
+    
+        create database ranger;
+        use ranger;
+        grant all privileges on ranger.* to 'ranger'@'%' identified by 'bigdata';
+        flush privileges;
+    
 2. 开启 ```innodb``` 表索引字符串最大长度限制（如若不执行此步骤，则 ```ranger``` 启动失败）
 
-	```
-	mysql -uroot -pbigdata
-	use mysql;
-	set global innodb_file_format = BARRACUDA;
-	set global innodb_large_prefix = ON;
-	```
+    ```
+    mysql -uroot -pbigdata
+    use mysql;
+    set global innodb_file_format = BARRACUDA;
+    set global innodb_large_prefix = ON;
+    ```
 
 > 注意：各组件依赖关系如下图所示，在安装部署过程中，有依赖关系的组件注意先部署被依赖的组件。
 
@@ -696,130 +696,130 @@ env | grep jdk 查看jdk
 
 #### 2.9.2 安装源信息
 
-    •    HDP-3.0：http://10.221.129.22/InspurHD1.0/hdp/
-    •    HDP-3.0-GPL: http://10.221.129.22/InspurHD1.0/hdp-gpl/
-    •    HDP-SOLR-4.0.0-400: http://10.221.129.22/InspurHD1.0/hdp-solr/
-    •    HDP-UTILS-1.1.0.22：http://10.221.129.22/InspurHD1.0/hdp-utils/
+    *    HDP-3.0：http://10.221.129.22/InspurHD1.0/hdp/
+    *    HDP-3.0-GPL: http://10.221.129.22/InspurHD1.0/hdp-gpl/
+    *    HDP-SOLR-4.0.0-400: http://10.221.129.22/InspurHD1.0/hdp-solr/
+    *    HDP-UTILS-1.1.0.22：http://10.221.129.22/InspurHD1.0/hdp-utils/
 
 #### 2.9.3 常规组件部署（HDFS、ZooKeeper、HD Metrics、YARN + MapReduce2）
 
 1. 登录Web页面
 
-	在浏览器中输入 http://10.200.72.2:8080/ 进入登录页面（ip地址修改为对应值）。
+    在浏览器中输入 http://10.200.72.2:8080/ 进入登录页面（ip地址修改为对应值）。
 
-	登录账密: admin admin
+    登录账密: admin admin
 
-	![](/pic/11.jpg)
+    ![](/pic/11.jpg)
 
 
-2. 点击“启动安装向导”按钮，进行Insight HD部署。
+2. 点击"启动安装向导"按钮，进行Insight HD部署。
 
-3. 在“开始”向导页输入要创建的集群名称，点击“下一步”。
+3. 在"开始"向导页输入要创建的集群名称，点击"下一步"。
 
-	![](/pic/12.jpg)
+    ![](/pic/12.jpg)
 
-4. 进入“选择版本”向导页，版本信息选择: HDP-3.1.0.0，并选择使用本地存储库。输入本地源地址，操作系统选择: kylin4 （其他操作系统版本移除）。单击“下一步”。
+4. 进入"选择版本"向导页，版本信息选择: HDP-3.1.0.0，并选择使用本地存储库。输入本地源地址，操作系统选择: kylin4 （其他操作系统版本移除）。单击"下一步"。
 
-	URL对应输入源地址:
+    URL对应输入源地址:
 
-	```
-	HDP: http://10.221.129.22/kylin-arm64/hortonworks/HDP/kylin4/3.1.0.0-78/
-	HDP-GPL: http://10.221.129.22/kylin-arm64/hortonworks/HDP-GPL/kylin4/3.1.0.0-78/
-	HDP-UTILS: http://10.221.129.22/kylin-arm64/hortonworks/HDP-UTILS/kylin4/1.1.0.22/
-	```
+    ```
+    HDP: http://10.221.129.22/kylin-arm64/hortonworks/HDP/kylin4/3.1.0.0-78/
+    HDP-GPL: http://10.221.129.22/kylin-arm64/hortonworks/HDP-GPL/kylin4/3.1.0.0-78/
+    HDP-UTILS: http://10.221.129.22/kylin-arm64/hortonworks/HDP-UTILS/kylin4/1.1.0.22/
+    ```
 
-5. 在“安装选项”向导页中注册及确认主机。
+5. 在"安装选项"向导页中注册及确认主机。
 
-	(1)	在目标主机文本框中输入ambari-agent各节点hostname，如:manager.bigdata.com（每行输入一个节点的hostname即可）。
+    (1)    在目标主机文本框中输入ambari-agent各节点hostname，如:manager.bigdata.com（每行输入一个节点的hostname即可）。
 
-	(2)	在主机注册信息中输入SSH私钥信息。
+    (2)    在主机注册信息中输入SSH私钥信息。
 
-	单击“选择文件”，选择路径 ```/root/.ssh/id_rsa```来配置私钥。
+    单击"选择文件"，选择路径 ```/root/.ssh/id_rsa```来配置私钥。
 
-	单击“注册和确认”。
+    单击"注册和确认"。
 
-	![](/pic/14.jpg)
+    ![](/pic/14.jpg)
 
-	(安装完成后查看问题列表，最好解决掉所有警告)
+    (安装完成后查看问题列表，最好解决掉所有警告)
 
-6. 在“确认主机”向导页中，确认主机信息并安装ambari-agent相关进程。
+6. 在"确认主机"向导页中，确认主机信息并安装ambari-agent相关进程。
 
-	![](/pic/15.jpg)
+    ![](/pic/15.jpg)
 
-	安装完成后，进度条会呈现绿色，状态栏信息会显示“Success”。
+    安装完成后，进度条会呈现绿色，状态栏信息会显示"Success"。
 
-	![](/pic/16.jpg)
+    ![](/pic/16.jpg)
 
-	点击提示信息“点击此处查看警告”，出现详细问题列表，建议将警告全部解决，便于此后集群的后续安装。
+    点击提示信息"点击此处查看警告"，出现详细问题列表，建议将警告全部解决，便于此后集群的后续安装。
 
-	![](/pic/17.jpg)
+    ![](/pic/17.jpg)
 
-7. 在“选择服务”向导页中选择需要安装的组件。
+7. 在"选择服务"向导页中选择需要安装的组件。
 
-	建议先同时安装HDFS、ZooKeeper、HD Metrics和YARN + MapReduce2，勾选完成后单击“下一步”，后续其他组件单独安装。
+    建议先同时安装HDFS、ZooKeeper、HD Metrics和YARN + MapReduce2，勾选完成后单击"下一步"，后续其他组件单独安装。
 
-	![](/pic/18.jpg)
+    ![](/pic/18.jpg)
 
-	> 说明：对于有依赖关系的组件，会有相关提示信息；同时，对未勾选的组件，集群安装完成后也可进行后续安装。
+    > 说明：对于有依赖关系的组件，会有相关提示信息；同时，对未勾选的组件，集群安装完成后也可进行后续安装。
 
-8. 在“指定Master”向导页中指定所选组件Master进程所在节点。
+8. 在"指定Master"向导页中指定所选组件Master进程所在节点。
 
-	可完全采用默认设置，同时也可自定义进程要安装的节点。
-	
-	点击每个进程对应的下拉框，在下拉框显示的所有agent节点中进行选择。设置完成后点击“下一步”。
+    可完全采用默认设置，同时也可自定义进程要安装的节点。
+    
+    点击每个进程对应的下拉框，在下拉框显示的所有agent节点中进行选择。设置完成后点击"下一步"。
 
-	![](/pic/19.jpg)
+    ![](/pic/19.jpg)
 
-	> 说明：对于后面有绿色加号的组件，可以增加集群节点进行部署。
+    > 说明：对于后面有绿色加号的组件，可以增加集群节点进行部署。
 
-9. 在“指定Slaves和Client”向导页中指定所选组件Slaves或Client进程的所在节点。
+9. 在"指定Slaves和Client"向导页中指定所选组件Slaves或Client进程的所在节点。
 
-	可完全采用默认设置，也可进行自定义设置。
-	
-	“主机”一栏显示当前可用的agent节点，对每个agent节点，勾选要安装的服务（说明：NFSGateway不需要安装）设置完成后单击“下一步”。
+    可完全采用默认设置，也可进行自定义设置。
+    
+    "主机"一栏显示当前可用的agent节点，对每个agent节点，勾选要安装的服务（说明：NFSGateway不需要安装）设置完成后单击"下一步"。
 
-	![20](/pic/20.jpg)
+    ![20](/pic/20.jpg)
 
-	> 说明：slave和client的可选组件在右边显示，请将水平滚动条拖动到最右端进行查看。
+    > 说明：slave和client的可选组件在右边显示，请将水平滚动条拖动到最右端进行查看。
 
-10. 在“自定义服务”向导页检查各个组件需要的配置是否完备。
+10. 在"自定义服务"向导页检查各个组件需要的配置是否完备。
 
-	对于需要用户手工配置或者配置存在问题的组件会在“CREDENTIALS”中创建。
+    对于需要用户手工配置或者配置存在问题的组件会在"CREDENTIALS"中创建。
 
-	![](/pic/21.jpg)
+    ![](/pic/21.jpg)
 
-11. 进入“检查”向导页，检查配置信息，审查无误后，单击“部署”，进行组件安装。
+11. 进入"检查"向导页，检查配置信息，审查无误后，单击"部署"，进行组件安装。
 
-	![](/pic/22.jpg)
+    ![](/pic/22.jpg)
 
-	![](/pic/23.jpg)
+    ![](/pic/23.jpg)
 
-	> 注意: “检查”页签的“库”区域下的 **”redhat7(HDP-3.1)“** 和 **”redhat7(HDP-UTILS-1.1.0.22)“** 的值不能为空，如果为空，不要单击”部署“，刷新一下此页，此处的值便可以正常写入，然后单击”部署“即可。
+    > 注意: "检查"页签的"库"区域下的 **"redhat7(HDP-3.1)"** 和 **"redhat7(HDP-UTILS-1.1.0.22)"** 的值不能为空，如果为空，不要单击"部署"，刷新一下此页，此处的值便可以正常写入，然后单击"部署"即可。
 
-12. 进入“安装、启动和测试”向导页，此过程中组件自动安装、启动和调试。
+12. 进入"安装、启动和测试"向导页，此过程中组件自动安装、启动和调试。
 
-	![](/pic/24.jpg)
+    ![](/pic/24.jpg)
 
-	安装完成后节点状态显示100%，消息提示“成功”。点击【下一步】查看概览。
+    安装完成后节点状态显示100%，消息提示"成功"。点击【下一步】查看概览。
 
-	![](/pic/25.jpg)
+    ![](/pic/25.jpg)
 
-13. “概览”向导页提供了集群安装过程的概况，如果服务安装过程无异常，集群安装即成功。
+13. "概览"向导页提供了集群安装过程的概况，如果服务安装过程无异常，集群安装即成功。
 
-14. 点击“完成”进入集群的控制台页面可监控集群。
+14. 点击"完成"进入集群的控制台页面可监控集群。
 
-	同时，如果启动或测试过程出现问题，也会提示相关警告信息。
+    同时，如果启动或测试过程出现问题，也会提示相关警告信息。
 
-	![](/pic/26.jpg)
+    ![](/pic/26.jpg)
 
 
 #### 2.9.4 HBase部署
 
 ```HMaster``` 服务部署在Master节点上，```RegionServer``` 服务部署在Worker节点上，如果有其他服务则部署在manager节点上。
 
-1. 单击页面左侧“…”->“添加服务”，选择HBase并单击“下一步”。
+1. 单击页面左侧"…"->"添加服务"，选择HBase并单击"下一步"。
 
-	![](/pic/31.jpg)
+    ![](/pic/31.jpg)
 
 2. 根据安装向导提示信息，执行安装步骤。
 
@@ -831,44 +831,44 @@ env | grep jdk 查看jdk
 
 Hive部署在manager节点上，Hive依赖HDFS、Yarn+MapReduce、Tez。其中HDFS、Yarn+MapReduce的已安装，Tez组件在安装Hive时会提示自动安装。
 
-1. 单击页面左侧“…”->“添加服务”，选择Hive并单击“下一步”。
+1. 单击页面左侧"…"->"添加服务"，选择Hive并单击"下一步"。
 
-	![](/pic/31.jpg)
+    ![](/pic/31.jpg)
 
-	![](/pic/32.jpg)
+    ![](/pic/32.jpg)
 
 2. 根据安装向导提示信息，执行安装步骤（请提前创建Hive数据库和用户及赋权）。
 
-3. 在“自定义服务”向导页，根据提示信息，配置数据库相关信息。
+3. 在"自定义服务"向导页，根据提示信息，配置数据库相关信息。
 
-	![](/pic/33.jpg)
+    ![](/pic/33.jpg)
 
-	数据库选项选择 Exciting MySQL/MariaDB
+    数据库选项选择 Exciting MySQL/MariaDB
 
-	输入数据库的账号密码（根据之前的设置，均为bigdata）
+    输入数据库的账号密码（根据之前的设置，均为bigdata）
 
-	运行命令:
+    运行命令:
 
-		ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/jdk64/jdk1.8.0_221/lib/mysql-connector-java.jar
-	点击TEST CONNECTION测试是否能连上数据库。
+        ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/jdk64/jdk1.8.0_221/lib/mysql-connector-java.jar
+    点击TEST CONNECTION测试是否能连上数据库。
 
 4. 安装成功后，有Success标识。
 
-	![](/pic/34.jpg)
+    ![](/pic/34.jpg)
 
-	![](/pic/35.jpg)
+    ![](/pic/35.jpg)
 
 5. 安装完成后，执行如下语句对Hive数据库执行utf8编码:
 
-	```
-	mysql -uhive -pbigdata
-	use hive;
-	alter table COLUMNS_V2 modify column COMMENT varchar(256) character set utf8;
-	alter table TABLE_PARAMS modify column PARAM_VALUE varchar(4000) character set utf8;
-	alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(4000) character set utf8;
-	alter table TBLS modify column VIEW_ORIGINAL_TEXT mediumtext character set utf8;
-	alter table TBLS modify column VIEW_EXPANDED_TEXT mediumtext character set utf8;
-	```
+    ```
+    mysql -uhive -pbigdata
+    use hive;
+    alter table COLUMNS_V2 modify column COMMENT varchar(256) character set utf8;
+    alter table TABLE_PARAMS modify column PARAM_VALUE varchar(4000) character set utf8;
+    alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(4000) character set utf8;
+    alter table TBLS modify column VIEW_ORIGINAL_TEXT mediumtext character set utf8;
+    alter table TBLS modify column VIEW_EXPANDED_TEXT mediumtext character set utf8;
+    ```
 
 6. 若安装失败或者启动失败，请根据提示信息或者后台日志定位问题。
 
@@ -876,7 +876,7 @@ Hive部署在manager节点上，Hive依赖HDFS、Yarn+MapReduce、Tez。其中HD
 
 Spark部署时，根据安装规划，Spark相关服务部署在manager节点上。
 
-1. 单击页面左侧“…”->“添加服务”，选择Spark并单击“下一步”。
+1. 单击页面左侧"…"->"添加服务"，选择Spark并单击"下一步"。
 
 2. 根据安装向导提示信息，执行安装步骤。
 
@@ -888,13 +888,13 @@ Spark部署时，根据安装规划，Spark相关服务部署在manager节点上
 
 Oozie部署时，根据安装规划，Oozie相关服务部署在 ```manager``` 节点上。
 
-1. 单击页面左侧“…”->“添加服务”，选择 ```Oozie``` 并单击“下一步”。
+1. 单击页面左侧"…"->"添加服务"，选择 ```Oozie``` 并单击"下一步"。
 
 2. 根据安装向导提示信息，执行安装步骤（请提前创建**Oozie数据库和用户及赋权**）。
 
-	> 根据之前的设置，数据库账号密码为: ```bigdata``` ```bigdata```
+    > 根据之前的设置，数据库账号密码为: ```bigdata``` ```bigdata```
 
-	点击 ```TEST CONNECTION``` 测试是否能连上数据库。
+    点击 ```TEST CONNECTION``` 测试是否能连上数据库。
 
 3. 安装成功后，有Success标识。
 
@@ -904,33 +904,33 @@ Oozie部署时，根据安装规划，Oozie相关服务部署在 ```manager``` �
 
 Ranger部署时，根据安装规划，Ranger相关服务部署在```manager```节点上。
 
-1. 单击页面左侧“…”->“添加服务”，选择 ```Ranger``` 并单击“下一步”。
+1. 单击页面左侧"…"->"添加服务"，选择 ```Ranger``` 并单击"下一步"。
 
-	![](/pic/41.jpg)
+    ![](/pic/41.jpg)
 
 2. 根据安装向导提示信息，执行安装步骤（请提前创建**Ranger数据库和用户及赋权**）。
 
-	![](/pic/42.jpg)
+    ![](/pic/42.jpg)
 
-	以 ```manager``` 为例:
+    以 ```manager``` 为例:
 
-		DB Flavor: MYSQL
-		Ranger DB host: manager.bigdata.com
-		Ranger DB Password: bigdata
-		DBA username: root
-		DBA password: bigdata
+        DB Flavor: MYSQL
+        Ranger DB host: manager.bigdata.com
+        Ranger DB Password: bigdata
+        DBA username: root
+        DBA password: bigdata
 
-3. 安装过程中，请将 ```“Ranger Plugin”``` 页签中，各组件的插件 ```plugin``` 打开。
+3. 安装过程中，请将 ```"Ranger Plugin"``` 页签中，各组件的插件 ```plugin``` 打开。
 
-	![](/pic/43.jpg)
+    ![](/pic/43.jpg)
 
-4. 安装过程中，请将 ```“Ranger Audit”``` 页签的 ```“Audit to Solr”``` 和 ```“Audit to HDFS”``` 选项关掉。
+4. 安装过程中，请将 ```"Ranger Audit"``` 页签的 ```"Audit to Solr"``` 和 ```"Audit to HDFS"``` 选项关掉。
 
-	![](/pic/44.jpg)
+    ![](/pic/44.jpg)
 
-5. 配置 ```“ADVANCED”``` 页签中 ```“高级设置ranger-env”``` 区域的内容。
+5. 配置 ```"ADVANCED"``` 页签中 ```"高级设置ranger-env"``` 区域的内容。
 
-	![](/pic/45.jpg)
+    ![](/pic/45.jpg)
 
 6. 安装成功后，有 ```Success``` 标识。
 
@@ -940,7 +940,7 @@ Ranger部署时，根据安装规划，Ranger相关服务部署在```manager```�
 
 Sqoop部署时，根据安装规划，Sqoop相关服务部署在manager节点上。
 
-1. 单击页面左侧“…”->“添加服务”，选择Sqoop并单击“下一步”。
+1. 单击页面左侧"…"->"添加服务"，选择Sqoop并单击"下一步"。
 
 2. 根据安装向导提示信息，执行安装步骤。
 
@@ -952,7 +952,7 @@ Sqoop部署时，根据安装规划，Sqoop相关服务部署在manager节点上
 
 Zeppelin部署时，根据安装规划，Zeppelin相关服务部署在slave节点上。
 
-1. 单击页面左侧“…”->“添加服务”，选择Zeppelin并单击“下一步”。
+1. 单击页面左侧"…"->"添加服务"，选择Zeppelin并单击"下一步"。
 
 2. 根据安装向导提示信息，执行安装步骤。
 
@@ -995,7 +995,7 @@ default_ccache_name = /tmp/krb5cc_%{uid}
     kdc = master.bigdata.com
 }
 
-3.	编辑/var/kerberos/krb5kdc/kdc.conf文件，内容如下。
+3.    编辑/var/kerberos/krb5kdc/kdc.conf文件，内容如下。
 [kdcdefaults]
  kdc_ports = 88
  kdc_tcp_ports = 88
@@ -1010,15 +1010,15 @@ default_ccache_name = /tmp/krb5cc_%{uid}
   max_renewable_life = 3000d 0h 0m 0s
   default_principal_flags = +renewable, +forwardable
  }
-4.	编辑/var/kerberos/krb5kdc/kadm5.acl文件，内容如下。
-*/admin@BIGDATA	*
-5.	创建数据库。
+4.    编辑/var/kerberos/krb5kdc/kadm5.acl文件，内容如下。
+*/admin@BIGDATA    *
+5.    创建数据库。
 kdb5_util create -r BIGDATA -s
 根据提示信息此处需要用户手工输入KDC数据库的密码，命令执行完成后，注意检查/var/kerberos/krb5kdc/下是否生成principal等票据文件。
-6.	创建KDC超级管理员，根据提示信息此处需要输入管理员密码。
+6.    创建KDC超级管理员，根据提示信息此处需要输入管理员密码。
 kadmin.local -q "addprinc admin/admin@BIGDATA"
 [注意]这里KDC超级管理员的账户名为红色字体所示。
-7.	分别执行如下命令启动kdc和kadmin。 
+7.    分别执行如下命令启动kdc和kadmin。 
 systemctl restart krb5kdc.service
 systemctl restart kadmin.service
 设置开机启动。
@@ -1038,14 +1038,14 @@ systemctl enable kadmin.service
 
 免密登录数据库后，运行如下命令:
 
-	```
-	use mysql;
-	update user set authentication_string=PASSWORD('bigdata') where User='root';
-	update user set plugin="mysql_native_password" where User='root';
-	flush privileges;
-	exit
-	```
-	
+    ```
+    use mysql;
+    update user set authentication_string=PASSWORD('bigdata') where User='root';
+    update user set plugin="mysql_native_password" where User='root';
+    flush privileges;
+    exit
+    ```
+    
 重启mysql登录即可。
 
 #### 4.1.2 Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock'
@@ -1054,11 +1054,11 @@ systemctl enable kadmin.service
 
 解决方法:
 
-	```
-	mkdir -p /var/run/mysqld
-	chown mysql /var/run/mysqld/
-	service mysql restart
-	```
+    ```
+    mkdir -p /var/run/mysqld
+    chown mysql /var/run/mysqld/
+    service mysql restart
+    ```
 
 #### 4.1.3 mysql主从配置slave节点slave start报错: ERROR 1872 (HY000): Slave failed to initialize relay log info structure from the repository
 
@@ -1138,13 +1138,13 @@ NameNode Server threads 参数值400
 
 DefaultTasksMax默认值512，修改为:
 
-	DefaultTasksMax=65535
+    DefaultTasksMax=65535
 
 ```vi /etc/systemd/logind.conf```
 
 UserTasksMax默认值12288，修改为:
 
-	UserTasksMax=65535
+    UserTasksMax=65535
 
 
 ### 4.4 其他问题 
@@ -1159,9 +1159,9 @@ UserTasksMax默认值12288，修改为:
 
 在报错的.py文件开头添加:
 
-	import sys
-	reload(sys)
-	sys.setdefaultencoding('utf-8')
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
 
 #### 4.4.3 登录时不是root用户，则需要开启root：
 
