@@ -184,7 +184,7 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 
 集群中各节点从managerNode节点同步时间，managerNode节点从标准时钟服务器同步时间。当managerNode节点出现故障时，各节点从masterNode节点同步时间。
 
-![ntp](/pic/ntp.jpg)
+![ntp](pic/ntp.jpg)
 
 #### 2.3.1 安装ntp服务
 
@@ -645,7 +645,7 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 
 > 注意：各组件依赖关系如下图所示，在安装部署过程中，有依赖关系的组件注意先部署被依赖的组件。
 
-![](/pic/yilai.png)
+![](pic/yilai.png)
 
 建议各组件安装顺序如下：
 
@@ -672,14 +672,14 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 
 	登录账密: admin admin
 
-	![](/pic/11.jpg)
+	![](pic/11.jpg)
 
 
 2. 点击“启动安装向导”按钮，进行Insight HD部署。
 
 3. 在“开始”向导页输入要创建的集群名称，点击“下一步”。
 
-	![](/pic/12.jpg)
+	![](pic/12.jpg)
 
 4. 进入“选择版本”向导页，版本信息选择: HDP-3.1.0.0，并选择使用本地存储库。输入本地源地址，操作系统选择: kylin4 （其他操作系统版本移除）。单击“下一步”。
 
@@ -701,27 +701,27 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 
 	单击“注册和确认”。
 
-	![](/pic/14.jpg)
+	![](pic/14.jpg)
 
 	(安装完成后查看问题列表，最好解决掉所有警告)
 
 6. 在“确认主机”向导页中，确认主机信息并安装ambari-agent相关进程。
 
-	![](/pic/15.jpg)
+	![](pic/15.jpg)
 
 	安装完成后，进度条会呈现绿色，状态栏信息会显示“Success”。
 
-	![](/pic/16.jpg)
+	![](pic/16.jpg)
 
 	点击提示信息“点击此处查看警告”，出现详细问题列表，建议将警告全部解决，便于此后集群的后续安装。
 
-	![](/pic/17.jpg)
+	![](pic/17.jpg)
 
 7. 在“选择服务”向导页中选择需要安装的组件。
 
 	建议先同时安装HDFS、ZooKeeper、HD Metrics和YARN + MapReduce2，勾选完成后单击“下一步”，后续其他组件单独安装。
 
-	![](/pic/18.jpg)
+	![](pic/18.jpg)
 
 	> 说明：对于有依赖关系的组件，会有相关提示信息；同时，对未勾选的组件，集群安装完成后也可进行后续安装。
 
@@ -731,7 +731,7 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 	
 	点击每个进程对应的下拉框，在下拉框显示的所有agent节点中进行选择。设置完成后点击“下一步”。
 
-	![](/pic/19.jpg)
+	![](pic/19.jpg)
 
 	> 说明：对于后面有绿色加号的组件，可以增加集群节点进行部署。
 
@@ -741,7 +741,7 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 	
 	“主机”一栏显示当前可用的agent节点，对每个agent节点，勾选要安装的服务（说明：NFSGateway不需要安装）设置完成后单击“下一步”。
 
-	![20](/pic/20.jpg)
+	![20](pic/20.jpg)
 
 	> 说明：slave和client的可选组件在右边显示，请将水平滚动条拖动到最右端进行查看。
 
@@ -749,23 +749,23 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 
 	对于需要用户手工配置或者配置存在问题的组件会在“CREDENTIALS”中创建。
 
-	![](/pic/21.jpg)
+	![](pic/21.jpg)
 
 11. 进入“检查”向导页，检查配置信息，审查无误后，单击“部署”，进行组件安装。
 
-	![](/pic/22.jpg)
+	![](pic/22.jpg)
 
-	![](/pic/23.jpg)
+	![](pic/23.jpg)
 
 	> 注意: “检查”页签的“库”区域下的 **”redhat7(HDP-3.1)“** 和 **”redhat7(HDP-UTILS-1.1.0.22)“** 的值不能为空，如果为空，不要单击”部署“，刷新一下此页，此处的值便可以正常写入，然后单击”部署“即可。
 
 12. 进入“安装、启动和测试”向导页，此过程中组件自动安装、启动和调试。
 
-	![](/pic/24.jpg)
+	![](pic/24.jpg)
 
 	安装完成后节点状态显示100%，消息提示“成功”。点击【下一步】查看概览。
 
-	![](/pic/25.jpg)
+	![](pic/25.jpg)
 
 13. “概览”向导页提供了集群安装过程的概况，如果服务安装过程无异常，集群安装即成功。
 
@@ -773,7 +773,7 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 
 	同时，如果启动或测试过程出现问题，也会提示相关警告信息。
 
-	![](/pic/26.jpg)
+	![](pic/26.jpg)
 
 
 #### 2.9.4 HBase部署
@@ -782,7 +782,7 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 
 1. 单击页面左侧“…”->“添加服务”，选择HBase并单击“下一步”。
 
-	![](/pic/31.jpg)
+	![](pic/31.jpg)
 
 2. 根据安装向导提示信息，执行安装步骤。
 
@@ -796,15 +796,15 @@ Hive部署在manager节点上，Hive依赖HDFS、Yarn+MapReduce、Tez。其中HD
 
 1. 单击页面左侧“…”->“添加服务”，选择Hive并单击“下一步”。
 
-	![](/pic/31.jpg)
+	![](pic/31.jpg)
 
-	![](/pic/32.jpg)
+	![](pic/32.jpg)
 
 2. 根据安装向导提示信息，执行安装步骤（请提前创建Hive数据库和用户及赋权）。
 
 3. 在“自定义服务”向导页，根据提示信息，配置数据库相关信息。
 
-	![](/pic/33.jpg)
+	![](pic/33.jpg)
 
 	数据库选项选择 Exciting MySQL/MariaDB
 
@@ -817,9 +817,9 @@ Hive部署在manager节点上，Hive依赖HDFS、Yarn+MapReduce、Tez。其中HD
 
 4. 安装成功后，有Success标识。
 
-	![](/pic/34.jpg)
+	![](pic/34.jpg)
 
-	![](/pic/35.jpg)
+	![](pic/35.jpg)
 
 5. 安装完成后，执行如下语句对Hive数据库执行utf8编码:
 
@@ -869,11 +869,11 @@ Ranger部署时，根据安装规划，Ranger相关服务部署在```manager```�
 
 1. 单击页面左侧“…”->“添加服务”，选择 ```Ranger``` 并单击“下一步”。
 
-	![](/pic/41.jpg)
+	![](pic/41.jpg)
 
 2. 根据安装向导提示信息，执行安装步骤（请提前创建**Ranger数据库和用户及赋权**）。
 
-	![](/pic/42.jpg)
+	![](pic/42.jpg)
 
 	以 ```manager``` 为例:
 
@@ -885,15 +885,15 @@ Ranger部署时，根据安装规划，Ranger相关服务部署在```manager```�
 
 3. 安装过程中，请将 ```“Ranger Plugin”``` 页签中，各组件的插件 ```plugin``` 打开。
 
-	![](/pic/43.jpg)
+	![](pic/43.jpg)
 
 4. 安装过程中，请将 ```“Ranger Audit”``` 页签的 ```“Audit to Solr”``` 和 ```“Audit to HDFS”``` 选项关掉。
 
-	![](/pic/44.jpg)
+	![](pic/44.jpg)
 
 5. 配置 ```“ADVANCED”``` 页签中 ```“高级设置ranger-env”``` 区域的内容。
 
-	![](/pic/45.jpg)
+	![](pic/45.jpg)
 
 6. 安装成功后，有 ```Success``` 标识。
 
@@ -931,59 +931,59 @@ Zeppelin部署时，根据安装规划，Zeppelin相关服务部署在slave节�
 
 2. 在“服务操作”中单击“启用NameNode HA”。
 
-	![](/pic/h1.jpg)
+	![](pic/h1.jpg)
 
 3. 进入“开始设置”向导页，如果Hbase正在运行，则需要停止Hbase服务，在文本框中输入Nameservice ID（例如，mycluster），点击“下一步”。
 
-	![](/pic/h2.jpg)
+	![](pic/h2.jpg)
 
 4. 进入“选择主机”向导页，指定附加NameNode以及JournalNode部署节点， 配置好后单击“下一步”按钮。
 
-	![](/pic/h3.jpg)
+	![](pic/h3.jpg)
 
 5. 在“检查”概览界面显示了节点的变化情况，删除Secondary NameNode，添加 Additional NameNode、Journal Node。
 
-	![](/pic/h4.jpg)
+	![](pic/h4.jpg)
 
 6. 进入“创建检查点”向导页，进行创建checkpoint 操作，此操作需要手工进行，根据提示信息，登录当前NameNode节点，执行显示在页面上的命令，执行完后单击 “下一步”。
 
-	![](/pic/h5.jpg)
+	![](pic/h5.jpg)
 
 	手工执行命令及返回结果如下所示，表示命令执行成功。
 
-	![](/pic/h6.jpg)
+	![](pic/h6.jpg)
 
 7. 进入“配置组件”向导页进行相关配置（系统自动完成）。
 
-	![](/pic/h7.jpg)
+	![](pic/h7.jpg)
 
 	等待1-3min，配置完成后单击“下一步”。
 
-	![](/pic/h8.jpg)
+	![](pic/h8.jpg)
 
 8. 在“启动NameNode HA向导”页进行初始化Journal Node操作，此操作需要根据提示信息手工进行，登录当前NameNode节点，执行显示在页面上的命令，执行完后，单击“下一步”。
 
-	![](/pic/h9.jpg)
+	![](pic/h9.jpg)
 
 9. 进入“启动组件”向导页，启动ZooKeeper和NameNode（系统自动完成），完成后单击“下一步”。
 
-	![](/pic/h10.jpg)
+	![](pic/h10.jpg)
 
 10. 进入“初始化NameNode HA元数据”向导页，初始化NameNode HA 元数据，此操作需要根据提示信息手工进行，登录当前NameNode节点，执行显示在页面上的命令，执行完后单击“下一步”。
 
-	![](/pic/h11.jpg)
+	![](pic/h11.jpg)
 
 11. 进入“完成HA设置”向导页，启动HA。
 
-	![](/pic/h12.jpg)
+	![](pic/h12.jpg)
 
 	等待HA设置完成，单击“完成”。
 
-	![](/pic/h13.jpg)
+	![](pic/h13.jpg)
 
 12. 查看HDFS服务概要界面，会显示HA相关信息，HA安装结束。
 
-	![](/pic/h14.jpg)
+	![](pic/h14.jpg)
 
 ### 2.11 开启安全模式
 
@@ -1330,7 +1330,7 @@ hdfs haadmin -getServiceState nn2
 
 ##### 3.1.2.2 本地准备用于传输的文件，存放在路径 /tmp/uploadtest 中
 
-![](/pic/781.png)
+![](pic/781.png)
 
 ##### 3.1.2.3 集群上新建测试文件夹datatest
 
@@ -1342,11 +1342,11 @@ hdfs haadmin -getServiceState nn2
 
 ##### 3.1.2.5 手动停止namenode后，报错信息如下:
 
-![](/pic/72.png)
+![](pic/72.png)
 
 ##### 3.1.2.6 查看集群文件
 
-![](/pic/73.png)
+![](pic/73.png)
 
 运行命令:
 
@@ -1354,7 +1354,7 @@ hdfs haadmin -getServiceState nn2
 
 ```hdfs dfs -ls /datatest/uploadtest```
 
-![](/pic/74.png)
+![](pic/74.png)
 
 ##### 3.1.2.7 本地新建文件夹 /tmp/localtest，将传输到集群中的文件下载到新文件夹
 
@@ -1372,7 +1372,7 @@ hdfs haadmin -getServiceState nn2
 
 ```ll```
 
-![](/pic/75.png)
+![](pic/75.png)
 
 ##### 3.1.2.9 比较新文件与上传文件的差异
 
@@ -1380,7 +1380,7 @@ hdfs haadmin -getServiceState nn2
 
 结果显示无差异
 
-![](/pic/76.png)
+![](pic/76.png)
 
 #### 3.1.3 DataNode测试
 
@@ -1390,7 +1390,7 @@ hdfs haadmin -getServiceState nn2
 
 ##### 3.1.3.2 本地准备用于传输的文件，存放在路径 /tmp/uploadtest 中
 
-![](/pic/781.png)
+![](pic/781.png)
 
 ##### 3.1.3.3 集群上新建测试文件夹datatest1，本地文件传到集群
 
@@ -1400,19 +1400,19 @@ hdfs haadmin -getServiceState nn2
 
 以3个DataNode的集群为例。
 
-![](/pic/82.png)
+![](pic/82.png)
 
 ##### 3.1.3.4 手动关闭一个DataNode节点，UI界面如下所示:
 
-![](/pic/83.png)
+![](pic/83.png)
 
 ##### 3.1.3.5 后台报错信息如下:
 
-![](/pic/84.png)
+![](pic/84.png)
 
 ##### 3.1.3.6 UI最终显示文件
 
-![](/pic/85.png)
+![](pic/85.png)
 
 ##### 3.1.3.7 运行命令查看集群文件
 
@@ -1420,7 +1420,7 @@ hdfs haadmin -getServiceState nn2
 
 ```hdfs dfs -ls /datatest1/uploadtest```
 
-![](/pic/86.png)
+![](pic/86.png)
 
 ##### 3.1.3.8 本地新建文件夹 /tmp/localtest1，将传输到集群中的文件下载到新文件夹
 
@@ -1440,7 +1440,7 @@ hdfs haadmin -getServiceState nn2
 
 ```ll```
 
-![](/pic/87.png)
+![](pic/87.png)
 
 
 ##### 3.1.3.10 比较新文件与上传文件的差异
@@ -1449,7 +1449,7 @@ hdfs haadmin -getServiceState nn2
 
 结果显示无差异
 
-![](/pic/88.png)
+![](pic/88.png)
 
 ### 3.2 YARN主备节点切换测试
 
@@ -1542,15 +1542,15 @@ hdfs haadmin -getServiceState nn2
 
 #### 4.1.4 组件数据库配置有误
 
-![](/pic/oozie_warning.png)
+![](pic/oozie_warning.png)
 
 安装组件时没有配置正确的数据库（默认为 new database）。
 
 应提前配置数据库，然后在安装组件时选择 existing MySql/MariaDB 并输入配置好的数据库信息：
 
-![](/pic/oozie_db.png)
+![](pic/oozie_db.png)
 
-![](/pic/oozie_param_modified.png)
+![](pic/oozie_param_modified.png)
 
 其他组件安装时也应该选择类似的数据库配置。
 
@@ -1664,7 +1664,7 @@ root@master1:~# ntpdate manager.bigdata.com
 
 修改参数：
 
-![](/pic/zeeplin_credential.jpg)
+![](pic/zeeplin_credential.jpg)
 
 #### 4.4.6 Zeppelin安装后UI链接无法进入问题：
 
