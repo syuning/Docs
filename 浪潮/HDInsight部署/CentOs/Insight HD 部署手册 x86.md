@@ -704,6 +704,11 @@ env | grep jdk 查看jdk
     *    HDP-SOLR-4.0.0-400: http://10.221.129.22/InspurHD1.0/hdp-solr/
     *    HDP-UTILS-1.1.0.22：http://10.221.129.22/InspurHD1.0/hdp-utils/
 
+    *    HDP-3.1：http://10.221.129.22/InspurHD1.0/hdp/
+    *    HDP-3.1-GPL: http://10.221.129.22/InspurHD1.0/hdp-gpl/
+    *    HDP-3.1-SOLR: http://10.221.129.22/InspurHD1.0/hdp-solr/
+    *    HDP-3.1-UTILS：http://10.221.129.22/InspurHD1.0/hdp-utils/
+
 #### 2.9.3 常规组件部署（HDFS、ZooKeeper、HD Metrics、YARN + MapReduce2）
 
 1. 登录Web页面
@@ -726,9 +731,9 @@ env | grep jdk 查看jdk
     URL对应输入源地址:
 
     ```
-    HDP: http://10.221.129.22/kylin-arm64/hortonworks/HDP/kylin4/3.1.0.0-78/
-    HDP-GPL: http://10.221.129.22/kylin-arm64/hortonworks/HDP-GPL/kylin4/3.1.0.0-78/
-    HDP-UTILS: http://10.221.129.22/kylin-arm64/hortonworks/HDP-UTILS/kylin4/1.1.0.22/
+    HDP: http://10.221.129.22/InspurHD1.0/hdp/
+    HDP-GPL: http://10.221.129.22/InspurHD1.0/hdp-gpl/
+    HDP-UTILS: http://10.221.129.22/InspurHD1.0/hdp-utils/
     ```
 
 5. 在"安装选项"向导页中注册及确认主机。
