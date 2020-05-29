@@ -159,9 +159,9 @@ server端要通过ssh协议将软件包分发到集群中各节点上，所以�
 内容如下所示:
 
 ```
-#VERSION_NUMBER=2.7.1.0
-[ambari-2.7.1.0]
-name=ambari Version - ambari-2.7.1.0
+#VERSION_NUMBER=2.7.3.0
+[ambari-2.7.3.0]
+name=ambari Version - ambari-2.7.3.0
 baseurl=http://10.221.129.22/InspurHD1.0/manager/
 gpgcheck=0
 enabled=1
@@ -322,7 +322,7 @@ priority=1
 
 1. 下载mysql-connector-java-5.1.47.jar
 
-    ```cd /usr/share/java```
+    ```cd /usr/jdk64/jdk-1.8.0-232/lib```
     ```wget http://10.221.129.22/InspurHD1.0/jdk/mysql-connector-java-5.1.48.jar```
 
 2. 查看文件:
@@ -349,27 +349,27 @@ priority=1
         执行如下命令编辑mysql配置文件my.cnf
         vi /etc/my.cnf
         配置信息如下所示:
-        [mysqld]
-        datadir=/var/lib/mysql
-        #socket=/var/lib/mysql.sock
-        skip-grant-tables
-        user=mysql
-        symbolic-links=0
-        log_bin_trust_function_creators=1
-        log-bin=mysql-bin
-        binlog_format=mixed
-        server-id = 1
-        character-set-server=utf8
-        init_connect='SET NAMES utf8'
-        [client]
-        default-character-set=utf8
-        [mysql]
-        no-auto-rehash
-        default-character-set=utf8
-        [mysqld_safe]
-        log-error=/var/log/mysqld.log
-        pid-file=/var/lib/mysql/mysqld.pid
-        replicate-do-db=all
+[mysqld]
+datadir=/var/lib/mysql
+#socket=/var/lib/mysql.sock
+skip-grant-tables
+user=mysql
+symbolic-links=0
+log_bin_trust_function_creators=1
+log-bin=mysql-bin
+binlog_format=mixed
+server-id = 1
+character-set-server=utf8
+init_connect='SET NAMES utf8'
+[client]
+default-character-set=utf8
+[mysql]
+no-auto-rehash
+default-character-set=utf8
+[mysqld_safe]
+log-error=/var/log/mysqld.log
+pid-file=/var/lib/mysql/mysqld.pid
+replicate-do-db=all
         [注意]skip-grant-tables参数为免密码登录，登录后请立刻初始化mysql的root密码，并给root用户赋权，完成后需要把免密码登录的参数skip-grant-tables从/etc/my.cnf中删除。
 
 
@@ -407,7 +407,7 @@ priority=1
 
     若数据库编码是否不是utf-8，运行如下命令：
 
-    ```vi /etc/mysql/mysql.conf.d/mysqld.cnf```
+    ```sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf```
 
     如果需要修改为utf8，在 ```lc-messages-dir = /usr/share/mysql``` 语句后加入:
 
@@ -417,7 +417,7 @@ priority=1
     
 8. 将数据库配置为允许远程连接
 
-    ```vi /etc/mysql/mysql.conf.d/mysqld.cnf```
+    ```sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf```
     
     配置修改如下：
     ```
@@ -576,6 +576,9 @@ priority=1
     ```grant all privileges on *.* to 'ambari'@'manager.bigdata.com' identified by 'bigdata' with grant option;```
 
     ```FLUSH PRIVILEGES;```
+
+    ```use ambari;```
+    ```source /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql```
     
 ```[注意]：安装过程中出现的异常会有提示信息，请根据提示信息做相应操作。提示信息不明确的可以查看后台日志，日志文件存放路径：/var/log/ambari-server/ambari-server.log
    ```
@@ -608,7 +611,7 @@ env | grep jdk 查看jdk
     Username: ambari
     Password: bigdata
     jdbc: n
-    输入: /usr/share/java/mysql-connector-java-5.1.48.jar
+    输入: /usr/share/java/mysql-connector-java-5.1.37.jar
     ```
 
     若在配置时没有jdbc选项，需要继续运行如下命令配置jdbc:
