@@ -4,7 +4,7 @@
 
 Docker将进程运行在独立的的**容器**中，而**容器**是在主机(host)上运行的进程。主机可以是本地主机，也可以是远程主机。当docker用户执行docker run时，运行的容器进程是独立的，因为它具有自己的文件系统、自己的网络以及独立于主机的进程树。
 
-### 一般形式
+### ** 1. 一般形式 **
 
     docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]
 
@@ -19,7 +19,7 @@ docker run命令必须要指定一个镜像(image)，用于派生容器。
 
 docker用户可以使用 ```docker run [OPTIONS]``` 来添加或覆盖开发人员设置的镜像默认设置，此外，docker用户还可以覆盖Docker运行时本身设置的几乎所有默认设置。docker用户拥有覆盖镜像和Docker运行时默认值的能力，这就是为什么run具有比其他任何docker命令更多的选项的原因。
 
-### 用户专用选项
+### ** 2. 用户专用选项 **
 
 只有docker用户才能设置以下选项：
 
@@ -33,7 +33,7 @@ docker用户可以使用 ```docker run [OPTIONS]``` 来添加或覆盖开发人�
 * 运行时特权和Linux功能
 
 
-### **独立运行 与 前台运行**
+### ** 3. 独立运行(Detached) 与 前台运行(foreground) **
 
 #### 独立运行
 
@@ -82,7 +82,7 @@ $ docker run -a stdin -a stdout -i -t ubuntu /bin/bash
 $ echo test | docker run -i busybox cat
 ```
 
-### 容器身份识别
+### ** 4. 容器身份识别 **
 
 #### 容器名称 [--name]
 
@@ -117,7 +117,7 @@ UUID标识符来自Docker守护程序。如果未使用--name选项分配容器�
     $ docker run alpine@sha256:9cacb71397b640eca97488cf08582ae4e4068513101088e9f96c9814bfda95e0 date
 
 
-#### PID设置
+### ** 5. PID设置 **
 
     --pid=""  : 为容器设置进程PID命名空间模式，
                  'container:<name|id>': 与另一个容器的PID命名空间合并
@@ -164,7 +164,7 @@ PID命名空间提供了流程分离。PID命名空间可删除系统进程的�
     $ strace -p 1
 
 
-#### UTS设置（--uts）
+### ** 6. UTS设置（--uts）**
 
     --uts=""  : 为容器设置UTS命名空间模式，
        'host': 在容器内使用宿主机的UTS命名空间
@@ -176,7 +176,7 @@ UTS命名空间用于设置主机名、和对该命名空间中正在运行的�
 
 如果用户希望容器的主机名随着宿主机的主机名更改而更改，则需要与主机共享UTS命名空间，此选项也可以实现一个更进阶的操作 - 从容器内部更改宿主机的主机名。
 
-#### IPC设置（--ipc）（IPC：Inter-Process Communication，进程间通信）
+### ** 7. IPC设置（--ipc）（IPC：Inter-Process Communication，进程间通信）**
 
     --ipc="MODE"  : 为容器设置IPC模式
 
@@ -199,7 +199,7 @@ IPC（POSIX / SysV IPC）命名空间提供命名共享内存段、信号量和�
 
 如果将这些类型的应用程序分为多个容器，则可能需要共享容器的IPC机制，为主（即“捐赠者”）容器开启 ```"shareable"``` 模式， 并为其他容器开启 ```"container:<donor-name-or-ID>"``` 模式。
 
-#### 网络设置
+### ** 8. 网络设置 **
 
 支持的网络选项 | 说明
 ----- | -----
@@ -227,37 +227,65 @@ IPC（POSIX / SysV IPC）命名空间提供命名共享内存段、信号量和�
 
     请注意，--add-host --hostname --dns --dns-search --dns-option和--mac-address在 ```container``` 网络模式下无效，并且--publish --publish-all --expose在 ```container``` 网络模式下也无效。
     
-    使用一个绑定到localhost的Redis来运行一个Redis容器，然后运行redis-cli命令并通过localhost接口连接至Redis服务器：
+    使用一个绑定到localhost的Redis镜像来运行一个Redis容器，之后运行redis-cli命令并通过localhost接口连接至Redis服务器：
 
         $ docker run -d --name redis example/redis --bind 127.0.0.1
-        $ # use the redis container's network stack to access localhost
+        $ # 使用redis容器的网络堆栈来访问localhost
         $ docker run --rm -it --network container:redis example/redis-cli -h 127.0.0.1
 
 * **'host': 使用Docker宿主机的网络堆栈**
     
-    将网络设置为host容器后，容器将共享主机的网络堆栈，并且来自主机的所有接口将对容器可用。容器的主机名将与主机系统上的主机名匹配。请注意，--mac-address在hostnetmode中无效。即使在host 网络模式下，默认情况下，容器也有其自己的UTS名称空间。这样 --hostname，--domainname在host网络模式下是允许的，并且只会更改容器内的主机名和域名。类似--hostname的--add-host，--dns，--dns-search，和 --dns-option选项可以在使用host网络模式。这些选项将更新 /etc/hosts或/etc/resolv.conf在容器内部。没有变化的，以制作 /etc/hosts，并/etc/resolv.conf在主机上。
+    将网络设置为host容器后，容器将共享主机的网络堆栈，并且来自主机的所有接口将对容器可用。容器的主机名将与宿主机系统上的主机名匹配。
+
+    请注意，```--mac-address```在```host```网络模式下不可用。即使在 ```host``` 网络模式下，默认情况下，容器也有其自己的UTS命名空间。这样 ```--hostname```，```--domainname```在```host```网络模式下是允许的，并且只会更改容器内的主机名和域名。类似--hostname的--add-host，--dns，--dns-search，和 --dns-option选项可以在使用host网络模式。这些选项将更新 /etc/hosts或/etc/resolv.conf在容器内部。没有变化的，以制作 /etc/hosts，并/etc/resolv.conf在主机上。
     
     与默认bridge模式相比，该host模式提供了明显 更好的网络性能，因为它使用了主机的本机网络堆栈，而网桥则必须通过docker守护程序进行一级虚拟化。当容器的网络性能至关重要时，建议以这种模式运行容器，例如，生产负载平衡器或高性能Web服务器。
 
 * **'<network-name>|<network-id>': 连接至一个用户自定义网络（使用 ```docker network create``` 来创建）**
     
-    您可以使用Docker网络驱动程序或外部网络驱动程序插件创建网络。您可以将多个容器连接到同一网络。连接到用户定义的网络后，这些容器可以仅使用另一个容器的IP地址或名称轻松进行通信。
+    您可以使用Docker网络驱动程序，或外部网络驱动程序插件，来创建一个自定义网络。您可以将多个容器连接到同一网络。连接到用户自定义的网络后，这些容器可以通过仅使用另一个容器的IP地址，或名称，来轻松进行通信。
     
-    对于overlay支持多主机连接的网络或自定义插件，连接到同一多主机网络但从不同引擎启动的容器也可以这种方式进行通信。
+    对于 ```overlay``` 网络或支持多主机连接的自定义网络插件，连接到同一多主机网络但从不同引擎启动的容器也可以这种方式进行通信。
     
-    以下示例使用内置bridge网络驱动程序并在创建的网络中运行容器来创建网络
+    以下示例使用内置的 ```bridge``` 网络驱动程序，并在创建的网络中运行容器来创建网络：
     
         $ docker network create -d bridge my-net
         $ docker run --network=my-net -itd --name=container3 busybox
 
 
-默认情况下，所有容器都启用了联网功能，并且它们可以建立任何传出连接。用户可以使用 ```docker run --network none``` 命令完全禁用网络，从而禁用所有传入和传出网络。在这样的情况下，用户将只能通过通过文件I/O或STDIN和STDOUT来进行操作。
+在默认情况下，所有的容器都启用了联网功能，并且它们可以建立任何传出连接。用户可以使用 ```docker run --network none``` 命令完全禁用网络，从而禁用所有传入和传出网络。在这样的情况下，用户将只能通过通过文件I/O或STDIN和STDOUT来进行操作。
 
 只有在默认选项（--network="bridge"）下才能实现发布端口和链接到其他容器。链接功能是已弃用的功能，推荐使用Docker网络驱动程序。
 
 默认情况下，您的容器将使用与主机相同的DNS服务器，但是您可以使用 ```--dns``` 来覆盖它。
 
 默认情况下，MAC地址是使用分配给容器的IP地址自动生成的，也可以通过使用 ```--mac-address``` 参数（格式为12:34:56:78:9a:bc：）来设置容器的MAC地址。请注意，Docker不会检查手动指定的MAC地址是否唯一。
+
+
+
+### ** 9. 重启机制 **
+
+### ** 10. 退出机制 **
+
+### ** 11. 清理 **
+
+### ** 12. 安全配置 **
+
+### ** 13. 设定初始进程 **
+
+### ** 14. 设置自定义的cgroup **
+
+### ** 15. 资源的运行时刻约束 **
+
+### ** 16. 附加组 **
+
+### ** 17. 运行时刻特权以及Linux性能 **
+
+### ** 18. 日志驱动 **
+
+### ** 19. 覆盖Dockerfile镜像默认值 **
+
+
 
 
 
