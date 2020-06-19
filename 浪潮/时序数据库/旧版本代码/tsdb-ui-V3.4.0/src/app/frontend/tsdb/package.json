@@ -1,6 +1,0 @@
-{
-  "name": "@tsdb/tsdb",
-  "version": "1.0.1",
-  "author": "inspur",
-  "main": "index.ts"
-}
