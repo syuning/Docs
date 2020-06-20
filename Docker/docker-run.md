@@ -316,7 +316,42 @@ unless-stopped | 无论退出状态如何（包括守护程序启动时），无
 
 
 ## **10. 容器的退出机制**
-// TODO
+
+ **退出代码（exit code）** 可以提供有关为何容器无法运行、或为何容器会退出的信息。
+
+当docker run使用**非零代码**退出时，**退出代码**遵循 ```chroot``` 标准，请参见下文：
+
+* ***125 - 错误是由Docker守护程序本身造成的***
+
+    $ docker run --foo busybox; echo $?
+    
+    flag provided but not defined: --foo
+    See 'docker run --help'.
+    125
+
+
+* ***126 - 无法调用命令***
+
+    $ docker run busybox /etc; echo $?
+    
+    docker: Error response from daemon: Container command '/etc' could not be invoked.
+    126
+
+
+* ***127 - 找不到命令***
+
+    $ docker run busybox foo; echo $?
+    
+    docker: Error response from daemon: Container command 'foo' not found or does not exist.
+    127
+
+
+* ***其他情况***
+
+    $ docker run busybox /bin/sh -c 'exit 3'; echo $?
+    
+    3
+
 
 ## **11. 清理容器**
 // TODO
