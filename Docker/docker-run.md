@@ -376,31 +376,704 @@ unless-stopped | 无论退出状态如何（包括守护程序启动时），无
 
 
 ## **12. 安全配置**
-// TODO
+
+选项 | 描述
+---- | ----
+--security-opt="label=user:USER" | 设置容器的标签用户
+--security-opt="label=role:ROLE" | 设置容器的标签角色
+--security-opt="label=type:TYPE" | 设置容器的标签类型
+--security-opt="label=level:LEVEL" | 设置容器的标签级别
+--security-opt="label=disable" | 关闭容器的标签限制
+--security-opt="apparmor=PROFILE" | 设置要应用于容器的 ```apparmor``` 配置文件
+--security-opt="no-new-privileges:true" | 禁止容器进程获取新特权
+--security-opt="seccomp=unconfined" | 关闭容器的 ```seccomp``` 限制
+--security-opt="seccomp=profile.json" | 白名单的 ```syscalls seccomp``` Json文件用作 ```seccomp``` 筛选器
+
+您可以通过指定 ```--security-opt``` 标志来覆盖每个容器的默认标签方案。在以下命令中指定级别可以使您在容器之间共享相同的内容：
+
+    $ docker run --security-opt label=level:s0:c100,c200 -it fedora bash
+
+> 注意：当前不支持MLS标签的自动翻译。
+
+要禁用此容器的安全标签而不是使用该 ```--privileged``` 标志运行 ，请使用以下命令：
+
+    $ docker run --security-opt label=disable -it fedora bash
+
+如果要对容器内的进程采用更严格的安全策略，则可以为容器指定其他类型。您可以通过执行以下命令来运行仅允许在Apache端口上侦听的容器：
+
+    $ docker run --security-opt label=type:svirt_apache_t -it centos bash
+
+> 注意：您将必须编写定义 ```svirt_apache_t``` 类型的策略。
+
+如果要阻止容器进程获取其他特权，可以执行以下命令：
+
+    $ docker run --security-opt no-new-privileges -it centos bash
+
+这意味着发出诸如 ```su``` 或的特权的命令 ```sudo``` 将不再起作用。它还会导致在删除特权后，稍后再应用任何 ```seccomp``` 过滤器，这可能意味着您可以使用一组更具限制性的过滤器。有关更多详细信息，请参见内核文档。
 
 ## **13. 设定初始进程**
-// TODO
 
-## **14. 设置自定义的cgroup**
-// TODO
+您可以使用 ```--init``` 标志来指定一个**初始化进程**用作容器中的**PID 1**。
+
+**指定初始化进程**可以确保，在创建的容器内执行初始化系统的一般职责，例如处理僵尸进程。
+
+使用的默认初始化进程是 ```docker-init``` 在Docker守护进程的系统路径中找到的第一个可执行文件。```docker-init``` 默认安装中包含的此二进制文件是由 ```tini``` 支持的。
+
+## **14. 设置自定义的cgroup）**
+
+> **cgroups**，其名称源自控制组群（control groups）的简写，是Linux内核的一个功能，用来限制、控制与分离一个进程组的资源（如CPU、内存、磁盘输入输出等。
+
+使用 ```--cgroup-parent``` 标志，您可以传递特定的 ```cgroup``` 来运行容器，这允许您自己创建和管理 ```cgroup``` 。您可以为这些 ```cgroup``` 定义自定义资源，并将容器放在**公共父组**下。
 
 ## **15. 资源的运行时刻约束**
 // TODO
 
+操作员还可以调整容器的性能参数：
+
+选项 | 描述
+----- | -----
+-m， --memory="" | 内存限制（格式：）<number>[<unit>]。数字是一个正整数。单位可以是一个b，k，m，或g。最小为4M。
+--memory-swap="" | 总内存限制（内存+交换，格式：）<number>[<unit>]。数字是一个正整数。单位可以是一个b，k，m，或g。
+--memory-reservation="" | 内存软限制（格式：）<number>[<unit>]。数字是一个正整数。单位可以是一个b，k，m，或g。
+--kernel-memory="" | 内核内存限制（格式：）<number>[<unit>]。数字是一个正整数。单位可以是一个b，k，m，或g。最小为4M。
+-c， --cpu-shares=0 | CPU份额（相对重量）
+--cpus=0.000 | CPU数量。数字是小数。0.000表示没有限制。
+--cpu-period=0 | 限制CPU CFS（完全公平调度程序）期限
+--cpuset-cpus="" | 允许执行的CPU（0-3，0,1）
+--cpuset-mems="" | 允许执行的内存节点（MEM）（0-3，0,1）。仅在NUMA系统上有效。
+--cpu-quota=0 | 限制CPU CFS（完全公平的调度程序）配额
+--cpu-rt-period=0 | 限制CPU的实时时间。以微秒为单位。需要设置父级cgroup，并且不能高于父级cgroup。还要检查rtprio ulimits。
+--cpu-rt-runtime=0 | 限制CPU实时运行时间。以微秒为单位。需要设置父级cgroup，并且不能高于父级cgroup。还要检查rtprio ulimits。
+--blkio-weight=0 | 块IO权重（相对权重）接受10到1000之间的权重值。
+--blkio-weight-device="" | 块IO重量（相对设备重量，格式：DEVICE_NAME:WEIGHT）
+--device-read-bps="" | 限制从设备读取的速率（格式：）<device-path>:<number>[<unit>]。数字是一个正整数。单位可以是一个kb，mb或gb。
+--device-write-bps="" | 将写入速率限制为设备（格式：）<device-path>:<number>[<unit>]。数字是一个正整数。单位可以是一个kb，mb或gb。
+--device-read-iops="" | 限制从设备（格式：）的读取速率（每秒IO <device-path>:<number>）。数字是一个正整数。
+--device-write-iops="" | 将写入速率（每秒的IO）限制为设备（格式：）<device-path>:<number>。数字是一个正整数。
+--oom-kill-disable=false | 是否为容器禁用OOM Killer。
+--oom-score-adj=0 | 调整容器的OOM首选项（-1000到1000）
+--memory-swappiness="" | 调整容器的内存交换行为。接受0到100之间的整数。
+--shm-size="" | 的大小/dev/shm。格式为<number><unit>。number必须大于0。单位是可选的，可以是b（字节），k（千字节），m（兆字节）或g（千兆字节）。如果省略单位，则系统使用字节。如果您完全省略尺寸，系统将使用64m。
+
+
+### **15.1 用户内存限制**
+
+我们有四种设置用户内存使用量的方法：
+
+选项 | 结果
+---- | ----
+memory = inf，memory-swap = inf（默认 | 容器没有内存限制。容器可以使用所需的内存。
+内存= L <inf，内存交换= inf | （指定内存，并将memory-swap设置为-1）容器不允许使用超过L个字节的内存，但是可以根据需要使用尽可能多的交换（如果主机支持交换内存）。
+内存= L <inf，内存交换= 2 * L | （请指定无内存交换的内存）容器不得使用超过L个字节的内存，而交换加内存使用量则是该字节的两倍。
+内存= L <inf，内存交换= S <inf，L <= S | （同时指定内存和内存交换）容器不允许使用超过L个字节的内存，交换和内存使用量受S限制。
+
+
+例子：
+
+    $ docker run -it ubuntu:14.04 /bin/bash
+
+
+我们没有对内存进行任何设置，这意味着容器中的进程可以使用所需的内存并交换所需的内存。
+
+    $ docker run -it -m 300M --memory-swap -1 ubuntu:14.04 /bin/bash
+
+
+我们设置了内存限制和禁用了交换内存限制，这意味着容器中的进程可以使用300M内存，并根据需要使用尽可能多的交换内存（如果主机支持交换内存）。
+
+    $ docker run -it -m 300M ubuntu:14.04 /bin/bash
+
+
+我们仅设置内存限制，这意味着容器中的进程可以使用300M内存和300M交换内存，默认情况下，总虚拟内存大小（--memory-swap）将设置为内存的两倍，在这种情况下，内存+ swap将为2 * 300M，因此进程也可以使用300M交换内存。
+
+    $ docker run -it -m 300M --memory-swap 1G ubuntu:14.04 /bin/bash
+
+
+我们同时设置了内存和交换内存，因此容器中的进程可以使用300M内存和700M交换内存。
+
+内存保留是一种内存软限制，它可以实现更大的内存共享。在正常情况下，容器可以使用所需的内存量，并且仅受-m/ --memory选项设置的硬性限制 。设置内存预留后，Docker会检测到内存争用或内存不足，并强制容器将其使用限制为预留限制。
+
+始终将内存保留值设置为硬限制以下，否则硬限制优先。保留为0等于不设置保留。默认情况下（未设置保留），内存保留与硬盘限制相同。
+
+内存保留是一项软限制功能，不能保证不会超出限制。取而代之的是，此功能试图确保在内存竞争激烈时，根据预留提示/设置分配内存。
+
+以下示例将内存（-m）限制为500M，并将内存预留设置为200M。
+
+    $ docker run -it -m 500M --memory-reservation 200M ubuntu:14.04 /bin/bash
+
+
+在这种配置下，当容器消耗的内存大于200M且小于500M时，下一个系统内存回收将尝试将容器内存缩小到200M以下。
+
+下面的示例将内存保留设置为1G，没有硬盘限制。
+
+    $ docker run -it --memory-reservation 1G ubuntu:14.04 /bin/bash
+
+
+容器可以使用所需的内存。内存预留设置可确保容器长时间不占用过多内存，因为每次回收内存都会将容器的消耗减少到预留空间。
+
+默认情况下，如果发生内存不足（OOM）错误，内核将终止容器中的进程。要更改此行为，请使用--oom-kill-disable选项。仅在还设置了该-m/--memory选项的容器上禁用OOM杀手 。如果-m未设置该标志，则可能导致主机内存不足，并要求终止主机的系统进程以释放内存。
+
+以下示例将内存限制为100M，并为此容器禁用OOM杀手：
+
+    $ docker run -it -m 100M --oom-kill-disable ubuntu:14.04 /bin/bash
+
+
+以下示例说明了使用标志的危险方式：
+
+    $ docker run -it --oom-kill-disable ubuntu:14.04 /bin/bash
+
+
+容器具有无限的内存，这可能导致主机内存不足，并需要终止系统进程来释放内存。--oom-score-adj 可以更改该参数以选择在系统内存不足时将杀死哪些容器的优先级，负分数会使它们被杀死的可能性较小，而正分数则更有可能被杀死。
+
+### **15.2 内核内存约束**
+
+内核内存从根本上不同于用户内存，因为不能交换内核内存。无法交换使得容器可以通过消耗过多的内核内存来阻止系统服务。内核内存包括：
+
+* 堆叠页面
+* 平板页面
+* 插槽内存压力
+* tcp内存压力
+
+您可以设置内核内存限制来限制这些类型的内存。例如，每个进程都消耗一些堆栈页面。通过限制内核内存，可以防止内核内存使用率过高时创建新进程。
+
+内核内存永远不会完全独立于用户内存。而是在用户内存限制的范围内限制内核内存。假设“ U”是用户内存限制，“ K”是内核限制。有三种可能的方式来设置限制：
+
+选项 | 结果
+U！= 0，K = inf（默认） | 这是使用内核内存之前已经存在的标准内存限制机制。内核内存被完全忽略。
+U！= 0，K <U | 内核内存是用户内存的子集。此设置在每个cgroup的内存总量被过量使用的部署中很有用。绝对不建议过度使用内核内存限制，因为此框仍然会耗尽不可回收的内存。在这种情况下，您可以配置K，以便所有组的总和永远不大于总内存。然后，以系统的服务质量为代价自由设置U。
+U！= 0，K> U | 由于内核内存费用也被馈送到用户计数器，并且针对两种内存的容器触发回收。此配置为管理员提供了内存的统一视图。对于只想跟踪内核内存使用情况的人来说，它也很有用。
+
+
+例子：
+
+    $ docker run -it -m 500M --kernel-memory 50M ubuntu:14.04 /bin/bash
+我们设置了内存和内核内存，因此容器中的进程总共可以使用500M内存，在这500M内存中，可以是50M内核内存顶部。
+
+    $ docker run -it --kernel-memory 50M ubuntu:14.04 /bin/bash
+我们在不使用-m的情况下设置了内核内存，因此容器中的进程可以使用所需数量的内存，但它们只能使用50M内核内存。
+
+### **15.3 限制**
+
+默认情况下，容器的内核可以换出一定比例的匿名页面。要为容器设置此百分比，请指定--memory-swappiness0到100之间的值。0值将关闭匿名页面交换。值100会将所有匿名页面设置为可交换。默认情况下，如果不使用 --memory-swappiness，则将从父级继承内存交换值。
+
+例如，您可以设置：
+
+    $ docker run -it --memory-swappiness=0 ubuntu:14.04 /bin/bash
+
+
+--memory-swappiness当您要保留容器的工作集并避免交换性能损失时，设置该选项很有用。
+
+### **15.4 CPU份额约束**
+
+默认情况下，所有容器获得相同比例的CPU周期。可以通过更改容器的CPU份额权重（相对于所有其他正在运行的容器的权重）来修改此比例。
+
+要从默认值1024修改比例，请使用-c或--cpu-shares 标志将权重设置为2或更高。如果设置为0，则系统将忽略该值，并使用默认值1024。
+
+该比例仅在运行CPU密集型进程时适用。当一个容器中的任务空闲时，其他容器可以使用剩余的CPU时间。实际的CPU时间量取决于系统上运行的容器数。
+
+例如，考虑三个容器，一个容器的cpu份额为1024，另两个容器的cpu份额设置为512。当所有三个容器中的进程尝试使用100％的CPU时，第一个容器将获得50％的CPU。总CPU时间。如果添加第四个容器的cpu份额为1024，则第一个容器仅获得33％的CPU。剩余的容器接收CPU的16.5％，16.5％和33％。
+
+在多核系统上，CPU时间的份额分配在所有CPU核上。即使容器限制为少于100％的CPU时间，它也可以使用每个CPU核心的100％。
+
+例如，考虑具有三个以上内核的系统。如果您在一个容器{C0}中-c=512运行一个进程来启动一个容器，而在另一个容器 {C1}中-c=1024运行两个进程来启动，则可能导致以下CPU份额划分：
+
+PID | container | CPU | CPUshare
+---- | ---- | ---- | ----
+100 | {C0} | 0 | 100% of CPU0
+101 | {C1} | 1 | 100% of CPU1
+102 | {C1} | 2 | 100% of CPU2
+
+### **15.5 CPU周期约束**
+
+默认的CPU CFS（完全公平调度程序）周期为100ms。我们可以使用 --cpu-period设置CPU的时间来限制容器的CPU使用率。并且通常--cpu-period应该使用--cpu-quota。
+
+例子：
+
+    $ docker run -it --cpu-period=50000 --cpu-quota=25000 ubuntu:14.04 /bin/bash
+如果有1个CPU，则意味着该容器每50毫秒可获取50％的CPU运行时间。
+
+除了使用--cpu-period和--cpu-quota设置CPU周期约束外，还可以指定--cpus浮点数来达到相同的目的。例如，如果有1个CPU，--cpus=0.5则将获得与设置--cpu-period=50000和--cpu-quota=25000（50％CPU）相同的结果。
+
+默认值--cpus就是0.000，这意味着没有限制。
+
+有关更多信息，请参阅有关带宽限制的CFS文档。
+
+### **15.6 Cpuset约束**
+
+我们可以设置cpus以允许容器执行。
+
+例子：
+
+    $ docker run -it --cpuset-cpus="1,3" ubuntu:14.04 /bin/bash
+
+
+这意味着容器中的进程可以在cpu 1和cpu 3上执行。
+
+    $ docker run -it --cpuset-cpus="0-2" ubuntu:14.04 /bin/bash
+
+
+这意味着容器中的进程可以在cpu 0，cpu 1和cpu 2上执行。
+
+我们可以设置允许在其中执行容器的内存。仅在NUMA系统上有效。
+
+例子：
+
+    $ docker run -it --cpuset-mems="1,3" ubuntu:14.04 /bin/bash
+
+
+本示例将容器中的进程限制为仅使用来自内存节点1和3的内存。
+
+    $ docker run -it --cpuset-mems="0-2" ubuntu:14.04 /bin/bash
+
+
+本示例将容器中的进程限制为仅使用来自内存节点0、1和2的内存。
+
+### **15.7 CPU配额限制**
+
+该--cpu-quota标志限制了容器的CPU使用率。默认0值允许容器占用100％的CPU资源（1个CPU）。CFS（完全公平调度程序）处理用于执行进程的资源分配，并且是内核使用的默认Linux调度程序。将此值设置为50000可将容器限制为CPU资源的50％。对于多个CPU，请--cpu-quota根据需要进行调整。有关更多信息，请参阅有关带宽限制的CFS文档。
+
+### **15.8 块IO带宽（Blkio）约束**
+
+默认情况下，所有容器都获得相同比例的块IO带宽（blkio）。该比例为500。要修改此比例，请使用该--blkio-weight标志相对于所有其他运行容器的权重更改容器的blkio权重。
+
+注意：
+
+blkio权重设置仅适用于直接IO。当前不支持缓冲的IO。
+
+该--blkio-weight标志可以将权重设置为10到1000之间的值。例如，以下命令创建两个具有不同blkio权重的容器：
+
+    $ docker run -it --name c1 --blkio-weight 300 ubuntu:14.04 /bin/bash
+    $ docker run -it --name c2 --blkio-weight 600 ubuntu:14.04 /bin/bash
+
+
+如果要同时在两个容器中阻止IO，例如：
+
+    $ time dd if=/mnt/zerofile of=test.out bs=1M count=1024 oflag=direct
+
+
+您会发现时间比例与两个容器的blkio重量比例相同。
+
+该--blkio-weight-device="DEVICE_NAME:WEIGHT"标志设置特定的设备权重。的DEVICE_NAME:WEIGHT是含有一个冒号分隔的设备名称和重量的字符串。例如，将/dev/sda设备权重设置为200：
+
+    $ docker run -it \
+        --blkio-weight-device "/dev/sda:200" \
+        ubuntu
+
+
+如果您同时指定--blkio-weight和--blkio-weight-device，则Docker使用--blkio-weight默认值权重，并使用--blkio-weight-device 特定设备上的新值覆盖默认值。以下示例使用默认权重，300并将/dev/sda该权重设置为时覆盖此默认值200：
+
+    $ docker run -it \
+        --blkio-weight 300 \
+        --blkio-weight-device "/dev/sda:200" \
+        ubuntu
+
+
+该--device-read-bps标志限制了从设备读取的速率（每秒字节数）。例如，该命令创建一个容器，并且限制了读出速度，以1mb 从每秒/dev/sda：
+
+    $ docker run -it --device-read-bps /dev/sda:1mb ubuntu
+
+
+该--device-write-bps标志限制了设备的写入速率（每秒字节数）。例如，此命令创建一个容器并将以下内容的写入速率限制为1mb 每秒/dev/sda：
+
+    $ docker run -it --device-write-bps /dev/sda:1mb ubuntu
+
+
+两个标志都采用<device-path>:<limit>[unit]格式限制。读写速率都必须为正整数。您可以以kb （千字节），mb（兆字节）或gb（千兆字节）指定速率。
+
+该--device-read-iops标志限制了设备的读取速率（每秒IO）。例如，此命令创建一个容器并将读取速率1000从限制为每秒 IO /dev/sda：
+
+    $ docker run -ti --device-read-iops /dev/sda:1000 ubuntu
+
+
+该--device-write-iops标志限制了设备的写入速率（每秒IO）。例如，此命令创建一个容器并将1000每秒IO 的写入速率限制 为/dev/sda：
+
+    $ docker run -ti --device-write-iops /dev/sda:1000 ubuntu
+
+
+两个标志都采用<device-path>:<limit>格式限制。读写速率都必须为正整数。
+
 ## **16. 附加组**
 // TODO
+
+    --group-add: Add additional groups to run as
+
+
+默认情况下，docker容器进程运行时会查找指定用户的补充组。如果要向该组列表添加更多内容，则可以使用此标志：
+
+    $ docker run --rm --group-add audio --group-add nogroup --group-add 777 busybox id
+
+    uid=0(root) gid=0(root) groups=10(wheel),29(audio),99(nogroup),777
 
 ## **17. 运行时刻特权以及Linux性能**
 // TODO
 
+选项 | 描述
+--- | ---
+--cap-add | 添加Linux功能
+--cap-drop | 放弃Linux功能
+--privileged | 赋予此容器扩展的特权
+--device=[] | 允许您在没有--privileged标志的情况下在容器内运行设备。
+默认情况下，Docker容器是“无特权的”，并且例如不能在Docker容器内运行Docker守护程序。这是因为默认情况下，不允许容器访问任何设备，但是授予“特权”容器访问所有设备的权限（请参阅cgroups devices文档）。
+
+当操作员执行时docker run --privileged，Docker将启用对主机上所有设备的访问，并在AppArmor或SELinux中进行一些配置，以允许容器对主机的访问几乎与在主机上容器外部运行的进程相同。--privileged可以在Docker Blog上找到 有关运行with的其他信息。
+
+如果要限制对一个或多个特定设备的访问，可以使用该--device标志。它允许您指定一个或多个在容器内可访问的设备。
+
+    $ docker run --device=/dev/snd:/dev/snd ...
+
+默认情况下，容器就可以read，write和mknod这些设备。可以使用:rwm每个--device标志的第三组选项来覆盖它：
+
+    $ docker run --device=/dev/sda:/dev/xvdc --rm -it ubuntu fdisk  /dev/xvdc
+
+Command (m for help): q
+
+    $ docker run --device=/dev/sda:/dev/xvdc:r --rm -it ubuntu fdisk  /dev/xvdc
+
+    You will not be able to write the partition table.
+
+Command (m for help): q
+
+    $ docker run --device=/dev/sda:/dev/xvdc:w --rm -it ubuntu fdisk  /dev/xvdc
+        crash....
+
+    $ docker run --device=/dev/sda:/dev/xvdc:m --rm -it ubuntu fdisk  /dev/xvdc
+    fdisk: unable to open /dev/xvdc: Operation not permitted
+另外--privileged，操作员可以使用--cap-add和对功能进行精细控制--cap-drop。默认情况下，Docker具有保留的默认功能列表。下表列出了默认情况下允许并可以删除的Linux功能选项。
+
+能力钥匙 | 能力描述
+---- | ----
+SETPCAP | 修改流程功能。
+麦克诺德 | 使用mknod（2）创建特殊文件。
+AUDIT_WRITE | 将记录写入内核审核日志。
+周恩来 | 对文件UID和GID进行任意更改（请参阅chown（2））。
+NET_RAW | 使用RAW和PACKET插槽。
+DAC_OVERRIDE | 绕过文件读取，写入和执行权限检查。
+福纳 | 绕过权限检查通常需要进程的文件系统UID与文件的UID匹配的操作。
+FSETID | 修改文件时，请勿清除set-user-ID和set-group-ID权限位。
+杀 | 绕过许可检查以发送信号。
+SETGID | 对进程GID和补充GID列表进行任意处理。
+SETUID | 对进程UID进行任意操作。
+NET_BIND_SERVICE | 将套接字绑定到Internet域特权端口（端口号小于1024）。
+SYS_CHROOT | 使用chroot（2），更改根目录。
+集资基金 | 设置文件功能。
+
+
+下表显示了默认情况下不授予的功能，可以添加这些功能。
+
+能力钥匙 | 能力描述
+---- | ----
+SYS_MODULE | 加载和卸载内核模块。
+SYS_RAWIO | 执行I / O端口操作（iopl（2）和ioperm（2））。
+SYS_PACCT | 使用acct（2），打开或关闭进程记帐。
+SYS_ADMIN | 执行一系列系统管理操作。
+SYS_NICE | 提高进程的nice值（nice（2），setpriority（2））并为任意进程更改nice的值。
+SYS_RESOURCE | 覆盖资源限制。
+SYS_TIME | 设置系统时钟（settimeofday（2），stime（2），adjtimex（2））; 设置实时（硬件）时钟。
+SYS_TTY_CONFIG | 使用vhangup（2）; 在虚拟终端上使用各种特权的ioctl（2）操作。
+AUDIT_CONTROL | 启用和禁用内核审核；更改审核过滤器规则；检索审核状态和过滤规则。
+MAC_ADMIN | 允许MAC配置或状态更改。为Smack LSM实施。
+MAC_OVERRIDE | 覆盖强制访问控制（MAC）。为Smack Linux安全模块（LSM）实现。
+NET_ADMIN | 执行各种与网络相关的操作。
+系统日志 | 执行特权的syslog（2）操作。
+DAC_READ_SEARCH | 绕过文件读取权限检查以及目录读取和执行权限检查。
+LINUX_IMMUTABLE | 设置FS_APPEND_FL和FS_IMMUTABLE_FL i节点标志。
+NET_BROADCAST | 进行套接字广播，并收听多播。
+IPC_LOCK | 锁定内存（mlock（2），mlockall（2），mmap（2），shmctl（2））。
+IPC_OWNER | 绕过权限检查对System V IPC对象的操作。
+SYS_PTRACE | 使用ptrace（2）跟踪任意进程。
+SYS_BOOT | 使用reboot（2）和kexec_load（2），重新引导并加载新内核以供以后执行。
+租 | 在任意文件上建立租约（请参阅fcntl（2））。
+WAKE_ALARM | 触发将唤醒系统的内容。
+BLOCK_SUSPEND | 使用可以阻止系统挂起的功能。
+
+功能（7）-Linux手册页上提供了更多参考信息。
+
+这两个标志都支持value ALL，因此，如果操作员希望拥有所有功能，但MKNOD可以使用：
+
+    $ docker run --cap-add=ALL --cap-drop=MKNOD ...
+为了与网络堆栈进行交互，--privileged应该使用它们--cap-add=NET_ADMIN来修改网络接口，而不是使用它们。
+
+    $ docker run -it --rm  ubuntu:14.04 ip link add dummy0 type dummy
+
+RTNETLINK answers: Operation not permitted
+
+    $ docker run -it --rm --cap-add=NET_ADMIN ubuntu:14.04 ip link add dummy0 type dummy
+要挂载基于FUSE的文件系统，您需要将--cap-add和 结合使用--device：
+
+    $ docker run --rm -it --cap-add SYS_ADMIN sshfs sshfs sven@10.10.10.20:/home/sven /mnt
+
+fuse: failed to open /dev/fuse: Operation not permitted
+
+    $ docker run --rm -it --device /dev/fuse sshfs sshfs sven@10.10.10.20:/home/sven /mnt
+
+fusermount: mount failed: Operation not permitted
+
+    $ docker run --rm -it --cap-add SYS_ADMIN --device /dev/fuse sshfs
+
+    // sshfs sven@10.10.10.20:/home/sven /mnt
+    The authenticity of host '10.10.10.20 (10.10.10.20)' can't be established.
+    ECDSA key fingerprint is 25:34:85:75:25:b0:17:46:05:19:04:93:b5:dd:5f:c6.
+    Are you sure you want to continue connecting (yes/no)? yes
+    sven@10.10.10.20's password:
+    
+    root@30aa0cfaf1b5:/# ls -la /mnt/src/docker
+    
+    total 1516
+    drwxrwxr-x 1 1000 1000   4096 Dec  4 06:08 .
+    drwxrwxr-x 1 1000 1000   4096 Dec  4 11:46 ..
+    -rw-rw-r-- 1 1000 1000     16 Oct  8 00:09 .dockerignore
+    -rwxrwxr-x 1 1000 1000    464 Oct  8 00:09 .drone.yml
+    drwxrwxr-x 1 1000 1000   4096 Dec  4 06:11 .git
+    -rw-rw-r-- 1 1000 1000    461 Dec  4 06:08 .gitignore
+    ....
+
+默认的seccomp配置文件将根据所选功能进行调整，以允许使用该功能允许的功能，因此自Docker 1.12起，您不必对此进行调整。在Docker 1.10和1.11中没有发生这种情况，可能有必要使用自定义seccomp配置文件或--security-opt seccomp=unconfined在添加功能时使用。
+
+
 ## **18. 日志驱动**
 // TODO
+
+容器可以具有与Docker守护程序不同的日志记录驱动程序。--log-driver=VALUE与docker run命令一起使用可配置容器的日志记录驱动程序。支持以下选项：
+
+司机 | 描述
+none | 禁用容器的任何日志记录。docker logs此驱动程序将不可用。
+json-file | Docker的默认日志记录驱动程序。将JSON消息写入文件。此驱动程序不支持任何日志记录选项。
+syslog | Docker的Syslog日志记录驱动程序。将日志消息写入syslog。
+journald | Docker的日志记录驱动程序。将日志消息写入journald。
+gelf | 用于Docker的Graylog扩展日志格式（GELF）日志记录驱动程序。将日志消息写入GELF端点（如Graylog或Logstash）。
+fluentd | Docker的流利日志记录驱动程序。将日志消息写入fluentd（向前输入）。
+awslogs | Docker的Amazon CloudWatch Logs日志记录驱动程序。将日志消息写入Amazon CloudWatch Logs
+splunk | 用于Docker的Splunk日志记录驱动程序。将日志消息写入到splunk使用事件Http收集器。
+该docker logs命令仅对json-file和journald 驱动程序可用。有关使用日志记录驱动程序的详细信息，请参阅“ 配置日志记录驱动程序”。
+
 
 ## **19. 覆盖Dockerfile镜像默认值**
 // TODO
 
+当开发人员从Dockerfile生成映像 或提交映像时，开发人员可以设置许多默认参数，这些默认参数在映像作为容器启动时生效。
+
+在Dockerfile命令的四个不能在运行时被覆盖：FROM， MAINTAINER，RUN，和ADD。其他所有内容在中都有相应的覆盖docker run。我们将介绍开发人员可能在每个Dockerfile指令中设置的内容，以及操作员如何覆盖该设置。
+
+CMD（默认命令或选项）
+ENTRYPOINT（在运行时执行的默认命令）
+展览（进港）
+ENV（环境变量）
+健康检查
+卷（共享文件系统）
+用户
+工作目录
+CMD（默认命令或选项）
+COMMAND在Docker命令行中调用可选选项：
+
+$ docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]
+该命令是可选的，因为创建的人IMAGE可能已经COMMAND使用Dockerfile CMD 指令提供了默认值。作为操作员（从图像中运行容器的人员），您CMD只需指定new 即可覆盖该指令 COMMAND。
+
+如果图片也指定，ENTRYPOINT则将CMD或COMMAND 附加为参数ENTRYPOINT。
+
+入口点（默认命令在运行时执行）
+    --entrypoint="": Overwrite the default entrypoint set by the image
+该ENTRYPOINT图像是类似COMMAND，因为它指定了可执行文件运行容器启动时，但它是（故意）更难以覆盖。在ENTRYPOINT给出了一个容器，它的默认性质或行为，所以，当你设置一个 ENTRYPOINT可以运行的容器，就好像它是二进制，完全使用默认选项，并且可以在通过更多的选择传球 COMMAND。但是，有时操作员可能希望在容器内运行其他内容，因此您可以ENTRYPOINT在运行时通过使用字符串指定new 来覆盖默认值ENTRYPOINT。这是一个如何在已设置为自动运行其他内容（例如/usr/bin/redis-server）的容器中运行Shell的示例：
+
+$ docker run -it --entrypoint /bin/bash example/redis
+或两个如何将更多参数传递给该ENTRYPOINT的示例：
+
+$ docker run -it --entrypoint /bin/bash example/redis -c ls -l
+$ docker run -it --entrypoint /usr/bin/redis-cli example/redis --help
+您可以通过传递空字符串来重置容器入口点，例如：
+
+$ docker run -it --entrypoint="" mysql bash
+注意
+
+传递--entrypoint将清除映像上设置的任何默认命令（即CMD，用于构建映像的Dockerfile中的任何指令）。
+
+暴露（）
+以下run命令选项可用于容器网络：
+
+--expose=[]: Expose a port or a range of ports inside the container.
+             These are additional to those exposed by the `EXPOSE` instruction
+-P         : Publish all exposed ports to the host interfaces
+-p=[]      : Publish a container's port or a range of ports to the host
+               format: ip:hostPort:containerPort | ip::containerPort | hostPort:containerPort | containerPort
+               Both hostPort and containerPort can be specified as a
+               range of ports. When specifying ranges for both, the
+               number of container ports in the range must match the
+               number of host ports in the range, for example:
+                   -p 1234-1236:1234-1236/tcp
+
+               When specifying a range for hostPort only, the
+               containerPort must not be a range.  In this case the
+               container port is published somewhere within the
+               specified hostPort range. (e.g., `-p 1234-1236:1234/tcp`)
+
+               (use 'docker port' to see the actual mapping)
+
+--link=""  : Add link to another container (<name or id>:alias or <name or id>)
+除了该EXPOSE指令外，图像开发人员对网络没有太多控制权。该EXPOSE指令定义了提供服务的初始传入端口。这些端口可用于容器内部的进程。操作员可以使用该--expose 选项添加到裸露的端口。
+
+要暴露容器的内部端口，操作员可以使用-P或-p标志启动容器。主机上可以访问裸露的端口，并且所有可访问主机的客户端都可以使用这些端口。
+
+该-P选项将所有端口发布到主机接口。Docker将每个公开端口绑定到主机上的随机端口。端口范围在定义 的临时端口范围内/proc/sys/net/ipv4/ip_local_port_range。使用该-p标志可以显式映射单个端口或端口范围。
+
+容器内部（服务在其中进行侦听的端口）的端口号不需要与容器外部（客户端进行连接的地方）暴露的端口号相匹配。例如，在容器内，HTTP服务正在端口80上侦听（因此映像开发人员EXPOSE 80在Dockerfile中指定了端口）。在运行时，端口可能绑定到主机上的42800。要查找主机端口和公开端口之间的映射，请使用docker port。
+
+如果操作员--link在默认网桥网络中启动新的客户端容器时使用，则该客户端容器可以通过专用网络接口访问公开的端口。如网络概述中--link所述在用户定义的网络中启动容器时使用，它将为要链接的容器提供命名别名。
+
+ENV（环境变量）
+创建Linux容器时，Docker会自动设置一些环境变量。创建Windows容器时，Docker不会设置任何环境变量。
+
+为Linux容器设置了以下环境变量：
+
+变量	值
+HOME	根据设定值 USER
+HOSTNAME	与容器关联的主机名
+PATH	包括热门目录，例如 /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+TERM	xterm 如果为容器分配了伪TTY
+此外，操作员可以使用一个或多个标志设置容器中的任何环境变量-e，甚至覆盖上面提到的标志，或者由开发人员使用Dockerfile定义ENV。如果操作员在没有指定值的情况下命名环境变量，则命名变量的当前值将传播到容器的环境中：
+
+$ export today=Wednesday
+$ docker run -e "deep=purple" -e today --rm alpine env
+
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=d2219b854598
+deep=purple
+today=Wednesday
+HOME=/root
+PS C:\> docker run --rm -e "foo=bar" microsoft/nanoserver cmd /s /c set
+ALLUSERSPROFILE=C:\ProgramData
+APPDATA=C:\Users\ContainerAdministrator\AppData\Roaming
+CommonProgramFiles=C:\Program Files\Common Files
+CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files
+CommonProgramW6432=C:\Program Files\Common Files
+COMPUTERNAME=C2FAEFCC8253
+ComSpec=C:\Windows\system32\cmd.exe
+foo=bar
+LOCALAPPDATA=C:\Users\ContainerAdministrator\AppData\Local
+NUMBER_OF_PROCESSORS=8
+OS=Windows_NT
+Path=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\ContainerAdministrator\AppData\Local\Microsoft\WindowsApps
+PATHEXT=.COM;.EXE;.BAT;.CMD
+PROCESSOR_ARCHITECTURE=AMD64
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 62 Stepping 4, GenuineIntel
+PROCESSOR_LEVEL=6
+PROCESSOR_REVISION=3e04
+ProgramData=C:\ProgramData
+ProgramFiles=C:\Program Files
+ProgramFiles(x86)=C:\Program Files (x86)
+ProgramW6432=C:\Program Files
+PROMPT=$P$G
+PUBLIC=C:\Users\Public
+SystemDrive=C:
+SystemRoot=C:\Windows
+TEMP=C:\Users\ContainerAdministrator\AppData\Local\Temp
+TMP=C:\Users\ContainerAdministrator\AppData\Local\Temp
+USERDOMAIN=User Manager
+USERNAME=ContainerAdministrator
+USERPROFILE=C:\Users\ContainerAdministrator
+windir=C:\Windows
+同样，操作员可以使用设置HOSTNAME（Linux）或COMPUTERNAME（Windows）-h。
+
+健康
+  --health-cmd            Command to run to check health
+  --health-interval       Time between running the check
+  --health-retries        Consecutive failures needed to report unhealthy
+  --health-timeout        Maximum time to allow one check to run
+  --health-start-period   Start period for the container to initialize before starting health-retries countdown
+  --no-healthcheck        Disable any container-specified HEALTHCHECK
+例：
 
 
+$ docker run --name=test -d \
+    --health-cmd='stat /etc/passwd || exit 1' \
+    --health-interval=2s \
+    busybox sleep 1d
+$ sleep 2; docker inspect --format='{{.State.Health.Status}}' test
+healthy
+$ docker exec test rm /etc/passwd
+$ sleep 2; docker inspect --format='{{json .State.Health}}' test
+{
+  "Status": "unhealthy",
+  "FailingStreak": 3,
+  "Log": [
+    {
+      "Start": "2016-05-25T17:22:04.635478668Z",
+      "End": "2016-05-25T17:22:04.7272552Z",
+      "ExitCode": 0,
+      "Output": "  File: /etc/passwd\n  Size: 334       \tBlocks: 8          IO Block: 4096   regular file\nDevice: 32h/50d\tInode: 12          Links: 1\nAccess: (0664/-rw-rw-r--)  Uid: (    0/    root)   Gid: (    0/    root)\nAccess: 2015-12-05 22:05:32.000000000\nModify: 2015..."
+    },
+    {
+      "Start": "2016-05-25T17:22:06.732900633Z",
+      "End": "2016-05-25T17:22:06.822168935Z",
+      "ExitCode": 0,
+      "Output": "  File: /etc/passwd\n  Size: 334       \tBlocks: 8          IO Block: 4096   regular file\nDevice: 32h/50d\tInode: 12          Links: 1\nAccess: (0664/-rw-rw-r--)  Uid: (    0/    root)   Gid: (    0/    root)\nAccess: 2015-12-05 22:05:32.000000000\nModify: 2015..."
+    },
+    {
+      "Start": "2016-05-25T17:22:08.823956535Z",
+      "End": "2016-05-25T17:22:08.897359124Z",
+      "ExitCode": 1,
+      "Output": "stat: can't stat '/etc/passwd': No such file or directory\n"
+    },
+    {
+      "Start": "2016-05-25T17:22:10.898802931Z",
+      "End": "2016-05-25T17:22:10.969631866Z",
+      "ExitCode": 1,
+      "Output": "stat: can't stat '/etc/passwd': No such file or directory\n"
+    },
+    {
+      "Start": "2016-05-25T17:22:12.971033523Z",
+      "End": "2016-05-25T17:22:13.082015516Z",
+      "ExitCode": 1,
+      "Output": "stat: can't stat '/etc/passwd': No such file or directory\n"
+    }
+  ]
+}
 
+健康状态也会显示在docker ps输出中。
 
-docker run -itd -p 127.0.0.1:50001:22 centos /bin/bash
+TMPFS（挂载tmpfs文件系统）
+--tmpfs=[]: Create a tmpfs mount with: container-dir[:<options>],
+            where the options are identical to the Linux
+            'mount -t tmpfs -o' command.
+下面安装一个空的tmpfs与容器中的例子rw， noexec，nosuid，和size=65536k选项。
+
+$ docker run -d --tmpfs /run:rw,noexec,nosuid,size=65536k my_image
+VOLUME（共享文件系统）
+-v, --volume=[host-src:]container-dest[:<options>]: Bind mount a volume.
+The comma-delimited `options` are [rw|ro], [z|Z],
+[[r]shared|[r]slave|[r]private], and [nocopy].
+The 'host-src' is an absolute path or a name value.
+
+If neither 'rw' or 'ro' is specified then the volume is mounted in
+read-write mode.
+
+The `nocopy` mode is used to disable automatically copying the requested volume
+path in the container to the volume storage location.
+For named volumes, `copy` is the default mode. Copy modes are not supported
+for bind-mounted volumes.
+
+--volumes-from="": Mount all volumes from the given container(s)
+注意
+
+使用systemd管理Docker守护程序的启动和停止时，在systemd单元文件中有一个选项来控制Docker守护程序本身的挂载传播MountFlags。此设置的值可能会导致Docker无法看到在安装点上进行的安装传播更改。例如，如果此值为slave，则可能无法在卷上使用shared或rshared传播。
+
+卷命令足够复杂，可以在“ 使用卷”部分中拥有自己的文档。开发人员可以定义一个或多个VOLUME与映像关联的对象，但是只有操作员才能从一个容器访问另一个容器（或从一个容器访问安装在主机上的卷）。
+
+在container-dest必须始终是绝对路径，例如/src/docs。的host-src可以是一个绝对路径或name值。如果您提供的绝对路径，则host-dirDocker绑定安装到您指定的路径。如果提供a name，则Docker将以此创建一个命名卷name。
+
+甲name值必须以字母数字字符，接着启动a-z0-9，_（下划线）， .（周期）或-（连字符）。绝对路径以/（正斜杠）开头。
+
+例如，您可以指定一个/foo或foo一个host-src值。如果提供该/foo值，则Docker将创建一个绑定安装。如果提供foo规范，则Docker将创建一个命名卷。
+
+用户
+root（id = 0）是容器中的默认用户。图像开发人员可以创建其他用户。这些用户可以通过名称访问。传递数字ID时，用户不必在容器中。
+
+开发人员可以设置默认用户，以使用Dockerfile USER指令运行第一个进程。启动容器时，操作员可以USER通过传递-u选项来覆盖指令。
+
+-u="", --user="": Sets the username or UID used and optionally the groupname or GID for the specified command.
+
+The followings examples are all valid:
+--user=[ user | user:group | uid | uid:gid | user:gid | uid:group ]
+注意：如果您传递数字uid，则它必须在0-2147483647的范围内。
+
+WORKDIR 
+在容器中运行二进制文件的默认工作目录是根目录（/），但是开发人员可以使用Dockerfile WORKDIR命令设置其他默认目录。操作员可以使用以下方法覆盖它：
+
+-w="": Working directory inside the container
