@@ -1,5 +1,71 @@
 @贝蒂 :unicorn: 的文档
 > 官网文档地址：https://docs.docker.com/engine/reference/run/
+# 目录
+
+```
+1. docker run 命令的一般形式
+    1.1 镜像默认值参数
+
+2. 用户自定义参数
+
+3. 独立运行(Detached)模式 与 前台运行(foreground)模式
+    3.1 独立运行(Detached)
+    3.2 前台运行(foreground)
+    
+4. 容器身份识别
+    4.1 容器名称 （--name）
+    4.2 容器ID（类PID机制）
+    4.3 Image[:tag]  镜像标签
+    4.4 Image[@digest] 镜像摘要
+
+5. PID设置
+
+6. UTS设置（--uts）
+
+7. IPC设置（--ipc）（IPC：Inter-Process Communication，进程间通信）
+
+8. 网络设置
+
+9. 容器的重启机制 (--restart)
+
+10. 容器的退出机制
+
+11. 清理容器(--rm)
+
+12. 安全配置
+
+13. 设定初始进程
+
+14. 设置自定义的cgroup）
+
+15. 资源的运行时刻约束
+    15.1 用户内存限制
+    15.2 内核内存约束
+    15.3 限制
+    15.4 CPU份额约束
+    15.5 CPU周期约束
+    15.6 Cpuset约束
+    15.7 CPU配额限制
+    15.8 块IO带宽（Blkio）约束
+
+16. 附加组
+
+17. 运行时刻特权以及Linux性能
+
+18. 日志驱动
+
+19. 覆盖Dockerfile镜像默认值
+    19.1 CMD（默认命令或选项）
+    19.2 ENTRYPOINT（默认命令在运行时执行）
+    19.3 EXPOSE (incoming ports)
+    19.4 ENV（环境变量）
+    19.5 HEALTHCHECK
+    19.6 TMPFS（挂载tmpfs文件系统）
+    19.7 VOLUME（共享文件系统）
+    19.8 USER
+    19.10 WORKDIR
+```
+
 
 # **docker run 命令**
 
@@ -89,7 +155,7 @@ $ echo test | docker run -i busybox cat
 
 ## **4. 容器身份识别**
 
-### **4.1 容器名称 [--name]**
+### **4.1 容器名称 （--name）**
 
 docker用户可以通过三种方式来鉴别一个容器：
 1. UUID 长id - “f78375b1c487e03c9438c729345e54db9d20cfa2ac1fc3494b6eb60872e74778”
@@ -181,7 +247,7 @@ UTS命名空间用于设置主机名、和对该命名空间中正在运行的�
 
 如果用户希望容器的主机名随着宿主机的主机名更改而更改，则需要与主机共享UTS命名空间，此选项也可以实现一个更进阶的操作 - 从容器内部更改宿主机的主机名。
 
-## **7. IPC设置（--ipc）（IPC：Inter-Process Communication，进程间通信**
+## **7. IPC设置（--ipc）（IPC：Inter-Process Communication，进程间通信）**
 
     --ipc="MODE"  : 为容器设置IPC模式
 
@@ -835,6 +901,7 @@ fusermount: mount failed: Operation not permitted
 容器可以具有与Docker守护程序不同的日志记录驱动程序。--log-driver=VALUE与docker run命令一起使用可配置容器的日志记录驱动程序。支持以下选项：
 
 司机 | 描述
+--- | ---
 none | 禁用容器的任何日志记录。docker logs此驱动程序将不可用。
 json-file | Docker的默认日志记录驱动程序。将JSON消息写入文件。此驱动程序不支持任何日志记录选项。
 syslog | Docker的Syslog日志记录驱动程序。将日志消息写入syslog。
@@ -853,60 +920,61 @@ splunk | 用于Docker的Splunk日志记录驱动程序。将日志消息写入�
 
 在Dockerfile命令的四个不能在运行时被覆盖：FROM， MAINTAINER，RUN，和ADD。其他所有内容在中都有相应的覆盖docker run。我们将介绍开发人员可能在每个Dockerfile指令中设置的内容，以及操作员如何覆盖该设置。
 
-CMD（默认命令或选项）
-ENTRYPOINT（在运行时执行的默认命令）
-展览（进港）
-ENV（环境变量）
-健康检查
-卷（共享文件系统）
-用户
-工作目录
-CMD（默认命令或选项）
+### **19.1 CMD（默认命令或选项）**
+
 COMMAND在Docker命令行中调用可选选项：
 
-$ docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]
+    $ docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]
+
 该命令是可选的，因为创建的人IMAGE可能已经COMMAND使用Dockerfile CMD 指令提供了默认值。作为操作员（从图像中运行容器的人员），您CMD只需指定new 即可覆盖该指令 COMMAND。
 
 如果图片也指定，ENTRYPOINT则将CMD或COMMAND 附加为参数ENTRYPOINT。
 
-入口点（默认命令在运行时执行）
+### **19.2 ENTRYPOINT（默认命令在运行时执行）**
+
     --entrypoint="": Overwrite the default entrypoint set by the image
+
 该ENTRYPOINT图像是类似COMMAND，因为它指定了可执行文件运行容器启动时，但它是（故意）更难以覆盖。在ENTRYPOINT给出了一个容器，它的默认性质或行为，所以，当你设置一个 ENTRYPOINT可以运行的容器，就好像它是二进制，完全使用默认选项，并且可以在通过更多的选择传球 COMMAND。但是，有时操作员可能希望在容器内运行其他内容，因此您可以ENTRYPOINT在运行时通过使用字符串指定new 来覆盖默认值ENTRYPOINT。这是一个如何在已设置为自动运行其他内容（例如/usr/bin/redis-server）的容器中运行Shell的示例：
 
-$ docker run -it --entrypoint /bin/bash example/redis
+    $ docker run -it --entrypoint /bin/bash example/redis
+
 或两个如何将更多参数传递给该ENTRYPOINT的示例：
 
-$ docker run -it --entrypoint /bin/bash example/redis -c ls -l
-$ docker run -it --entrypoint /usr/bin/redis-cli example/redis --help
+    $ docker run -it --entrypoint /bin/bash example/redis -c ls -l
+    $ docker run -it --entrypoint /usr/bin/redis-cli example/redis --help
+
 您可以通过传递空字符串来重置容器入口点，例如：
 
-$ docker run -it --entrypoint="" mysql bash
+    $ docker run -it --entrypoint="" mysql bash
+
 注意
 
 传递--entrypoint将清除映像上设置的任何默认命令（即CMD，用于构建映像的Dockerfile中的任何指令）。
 
-暴露（）
+### **19.3 EXPOSE (incoming ports)**
+
 以下run命令选项可用于容器网络：
 
---expose=[]: Expose a port or a range of ports inside the container.
-             These are additional to those exposed by the `EXPOSE` instruction
--P         : Publish all exposed ports to the host interfaces
--p=[]      : Publish a container's port or a range of ports to the host
-               format: ip:hostPort:containerPort | ip::containerPort | hostPort:containerPort | containerPort
-               Both hostPort and containerPort can be specified as a
-               range of ports. When specifying ranges for both, the
-               number of container ports in the range must match the
-               number of host ports in the range, for example:
-                   -p 1234-1236:1234-1236/tcp
+    --expose=[]: Expose a port or a range of ports inside the container.
+                 These are additional to those exposed by the `EXPOSE` instruction
+    -P         : Publish all exposed ports to the host interfaces
+    -p=[]      : Publish a container's port or a range of ports to the host
+                   format: ip:hostPort:containerPort | ip::containerPort | hostPort:containerPort | containerPort
+                   Both hostPort and containerPort can be specified as a
+                   range of ports. When specifying ranges for both, the
+                   number of container ports in the range must match the
+                   number of host ports in the range, for example:
+                       -p 1234-1236:1234-1236/tcp
+    
+                   When specifying a range for hostPort only, the
+                   containerPort must not be a range.  In this case the
+                   container port is published somewhere within the
+                   specified hostPort range. (e.g., `-p 1234-1236:1234/tcp`)
+    
+                   (use 'docker port' to see the actual mapping)
+    
+    --link=""  : Add link to another container (<name or id>:alias or <name or id>)
 
-               When specifying a range for hostPort only, the
-               containerPort must not be a range.  In this case the
-               container port is published somewhere within the
-               specified hostPort range. (e.g., `-p 1234-1236:1234/tcp`)
-
-               (use 'docker port' to see the actual mapping)
-
---link=""  : Add link to another container (<name or id>:alias or <name or id>)
 除了该EXPOSE指令外，图像开发人员对网络没有太多控制权。该EXPOSE指令定义了提供服务的初始传入端口。这些端口可用于容器内部的进程。操作员可以使用该--expose 选项添加到裸露的端口。
 
 要暴露容器的内部端口，操作员可以使用-P或-p标志启动容器。主机上可以访问裸露的端口，并且所有可访问主机的客户端都可以使用这些端口。
@@ -917,139 +985,154 @@ $ docker run -it --entrypoint="" mysql bash
 
 如果操作员--link在默认网桥网络中启动新的客户端容器时使用，则该客户端容器可以通过专用网络接口访问公开的端口。如网络概述中--link所述在用户定义的网络中启动容器时使用，它将为要链接的容器提供命名别名。
 
-ENV（环境变量）
+### **19.4 ENV（环境变量）**
+
 创建Linux容器时，Docker会自动设置一些环境变量。创建Windows容器时，Docker不会设置任何环境变量。
 
 为Linux容器设置了以下环境变量：
 
-变量	值
-HOME	根据设定值 USER
-HOSTNAME	与容器关联的主机名
-PATH	包括热门目录，例如 /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-TERM	xterm 如果为容器分配了伪TTY
-此外，操作员可以使用一个或多个标志设置容器中的任何环境变量-e，甚至覆盖上面提到的标志，或者由开发人员使用Dockerfile定义ENV。如果操作员在没有指定值的情况下命名环境变量，则命名变量的当前值将传播到容器的环境中：
+变量 | 值
+HOME | 根据设定值 USER
+HOSTNAME | 与容器关联的主机名
+PATH | 包括热门目录，例如 /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+TERM | xterm 如果为容器分配了伪TTY
 
-$ export today=Wednesday
-$ docker run -e "deep=purple" -e today --rm alpine env
+此外，操作员可以使用一个或多个标志设置容器中的任何环境变量-e，甚至覆盖上面提到的标志，或者由开发人员使用Dockerfile定义ENV。如果操作员在没有指定值的情况下命名环境变量，则命名变量的当前值将传播到容器的
 
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-HOSTNAME=d2219b854598
-deep=purple
-today=Wednesday
-HOME=/root
-PS C:\> docker run --rm -e "foo=bar" microsoft/nanoserver cmd /s /c set
-ALLUSERSPROFILE=C:\ProgramData
-APPDATA=C:\Users\ContainerAdministrator\AppData\Roaming
-CommonProgramFiles=C:\Program Files\Common Files
-CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files
-CommonProgramW6432=C:\Program Files\Common Files
-COMPUTERNAME=C2FAEFCC8253
-ComSpec=C:\Windows\system32\cmd.exe
-foo=bar
-LOCALAPPDATA=C:\Users\ContainerAdministrator\AppData\Local
-NUMBER_OF_PROCESSORS=8
-OS=Windows_NT
-Path=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\ContainerAdministrator\AppData\Local\Microsoft\WindowsApps
-PATHEXT=.COM;.EXE;.BAT;.CMD
-PROCESSOR_ARCHITECTURE=AMD64
-PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 62 Stepping 4, GenuineIntel
-PROCESSOR_LEVEL=6
-PROCESSOR_REVISION=3e04
-ProgramData=C:\ProgramData
-ProgramFiles=C:\Program Files
-ProgramFiles(x86)=C:\Program Files (x86)
-ProgramW6432=C:\Program Files
-PROMPT=$P$G
-PUBLIC=C:\Users\Public
-SystemDrive=C:
-SystemRoot=C:\Windows
-TEMP=C:\Users\ContainerAdministrator\AppData\Local\Temp
-TMP=C:\Users\ContainerAdministrator\AppData\Local\Temp
-USERDOMAIN=User Manager
-USERNAME=ContainerAdministrator
-USERPROFILE=C:\Users\ContainerAdministrator
-windir=C:\Windows
+环境中：
+
+    $ export today=Wednesday
+    $ docker run -e "deep=purple" -e today --rm alpine env
+    
+    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    HOSTNAME=d2219b854598
+    deep=purple
+    today=Wednesday
+    HOME=/root
+    PS C:\> docker run --rm -e "foo=bar" microsoft/nanoserver cmd /s /c set
+    ALLUSERSPROFILE=C:\ProgramData
+    APPDATA=C:\Users\ContainerAdministrator\AppData\Roaming
+    CommonProgramFiles=C:\Program Files\Common Files
+    CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files
+    CommonProgramW6432=C:\Program Files\Common Files
+    COMPUTERNAME=C2FAEFCC8253
+    ComSpec=C:\Windows\system32\cmd.exe
+    foo=bar
+    LOCALAPPDATA=C:\Users\ContainerAdministrator\AppData\Local
+    NUMBER_OF_PROCESSORS=8
+    OS=Windows_NT
+    Path=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\ContainerAdministrator\AppData\Local\Microsoft\WindowsApps
+    PATHEXT=.COM;.EXE;.BAT;.CMD
+    PROCESSOR_ARCHITECTURE=AMD64
+    PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 62 Stepping 4, GenuineIntel
+    PROCESSOR_LEVEL=6
+    PROCESSOR_REVISION=3e04
+    ProgramData=C:\ProgramData
+    ProgramFiles=C:\Program Files
+    ProgramFiles(x86)=C:\Program Files (x86)
+    ProgramW6432=C:\Program Files
+    PROMPT=$P$G
+    PUBLIC=C:\Users\Public
+    SystemDrive=C:
+    SystemRoot=C:\Windows
+    TEMP=C:\Users\ContainerAdministrator\AppData\Local\Temp
+    TMP=C:\Users\ContainerAdministrator\AppData\Local\Temp
+    USERDOMAIN=User Manager
+    USERNAME=ContainerAdministrator
+    USERPROFILE=C:\Users\ContainerAdministrator
+    windir=C:\Windows
+
 同样，操作员可以使用设置HOSTNAME（Linux）或COMPUTERNAME（Windows）-h。
 
-健康
-  --health-cmd            Command to run to check health
-  --health-interval       Time between running the check
-  --health-retries        Consecutive failures needed to report unhealthy
-  --health-timeout        Maximum time to allow one check to run
-  --health-start-period   Start period for the container to initialize before starting health-retries countdown
-  --no-healthcheck        Disable any container-specified HEALTHCHECK
+### **19.5 HEALTHCHECK**
+
+      --health-cmd            Command to run to check health
+      --health-interval       Time between running the check
+      --health-retries        Consecutive failures needed to report unhealthy
+      --health-timeout        Maximum time to allow one check to run
+      --health-start-period   Start period for the container to initialize before starting health-retries countdown
+      --no-healthcheck        Disable any container-specified HEALTHCHECK
+
+
 例：
 
 
-$ docker run --name=test -d \
-    --health-cmd='stat /etc/passwd || exit 1' \
-    --health-interval=2s \
-    busybox sleep 1d
-$ sleep 2; docker inspect --format='{{.State.Health.Status}}' test
-healthy
-$ docker exec test rm /etc/passwd
-$ sleep 2; docker inspect --format='{{json .State.Health}}' test
-{
-  "Status": "unhealthy",
-  "FailingStreak": 3,
-  "Log": [
+    $ docker run --name=test -d \
+        --health-cmd='stat /etc/passwd || exit 1' \
+        --health-interval=2s \
+        busybox sleep 1d
+    $ sleep 2; docker inspect --format='{{.State.Health.Status}}' test
+    healthy
+    $ docker exec test rm /etc/passwd
+    $ sleep 2; docker inspect --format='{{json .State.Health}}' test
     {
-      "Start": "2016-05-25T17:22:04.635478668Z",
-      "End": "2016-05-25T17:22:04.7272552Z",
-      "ExitCode": 0,
-      "Output": "  File: /etc/passwd\n  Size: 334       \tBlocks: 8          IO Block: 4096   regular file\nDevice: 32h/50d\tInode: 12          Links: 1\nAccess: (0664/-rw-rw-r--)  Uid: (    0/    root)   Gid: (    0/    root)\nAccess: 2015-12-05 22:05:32.000000000\nModify: 2015..."
-    },
-    {
-      "Start": "2016-05-25T17:22:06.732900633Z",
-      "End": "2016-05-25T17:22:06.822168935Z",
-      "ExitCode": 0,
-      "Output": "  File: /etc/passwd\n  Size: 334       \tBlocks: 8          IO Block: 4096   regular file\nDevice: 32h/50d\tInode: 12          Links: 1\nAccess: (0664/-rw-rw-r--)  Uid: (    0/    root)   Gid: (    0/    root)\nAccess: 2015-12-05 22:05:32.000000000\nModify: 2015..."
-    },
-    {
-      "Start": "2016-05-25T17:22:08.823956535Z",
-      "End": "2016-05-25T17:22:08.897359124Z",
-      "ExitCode": 1,
-      "Output": "stat: can't stat '/etc/passwd': No such file or directory\n"
-    },
-    {
-      "Start": "2016-05-25T17:22:10.898802931Z",
-      "End": "2016-05-25T17:22:10.969631866Z",
-      "ExitCode": 1,
-      "Output": "stat: can't stat '/etc/passwd': No such file or directory\n"
-    },
-    {
-      "Start": "2016-05-25T17:22:12.971033523Z",
-      "End": "2016-05-25T17:22:13.082015516Z",
-      "ExitCode": 1,
-      "Output": "stat: can't stat '/etc/passwd': No such file or directory\n"
+      "Status": "unhealthy",
+      "FailingStreak": 3,
+      "Log": [
+        {
+          "Start": "2016-05-25T17:22:04.635478668Z",
+          "End": "2016-05-25T17:22:04.7272552Z",
+          "ExitCode": 0,
+          "Output": "  File: /etc/passwd\n  Size: 334       \tBlocks: 8          IO Block: 4096   regular file\nDevice: 32h/50d\tInode: 12          Links: 1\nAccess: (0664/-rw-rw-r--)  Uid: (    0/    root)   Gid: (    0/    root)\nAccess: 2015-12-05 22:05:32.000000000\nModify: 2015..."
+        },
+        {
+          "Start": "2016-05-25T17:22:06.732900633Z",
+          "End": "2016-05-25T17:22:06.822168935Z",
+          "ExitCode": 0,
+          "Output": "  File: /etc/passwd\n  Size: 334       \tBlocks: 8          IO Block: 4096   regular file\nDevice: 32h/50d\tInode: 12          Links: 1\nAccess: (0664/-rw-rw-r--)  Uid: (    0/    root)   Gid: (    0/    root)\nAccess: 2015-12-05 22:05:32.000000000\nModify: 2015..."
+        },
+        {
+          "Start": "2016-05-25T17:22:08.823956535Z",
+          "End": "2016-05-25T17:22:08.897359124Z",
+          "ExitCode": 1,
+          "Output": "stat: can't stat '/etc/passwd': No such file or directory\n"
+        },
+        {
+          "Start": "2016-05-25T17:22:10.898802931Z",
+          "End": "2016-05-25T17:22:10.969631866Z",
+          "ExitCode": 1,
+          "Output": "stat: can't stat '/etc/passwd': No such file or directory\n"
+        },
+        {
+          "Start": "2016-05-25T17:22:12.971033523Z",
+          "End": "2016-05-25T17:22:13.082015516Z",
+          "ExitCode": 1,
+          "Output": "stat: can't stat '/etc/passwd': No such file or directory\n"
+        }
+      ]
     }
-  ]
-}
 
 健康状态也会显示在docker ps输出中。
 
-TMPFS（挂载tmpfs文件系统）
---tmpfs=[]: Create a tmpfs mount with: container-dir[:<options>],
-            where the options are identical to the Linux
-            'mount -t tmpfs -o' command.
+### **19.6 TMPFS（挂载tmpfs文件系统）**
+
+    --tmpfs=[]: Create a tmpfs mount with: container-dir[:<options>],
+                where the options are identical to the Linux
+                'mount -t tmpfs -o' command.
+
+
 下面安装一个空的tmpfs与容器中的例子rw， noexec，nosuid，和size=65536k选项。
 
-$ docker run -d --tmpfs /run:rw,noexec,nosuid,size=65536k my_image
-VOLUME（共享文件系统）
--v, --volume=[host-src:]container-dest[:<options>]: Bind mount a volume.
-The comma-delimited `options` are [rw|ro], [z|Z],
-[[r]shared|[r]slave|[r]private], and [nocopy].
-The 'host-src' is an absolute path or a name value.
+    $ docker run -d --tmpfs /run:rw,noexec,nosuid,size=65536k my_image
 
-If neither 'rw' or 'ro' is specified then the volume is mounted in
-read-write mode.
 
-The `nocopy` mode is used to disable automatically copying the requested volume
-path in the container to the volume storage location.
-For named volumes, `copy` is the default mode. Copy modes are not supported
-for bind-mounted volumes.
+### **19.7 VOLUME（共享文件系统）**
 
---volumes-from="": Mount all volumes from the given container(s)
+    -v, --volume=[host-src:]container-dest[:<options>]: Bind mount a volume.
+    The comma-delimited `options` are [rw|ro], [z|Z],
+    [[r]shared|[r]slave|[r]private], and [nocopy].
+    The 'host-src' is an absolute path or a name value.
+    
+    If neither 'rw' or 'ro' is specified then the volume is mounted in
+    read-write mode.
+    
+    The `nocopy` mode is used to disable automatically copying the requested volume
+    path in the container to the volume storage location.
+    For named volumes, `copy` is the default mode. Copy modes are not supported
+    for bind-mounted volumes.
+    
+    --volumes-from="": Mount all volumes from the given container(s)
+
 注意
 
 使用systemd管理Docker守护程序的启动和停止时，在systemd单元文件中有一个选项来控制Docker守护程序本身的挂载传播MountFlags。此设置的值可能会导致Docker无法看到在安装点上进行的安装传播更改。例如，如果此值为slave，则可能无法在卷上使用shared或rshared传播。
@@ -1062,18 +1145,21 @@ for bind-mounted volumes.
 
 例如，您可以指定一个/foo或foo一个host-src值。如果提供该/foo值，则Docker将创建一个绑定安装。如果提供foo规范，则Docker将创建一个命名卷。
 
-用户
+### **19.8 USER**
+
 root（id = 0）是容器中的默认用户。图像开发人员可以创建其他用户。这些用户可以通过名称访问。传递数字ID时，用户不必在容器中。
 
 开发人员可以设置默认用户，以使用Dockerfile USER指令运行第一个进程。启动容器时，操作员可以USER通过传递-u选项来覆盖指令。
 
--u="", --user="": Sets the username or UID used and optionally the groupname or GID for the specified command.
+    -u="", --user="": Sets the username or UID used and optionally the groupname or GID for the specified command.
+    
+    The followings examples are all valid:
+    --user=[ user | user:group | uid | uid:gid | user:gid | uid:group ]
 
-The followings examples are all valid:
---user=[ user | user:group | uid | uid:gid | user:gid | uid:group ]
 注意：如果您传递数字uid，则它必须在0-2147483647的范围内。
 
-WORKDIR 
+### **19.10 WORKDIR** 
+
 在容器中运行二进制文件的默认工作目录是根目录（/），但是开发人员可以使用Dockerfile WORKDIR命令设置其他默认目录。操作员可以使用以下方法覆盖它：
 
--w="": Working directory inside the container
+    -w="": Working directory inside the container
