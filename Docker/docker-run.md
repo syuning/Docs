@@ -1,29 +1,33 @@
 @贝蒂 :unicorn: 的文档
 > 官网文档地址：https://docs.docker.com/engine/reference/run/
-# **docker run**
 
-Docker将进程运行在独立的的**容器**中，而**容器**是在主机(host)上运行的进程。主机可以是本地主机，也可以是远程主机。当docker用户执行docker run时，运行的容器进程是独立的，因为它具有自己的文件系统、自己的网络以及独立于主机的进程树。
+# **docker run 命令**
 
-### ** 1. 一般形式 **
+Docker将进程运行在独立的的**容器**中，而**容器**是在宿主机(host)上运行的进程，宿主机可以是本地主机，也可以是远程主机。
+
+当docker用户执行docker run时，运行的容器进程是独立的，因为它具有自己的文件系统、自己的网络以及独立于主机的进程树。
+
+## **1. docker run 命令的一般形式**
 
     docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]
 
-docker run命令必须要指定一个镜像(image)，用于派生容器。
+docker run命令必须要指定一个**镜像(image)**，用于派生容器。
 
-镜像开发人员可以定义与镜像的*默认值*：
 
-* 独立运行 或 前台运行
+### **1.1 镜像默认值参数**：
+
+* ***独立(Detached)运行*** 或 ***前台(foreground)运行***
 * 容器身份识别
 * 网络设置
 * CPU和内存的运行时限制
 
 docker用户可以使用 ```docker run [OPTIONS]``` 来添加或覆盖开发人员设置的镜像默认设置，此外，docker用户还可以覆盖Docker运行时本身设置的几乎所有默认设置。docker用户拥有覆盖镜像和Docker运行时默认值的能力，这就是为什么run具有比其他任何docker命令更多的选项的原因。
 
-### ** 2. 用户专用选项 **
+## **2. 用户自定义参数**
 
-只有docker用户才能设置以下选项：
+只有docker用户才能设置以下参数：
 
-* 独立运行 或 前台运行
+* ***独立(Detached)运行*** 或 ***前台(foreground)运行***
 * 容器身份识别
 * IPC设置
 * 网络设置
@@ -33,9 +37,9 @@ docker用户可以使用 ```docker run [OPTIONS]``` 来添加或覆盖开发人�
 * 运行时特权和Linux功能
 
 
-### ** 3. 独立运行(Detached) 与 前台运行(foreground) **
+## **3. 独立运行(Detached)模式 与 前台运行(foreground)模式**
 
-#### 独立运行
+### **3.1 独立运行(Detached)**
 
 
     docker run -d=true 
@@ -45,26 +49,27 @@ docker用户可以使用 ```docker run [OPTIONS]``` 来添加或覆盖开发人�
 
 以独立模式启动的容器，会在**用于运行容器的根进程退出时**退出。
 
-如果在docker run中将-d与--rm一起使用，则在**容器退出或守护进程退出时**将容器删除。
+如果在 ```docker run``` 中将 ```-d``` 与 ```--rm``` 一起使用，则在**容器退出或守护进程退出时**将容器删除。
 
 不要将```service [服务名] start```命令传递给独立运行的容器，如尝试启动nginx服务（ docker run -d -p 80:80 my_image service nginx start），此时由于根进程（service nginx start）返回，因此容器自动停止。若要启动此类web服务器之类的进程，请执行以下操作：
 
     $ docker run -d -p 80:80 my_image nginx -g 'daemon off;'
 
-由于独立运行的容器不再监听docker run运行时所在的命令行，因此若要使用独立运行的容器进行输入、输出，请使用网络连接或共享卷。
+由于独立运行的容器不再监听 ```docker run``` 运行时所在的命令行，因此若要使用独立运行的容器进行输入、输出，请使用网络连接或共享卷。
 
 若要重新附加到分离的容器，请使用 ```docker attach``` 命令。
 
-#### 前台运行
+### **3.2 前台运行(foreground)**
 
-当不指定-d运行docker run时，默认容器将在前台运行。docker run可以在容器中启动进程，并将控制台绑定到到进程的标准输入、输出和标准错误。它甚至可以假装为TTY并传递信号。
+当不指定 ```-d``` 运行 ```docker run``` 时，默认容器将在前台运行。
+
+```docker run``` 可以在容器中启动进程，并将控制台绑定到到进程的标准输入、输出和标准错误。它甚至可以假装为TTY并传递信号。
 
 以下选项都是可配置的：
 
+1.  **-a=[]** : 绑定到 `STDIN`, `STDOUT` 或 `STDERR`
 
-1. **-a=[]**: 绑定到 `STDIN`, `STDOUT` and/or `STDERR`
-
-默认情况下docker会将stdout和stderr同时绑定到控制台，你也可以随意指定这三个中的任意一个或多个，如：
+默认情况下 ```docker``` 会将 ```stdout``` 和 ```stderr``` 同时绑定到控制台，你也可以随意指定这三个中的任意一个或多个，如：
 
 ```
 $ docker run -a stdin -a stdout -i -t ubuntu /bin/bash
@@ -82,9 +87,9 @@ $ docker run -a stdin -a stdout -i -t ubuntu /bin/bash
 $ echo test | docker run -i busybox cat
 ```
 
-### ** 4. 容器身份识别 **
+## **4. 容器身份识别**
 
-#### 容器名称 [--name]
+### **4.1 容器名称 [--name]**
 
 docker用户可以通过三种方式来鉴别一个容器：
 1. UUID 长id - “f78375b1c487e03c9438c729345e54db9d20cfa2ac1fc3494b6eb60872e74778”
@@ -93,20 +98,20 @@ docker用户可以通过三种方式来鉴别一个容器：
 
 UUID标识符来自Docker守护程序。如果未使用--name选项分配容器名称，则守护程序（Docker daemon）将为您生成一个随机字符串名称。定义一个name是向容器添加含义的便捷方法，如果指定name，则可以在Docker网络中引用容器时使用它。这同时适用于独立运行的和前台运行的Docker容器。
 
-#### 容器ID（类PID机制）
+### **4.2 容器ID（类PID机制）**
 
 为了更好地自动化，Docker可以实现将容器ID写至你所选的文件，类似程序将进程ID写至PID文件：
 
     --cidfile="": 将容器ID写至该文件
 
 
-#### Image[:tag]  镜像标签
+### **4.3 Image[:tag]  镜像标签**
 
 通过标明一个tag，镜像的版本是可选的。例如：
 
     docker run ubuntu:14.04
 
-#### Image[@digest]  镜像摘要
+### **4.4 Image[@digest]  镜像摘要**
 
 使用v2或更新的镜像格式的镜像，具有摘要（digest)功能 - 一个内容可寻址标识符。
 
@@ -117,7 +122,7 @@ UUID标识符来自Docker守护程序。如果未使用--name选项分配容器�
     $ docker run alpine@sha256:9cacb71397b640eca97488cf08582ae4e4068513101088e9f96c9814bfda95e0 date
 
 
-### ** 5. PID设置 **
+## **5. PID设置**
 
     --pid=""  : 为容器设置进程PID命名空间模式，
                  'container:<name|id>': 与另一个容器的PID命名空间合并
@@ -164,7 +169,7 @@ PID命名空间提供了流程分离。PID命名空间可删除系统进程的�
     $ strace -p 1
 
 
-### ** 6. UTS设置（--uts）**
+## **6. UTS设置（--uts）**
 
     --uts=""  : 为容器设置UTS命名空间模式，
        'host': 在容器内使用宿主机的UTS命名空间
@@ -176,7 +181,7 @@ UTS命名空间用于设置主机名、和对该命名空间中正在运行的�
 
 如果用户希望容器的主机名随着宿主机的主机名更改而更改，则需要与主机共享UTS命名空间，此选项也可以实现一个更进阶的操作 - 从容器内部更改宿主机的主机名。
 
-### ** 7. IPC设置（--ipc）（IPC：Inter-Process Communication，进程间通信）**
+## **7. IPC设置（--ipc）（IPC：Inter-Process Communication，进程间通信**
 
     --ipc="MODE"  : 为容器设置IPC模式
 
@@ -199,7 +204,7 @@ IPC（POSIX / SysV IPC）命名空间提供命名共享内存段、信号量和�
 
 如果将这些类型的应用程序分为多个容器，则可能需要共享容器的IPC机制，为主（即“捐赠者”）容器开启 ```"shareable"``` 模式， 并为其他容器开启 ```"container:<donor-name-or-ID>"``` 模式。
 
-### ** 8. 网络设置 **
+## **8. 网络设置**
 
 支持的网络选项 | 说明
 ----- | -----
@@ -265,7 +270,7 @@ IPC（POSIX / SysV IPC）命名空间提供命名共享内存段、信号量和�
 
 默认情况下，MAC地址是使用分配给容器的IP地址自动生成的，也可以通过使用 ```--mac-address``` 参数（格式为12:34:56:78:9a:bc：）来设置容器的MAC地址。请注意，Docker不会检查手动指定的MAC地址是否唯一。
 
-### ** 9. 重启机制 (--restart) **
+## **9. 容器的重启机制 (--restart)**
 
 使用 ```--restartDocker``` 来运行 ```docker run```，您可以指定重启策略，以设置容器在退出时应如何重启。
 
@@ -310,34 +315,34 @@ unless-stopped | 无论退出状态如何（包括守护程序启动时），无
     $ docker run --restart=on-failure:10 redis
 
 
-### ** 10. 退出机制 **
+## **10. 容器的退出机制**
 // TODO
 
-### ** 11. 清理 **
+## **11. 清理容器**
 // TODO
 
-### ** 12. 安全配置 **
+## **12. 安全配置**
 // TODO
 
-### ** 13. 设定初始进程 **
+## **13. 设定初始进程**
 // TODO
 
-### ** 14. 设置自定义的cgroup **
+## **14. 设置自定义的cgroup**
 // TODO
 
-### ** 15. 资源的运行时刻约束 **
+## **15. 资源的运行时刻约束**
 // TODO
 
-### ** 16. 附加组 **
+## **16. 附加组**
 // TODO
 
-### ** 17. 运行时刻特权以及Linux性能 **
+## **17. 运行时刻特权以及Linux性能**
 // TODO
 
-### ** 18. 日志驱动 **
+## **18. 日志驱动**
 // TODO
 
-### ** 19. 覆盖Dockerfile镜像默认值 **
+## **19. 覆盖Dockerfile镜像默认值**
 // TODO
 
 
