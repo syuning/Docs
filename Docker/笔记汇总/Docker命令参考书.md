@@ -73,7 +73,7 @@ Step 4/4 : CMD env | grep _TCP= | (sed 's/.*_PORT_\([0-9]*\)_TCP=tcp:\/\/\(.*\):
 Successfully built 7ea8aef582cc
 ```
 
-构建缓存仅用于具有本地父链的映像，这意味着这些图像是由以前的版本创建的，或者整个图像链都由已加载docker load。如果您希望使用特定镜像的构建缓存，则可以使用--cache-from选项指定它。带 --cache-from的镜像不需要具有父链，可以从其他注册表(registry)中提取。
+构建缓存仅用于具有本地父链的镜像，这意味着这些镜像是由以前的版本创建的，或者整个镜像链都由已加载docker load。如果您希望使用特定镜像的构建缓存，则可以使用--cache-from选项指定它。带 --cache-from的镜像不需要具有父链，可以从其他注册表(registry)中提取。
 
 完成构建后，就可以考虑将存储库推送到其注册表(https://docs.docker.com/engine/tutorials/dockerrepos/#/contributing-to-docker-hub)了。
 
@@ -88,7 +88,7 @@ Successfully built 7ea8aef582cc
 * 两次构建之间仅增量传输构建上下文中的更改文件
 * 在构建上下文中检测并跳过传输未使用的文件
 * 使用具有许多新功能的外部Dockerfile实现
-* 避免其他API的副作用（中间图像和容器）
+* 避免其他API的副作用（中间镜像和容器）
 * 优先考虑构建缓存以进行自动修剪
 * 要使用BuildKit后端，您需要在CLI上设置环境变量DOCKER_BUILDKIT=1，然后再调用docker build。
 
