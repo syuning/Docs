@@ -1,0 +1,1 @@
+| Instance Count | Enter the number of instances of a given type. Default is 1. |  

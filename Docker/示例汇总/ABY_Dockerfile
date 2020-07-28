@@ -1,0 +1,25 @@
+FROM debian:latest
+LABEL maintainer="Lynn Yuan <yuanxiaolong@inspur.com>"
+
+RUN set -x \
+ && apt-get update
+
+RUN set -x \
+ && apt-get install -y cmake && cmake --version \
+ && apt-get install -y g++ automake libgmp-dev libssl-dev libboost-all-dev
+
+RUN set -x \
+ && apt-get install -y locales vim wget curl git
+
+RUN set -x \
+ && cd /opt \
+ && git clone https://github.com/encryptogroup/ABY.git
+
+RUN set -x \
+ && cd /opt/ABY \
+ && mkdir build && cd build \
+ && cmake .. -DABY_BUILD_EXE=On -DCMAKE_BUILD_TYPE=Release \
+ && make && make install
+
+WORKDIR /ABY
+#docker build --rm -t aby:public -f ABY_Dockerfile .
