@@ -1,1 +1,0 @@
-Click on **Advanced** to view and enter additional configuration options.
